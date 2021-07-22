@@ -11,6 +11,11 @@ export const removeAllChildren = (elem: Element) => {
   while (elem.firstChild) elem.firstChild.remove();
 };
 
+const assignChildrenToElement = (elem: Element, props: ElementWithChildren) => {
+  if (props.children)
+    props.children.forEach((child) => child && elem.appendChild(child));
+};
+
 export const setChildren = (elem: Element, children: Element[]) => {
   removeAllChildren(elem);
   children.forEach((child) => elem.appendChild(child));
@@ -27,6 +32,10 @@ export type ClassDefinitions = {
   className?: ClassName;
   classNames?: ClassName[];
   classMap?: ClassMap;
+};
+
+export type ElementWithChildren = {
+  children?: (Node | undefined | false)[];
 };
 
 type Ref<T> = {
@@ -61,15 +70,15 @@ export const toggleClass = (
   isSet?: boolean
 ) => elem.classList.toggle(className, isSet);
 
-export const ul = ({ children }: { children: Element[] }) => {
+export const ul = (props: ElementWithChildren) => {
   const elem = document.createElement("ul");
-  appendChildren(elem, children);
+  assignChildrenToElement(elem, props);
   return elem;
 };
 
-export const ol = ({ children }: { children: Element[] }) => {
+export const ol = (props: ElementWithChildren) => {
   const elem = document.createElement("ol");
-  appendChildren(elem, children);
+  assignChildrenToElement(elem, props);
   return elem;
 };
 
@@ -78,37 +87,37 @@ type Events = {
   onClick?: (e: MouseEvent) => void;
 };
 type DivProps = {
-  children?: Node[];
   id?: string;
 } & ClassDefinitions &
+  ElementWithChildren &
   Events &
   Ref<HTMLDivElement>;
 
 export const div = (props: DivProps) => {
   const elem = document.createElement("div");
 
-  const { children, id } = props;
+  const { id } = props;
   assignClasses(elem, props);
   assignElementEvents(elem, props);
+  assignChildrenToElement(elem, props);
   if (id) elem.id = id;
-  if (children) appendChildren(elem, children);
   if (props.ref) props.ref(elem);
   return elem;
 };
 
-interface LiProps {
+type LiProps = {
   id?: string;
   text?: string;
   style?: Partial<CSSStyleDeclaration>;
-  children?: Element[];
-}
+} & ElementWithChildren;
 
-export const li = ({ text, id, children, style }: LiProps) => {
+export const li = (props: LiProps) => {
   const elem = document.createElement("li");
+  assignChildrenToElement(elem, props);
+  const { text, id, style } = props;
   if (text) elem.textContent = text;
   if (id) elem.id = id;
   Object.assign(elem.style, style);
-  if (children) appendChildren(elem, children);
   return elem;
 };
 
