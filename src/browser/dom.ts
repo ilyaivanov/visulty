@@ -11,10 +11,10 @@ export const removeAllChildren = (elem: Element) => {
   while (elem.firstChild) elem.firstChild.remove();
 };
 
-const assignChildrenToElement = (elem: Element, props: ElementWithChildren) => {
-  if (props.children)
-    props.children.forEach((child) => child && elem.appendChild(child));
-};
+const assignChildrenArrayToElement = (
+  elem: Element,
+  children: ElementChild[]
+) => children.forEach((child) => child && elem.appendChild(child));
 
 export const setChildren = (elem: Element, children: Element[]) => {
   removeAllChildren(elem);
@@ -34,9 +34,7 @@ export type ClassDefinitions = {
   classMap?: ClassMap;
 };
 
-export type ElementWithChildren = {
-  children?: (Node | undefined | false)[];
-};
+export type ElementChild = Node | undefined | false;
 
 type Ref<T> = {
   ref?: (el: T) => void;
@@ -70,70 +68,48 @@ export const toggleClass = (
   isSet?: boolean
 ) => elem.classList.toggle(className, isSet);
 
-export const ul = (props: ElementWithChildren) => {
-  const elem = document.createElement("ul");
-  assignChildrenToElement(elem, props);
-  return elem;
-};
-
-export const ol = (props: ElementWithChildren) => {
-  const elem = document.createElement("ol");
-  assignChildrenToElement(elem, props);
-  return elem;
-};
-
 type Events = {
   onKeyDown?: (e: KeyboardEvent) => void;
   onClick?: (e: MouseEvent) => void;
 };
+
+const assignElementEvents = (elem: HTMLElement, props: Events) => {
+  if (props.onKeyDown) elem.addEventListener("keydown", props.onKeyDown);
+  if (props.onClick) elem.addEventListener("click", props.onClick);
+};
+
+//ELEMENTS
+
 type DivProps = {
   id?: string;
 } & ClassDefinitions &
-  ElementWithChildren &
   Events &
   Ref<HTMLDivElement>;
 
-export const div = (props: DivProps) => {
+export const div = (props: DivProps, ...children: ElementChild[]) => {
   const elem = document.createElement("div");
 
   const { id } = props;
   assignClasses(elem, props);
   assignElementEvents(elem, props);
-  assignChildrenToElement(elem, props);
+  assignChildrenArrayToElement(elem, children);
   if (id) elem.id = id;
   if (props.ref) props.ref(elem);
   return elem;
 };
 
-type LiProps = {
-  id?: string;
+type ButtonProps = {
   text?: string;
-  style?: Partial<CSSStyleDeclaration>;
-} & ElementWithChildren;
-
-export const li = (props: LiProps) => {
-  const elem = document.createElement("li");
-  assignChildrenToElement(elem, props);
-  const { text, id, style } = props;
-  if (text) elem.textContent = text;
-  if (id) elem.id = id;
-  Object.assign(elem.style, style);
-  return elem;
-};
-
-type SpanProps = {
-  text: string;
 } & ClassDefinitions &
-  Events &
-  Ref<HTMLSpanElement>;
+  Events;
 
-export const span = (props: SpanProps) => {
-  const elem = document.createElement("span");
+export const button = (props: ButtonProps) => {
+  const elem = document.createElement("button");
   assignClasses(elem, props);
   assignElementEvents(elem, props);
 
-  elem.textContent = props.text;
-  if (props.ref) props.ref(elem);
+  if (props.text) elem.textContent = props.text;
+
   return elem;
 };
 
@@ -154,22 +130,18 @@ export const input = (props: InputProps) => {
   return elem;
 };
 
-type ButtonProps = {
-  text?: string;
+type SpanProps = {
+  text: string;
 } & ClassDefinitions &
-  Events;
+  Events &
+  Ref<HTMLSpanElement>;
 
-export const button = (props: ButtonProps) => {
-  const elem = document.createElement("button");
+export const span = (props: SpanProps) => {
+  const elem = document.createElement("span");
   assignClasses(elem, props);
   assignElementEvents(elem, props);
 
-  if (props.text) elem.textContent = props.text;
-
+  elem.textContent = props.text;
+  if (props.ref) props.ref(elem);
   return elem;
-};
-
-const assignElementEvents = (elem: HTMLElement, props: Events) => {
-  if (props.onKeyDown) elem.addEventListener("keydown", props.onKeyDown);
-  if (props.onClick) elem.addEventListener("click", props.onClick);
 };

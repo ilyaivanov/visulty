@@ -3,16 +3,16 @@ import { spacings, levels } from "../designSystem";
 import { itemsStore } from "./stores";
 
 const viewItem = (item: Item, level: number): HTMLElement => {
-  const row = dom.div({
-    classNames: ["item-row", levels.rowForLevel(level)],
-    onClick: () => itemsStore.toggleItem(item),
-    children: [
-      dom.span({
-        className: "item-row-title",
-        text: item.title,
-      }),
-    ],
-  });
+  const row = dom.div(
+    {
+      classNames: ["item-row", levels.rowForLevel(level)],
+      onClick: () => itemsStore.toggleItem(item),
+    },
+    dom.span({
+      className: "item-row-title",
+      text: item.title,
+    })
+  );
   let children =
     item.isOpen && item.children && viewChildren(item.children, level + 1);
 
@@ -32,15 +32,15 @@ const viewItem = (item: Item, level: number): HTMLElement => {
       }
     }
   );
-  const container = dom.div({ children: [row, children] });
+  const container = dom.div({}, row, children);
   return container;
 };
 
 const viewChildren = (items: Item[], level: number): HTMLElement => {
-  return dom.div({
-    className: "item-row-children",
-    children: items.map((item) => viewItem(item, level)),
-  });
+  return dom.div(
+    { className: "item-row-children" },
+    ...items.map((item) => viewItem(item, level))
+  );
 };
 
 export const viewTree = () => viewChildren(itemsStore.root.children!, 0);
