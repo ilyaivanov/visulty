@@ -1,7 +1,5 @@
 import { viewTree } from "./src/app/tree";
-import { dom, style } from "./src/browser";
-
-const { div } = dom;
+import { div, style } from "./src/browser";
 
 document.body.appendChild(
   div({ className: "app" }, div({ className: "tab" }, viewTree()))

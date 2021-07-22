@@ -1,14 +1,14 @@
-import { dom, anim, style } from "../browser";
+import { div, span, anim, style } from "../browser";
 import { spacings, levels } from "../designSystem";
 import { itemsStore } from "./stores";
 
 const viewItem = (item: Item, level: number): HTMLElement => {
-  const row = dom.div(
+  const row = div(
     {
       classNames: ["item-row", levels.rowForLevel(level)],
       onClick: () => itemsStore.toggleItem(item),
     },
-    dom.span({
+    span({
       className: "item-row-title",
       text: item.title,
     })
@@ -32,12 +32,12 @@ const viewItem = (item: Item, level: number): HTMLElement => {
       }
     }
   );
-  const container = dom.div({}, row, children);
+  const container = div({}, row, children);
   return container;
 };
 
 const viewChildren = (items: Item[], level: number): HTMLElement => {
-  return dom.div(
+  return div(
     { className: "item-row-children" },
     ...items.map((item) => viewItem(item, level))
   );
