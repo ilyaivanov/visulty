@@ -1,0 +1,39 @@
+{
+  "name": "visulty",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "webpack serve --mode development",
+    "build": "webpack --mode production",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:ilyaivanov/visulty.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "jsdom"
+  },
+  "homepage": "https://github.com/ilyaivanov/visulty",
+  "devDependencies": {
+    "@testing-library/dom": "^7.31.2",
+    "@testing-library/jest-dom": "^5.12.0",
+    "@types/jest": "^26.0.23",
+    "clean-webpack-plugin": "^3.0.0",
+    "html-webpack-plugin": "^5.3.1",
+    "jest": "^27.0.1",
+    "prettier": "^2.3.0",
+    "ts-jest": "^27.0.1",
+    "ts-loader": "^9.2.2",
+    "typescript": "^4.2.2",
+    "webpack": "^5.37.1",
+    "webpack-cli": "^4.7.0",
+    "webpack-dev-server": "^3.11.2"
+  },
+  "dependencies": {
+    "mobx": "^6.3.2"
+  }
+}
