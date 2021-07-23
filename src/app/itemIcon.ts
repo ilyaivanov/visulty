@@ -29,7 +29,7 @@ export const viewItemIcon = (item: Item, events: IconEvents) => {
   const itemIconContainer = svg.svg({
     className: "item-icon-svg",
     viewBox: `0 0 ${iconSize} ${iconSize}`,
-    children: [outerCircle, innerCircle],
+    children: [!item.imageUrl ? outerCircle : undefined, innerCircle],
     // onMouseDown: props?.onMouseDown,
   });
 
@@ -37,8 +37,8 @@ export const viewItemIcon = (item: Item, events: IconEvents) => {
     itemIconContainer.style.backgroundImage = `url(${item.imageUrl})`;
     dom.assignClasses(itemIconContainer, {
       classMap: {
-        "item-icon-image_square": item.isPlaylist || item.isVideo,
-        "item-icon-image_circle": item.isChannel,
+        "item-icon-image_square": item.isPlaylist() || item.isVideo(),
+        "item-icon-image_circle": item.isChannel(),
       },
     });
   } else {

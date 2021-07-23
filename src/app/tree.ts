@@ -14,37 +14,45 @@ const viewItem = (item: Item, level: number): HTMLElement => {
       text: item.title,
     })
   );
-  let children =
-    item.isOpen && item.children && viewChildren(item.children, level + 1);
+  const childrenArea = div(
+    { className: "item-row-children" },
+    ...viewChildren(item, level + 1)
+  );
 
+  //TODO: this is probably better to handle via state machines
   itemsStore.itemReaction(
     item,
-    () => item.isOpen,
-    () => {
-      if (item.isOpen && item.children) {
-        children = viewChildren(item.children, level + 1);
-        container.appendChild(children);
-        anim.expand(children);
+    () => ({ isOpen: item.isOpen, isLoading: item.isLoading }),
+    ({ isOpen, isLoading }) => {
+      if (isOpen && item.children) {
+        dom.setChildren(childrenArea, viewChildren(item, level + 1));
+        if (!childrenArea.isConnected) container.appendChild(childrenArea);
+        anim.expand(childrenArea);
+      } else if (isOpen && isLoading) {
+        dom.setChild(
+          childrenArea,
+          dom.div({ text: "Loading...", className: levels.rowForLevel(level) })
+        );
+        if (!childrenArea.isConnected) container.appendChild(childrenArea);
+        anim.expand(childrenArea);
       } else {
-        if (children)
-          anim
-            .collapse(children)
-            .addEventListener("finish", () => children && children.remove());
+        anim
+          .collapse(childrenArea)
+          .addEventListener("finish", () => childrenArea.remove());
       }
     }
   );
-  const container = div({}, row, children);
+  const container = div({}, row, item.isOpen && item.children && childrenArea);
   return container;
 };
 
-const viewChildren = (items: Item[], level: number): HTMLElement => {
-  return div(
-    { className: "item-row-children" },
-    ...items
-      .map((item) => viewItem(item, level))
-      .concat(level != 0 ? childrenBorder(level - 1) : [])
-  );
-};
+const viewChildren = (item: Item, level: number): HTMLElement[] =>
+  item.children
+    ? item.children
+        .map((item) => viewItem(item, level))
+        .concat(level != 0 ? childrenBorder(level - 1) : [])
+    : [];
+
 const childrenBorder = (level: number) =>
   div({
     classNames: ["item-children-border", levels.childrenBorderForLevel(level)],

@@ -4,11 +4,11 @@ import { itemsStore, uiStore } from "./stores";
 import { viewTree } from "./tree";
 import * as youtubeApi from "../api/youtube";
 import {
-  createChannel,
-  createFolder,
-  createPlaylist,
-  createVideo,
+  VideoItem,
+  ChannelItem,
+  PlaylistItem,
   Item,
+  FolderItem,
 } from "../domain/item";
 
 export const viewSearchTab = () => {
@@ -47,7 +47,10 @@ const onKeyDown = (e: KeyboardEvent) => {
     const term = (e.currentTarget as HTMLInputElement).value;
     youtubeApi.loadSearchResults(term).then((response) => {
       const items = response.items.map(mapResponseItem);
-      itemsStore.searchRoot = createFolder("Search", items);
+      itemsStore.searchRoot = new FolderItem({
+        title: "Search",
+        children: items,
+      });
     });
     setTimeout(() => {
       uiStore.stopLoading();
@@ -55,9 +58,19 @@ const onKeyDown = (e: KeyboardEvent) => {
   }
 };
 
-const mapResponseItem = (item: youtubeApi.ResponseItem): Item => {
-  if (item.itemType === "video") return createVideo(item.name, item.itemId);
+export const mapResponseItem = (item: youtubeApi.ResponseItem): Item => {
+  if (item.itemType === "video")
+    return new VideoItem({ title: item.name, videoId: item.itemId });
   else if (item.itemType === "channel")
-    return createChannel(item.name, item.image, item.itemId);
-  else return createPlaylist(item.name, item.image, item.itemId);
+    return new ChannelItem({
+      title: item.name,
+      channelImage: item.image,
+      channelId: item.itemId,
+    });
+  else
+    return new PlaylistItem({
+      title: item.name,
+      playlistImage: item.image,
+      playlistId: item.itemId,
+    });
 };

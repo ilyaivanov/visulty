@@ -86,6 +86,7 @@ const assignElementEvents = (elem: HTMLElement, props: Events) => {
 
 type DivProps = {
   id?: string;
+  text?: string;
 } & ClassDefinitions &
   Events &
   Ref<HTMLDivElement>;
@@ -93,11 +94,13 @@ type DivProps = {
 export const div = (props: DivProps, ...children: ElementChild[]) => {
   const elem = document.createElement("div");
 
-  const { id } = props;
   assignClasses(elem, props);
   assignElementEvents(elem, props);
   assignChildrenArrayToElement(elem, children);
+
+  const { id, text } = props;
   if (id) elem.id = id;
+  if (text) elem.textContent = text;
   if (props.ref) props.ref(elem);
   return elem;
 };
