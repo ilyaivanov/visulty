@@ -5,6 +5,7 @@ import {
   IReactionOptions,
   IReactionDisposer,
 } from "mobx";
+import { Item } from "./item";
 
 //Managers item reactions and makes sure I don't have memory leaks for item reactions
 //the problem is that I can't simply detect when a node was removed.

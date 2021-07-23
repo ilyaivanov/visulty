@@ -15,7 +15,7 @@ type ClassName =
   | "item-done"
   | "item-row"
   | "item-row-title"
-  | "item-row-container"
+  | "item-container-row-title"
   | "item-row_selected"
   | "item-children-border"
   | "item-row-children"
@@ -38,10 +38,3 @@ type ClassName =
   | "player";
 
 type ElementId = string;
-
-type Item = {
-  id: string;
-  title: string;
-  children?: Item[];
-  isOpen?: boolean;
-};

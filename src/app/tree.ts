@@ -1,15 +1,16 @@
 import { div, span, anim, style } from "../browser";
 import { spacings, levels } from "../designSystem";
+import { Item } from "../domain/item";
+import { viewItemIcon } from "./itemIcon";
 import { itemsStore } from "./stores";
 
 const viewItem = (item: Item, level: number): HTMLElement => {
   const row = div(
-    {
-      classNames: ["item-row", levels.rowForLevel(level)],
-      onClick: () => itemsStore.toggleItem(item),
-    },
+    { classNames: ["item-row", levels.rowForLevel(level)] },
+    viewItemIcon(item, { onChevronClick: () => itemsStore.toggleItem(item) }),
     span({
       className: "item-row-title",
+      classMap: { "item-container-row-title": item.isContainer },
       text: item.title,
     })
   );
@@ -64,7 +65,7 @@ style.class("item-row-title", {
   marginBottom: 2,
 });
 
-style.class("item-row-container", { fontWeight: "bold" });
+style.class("item-container-row-title", { fontWeight: "bold" });
 
 style.class("item-row-children", {
   overflow: "hidden",

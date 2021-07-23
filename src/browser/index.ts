@@ -1,4 +1,5 @@
 export { div, span } from "./dom";
+export * as dom from "./dom";
 export * as svg from "./svg";
 export * as anim from "./anim";
 export * as css from "./css";
