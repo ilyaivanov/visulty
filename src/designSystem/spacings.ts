@@ -1,6 +1,5 @@
 const borderWidth = 2;
 const treeMaxWidth = 700;
-
 const outerRadius = 16;
 const innerRadius = 6;
 const chevronSize = 16;
@@ -22,14 +21,14 @@ export const spacings = {
   //   negativeMarginForRowAtZeroLevel: 1000,
   rowVecticalPadding,
   spaceBetweenCircleAndText: 8,
-  //   headerHeight: 48,
+  headerHeight: 48,
+  playerFooterHeight: 49,
   //   bodyScrollWidth: 6,
   //   pageFontSize: 16,
   //   pageTitleFontSize: 23,
   //   pageMarginTop: 20,
   //   documentWidth: 700,
   //   rowsContainerLeftPadding: 20,
-  //   playerFooterHeight: 49,
 
   //   //CARDS
   //   cardHeight: 48,

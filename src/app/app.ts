@@ -2,6 +2,7 @@ import { viewTree } from "./tree";
 import { css, div, button, style } from "../browser";
 import { itemsStore, uiStore } from "./stores";
 import { viewSearchTab as viewSearchTab } from "./searchTab";
+import { spacings } from "../designSystem";
 
 export const viewApp = () => {
   return div(
@@ -39,11 +40,8 @@ style.tag("body", {
   fontFamily: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"`,
 });
 
-const HEADER_HEIGHT = 50;
-const PLAYER_HEIGHT = 50;
-
 style.class("gallery", {
-  height: `calc(100vh - ${HEADER_HEIGHT}px - ${PLAYER_HEIGHT}px)`,
+  height: `calc(100vh - ${spacings.playerFooterHeight}px - ${spacings.headerHeight}px)`,
   gridArea: "gallery",
   display: "flex",
 });
@@ -63,13 +61,13 @@ style.class("search-tab_hidden", { marginRight: "-100%" });
 
 style.class("header", {
   gridArea: "header",
-  height: HEADER_HEIGHT,
+  height: spacings.headerHeight,
   backgroundColor: "blue",
 });
 
 style.class("player", {
   gridArea: "player",
-  height: PLAYER_HEIGHT,
+  height: spacings.playerFooterHeight,
   backgroundColor: "green",
 });
 
