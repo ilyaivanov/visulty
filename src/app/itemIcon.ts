@@ -60,7 +60,7 @@ export const viewItemIcon = (item: Item, events: IconEvents) => {
 };
 
 const getInnerCircle = (item: Item) =>
-  !item.children
+  item.isEmpty
     ? svg.circle({
         cx: iconSize / 2,
         cy: iconSize / 2,

@@ -24,7 +24,7 @@ export class Item {
     return this.props.type !== "YTvideo";
   }
   get isEmpty() {
-    return !this.children;
+    return !this.children || this.children.length == 0;
   }
 
   get isNeededToBeFetched() {
@@ -59,21 +59,29 @@ export const createFolder = (title: string, children?: Item[]): Item =>
 export const createVideo = (title: string, videoId: string): Item =>
   new Item(title, { type: "YTvideo", videoId });
 
-export const createPlaylist = (title: string, imageUrl: string): Item => {
+export const createPlaylist = (
+  title: string,
+  imageUrl: string,
+  playlistId: string
+): Item => {
   const item = new Item(title, {
     type: "YTplaylist",
     imageUrl,
-    playlistId: "someDummyId",
+    playlistId,
   });
   item.isOpen = false;
   return item;
 };
 
-export const createChannel = (title: string, imageUrl: string): Item => {
+export const createChannel = (
+  title: string,
+  imageUrl: string,
+  channelId: string
+): Item => {
   const item = new Item(title, {
     type: "YTchannel",
     imageUrl,
-    channelId: "someDummyId",
+    channelId,
   });
   item.isOpen = false;
   return item;
