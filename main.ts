@@ -18,7 +18,7 @@ initFirebase(() => {
       items["HOME"].children!.map((id) => mapItem(items, items[id]))
     );
 
-    itemsStore.root = root;
+    itemsStore.homeRoot = root;
 
     document.body.appendChild(viewApp());
   });

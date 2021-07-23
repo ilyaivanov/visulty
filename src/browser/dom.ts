@@ -20,6 +20,10 @@ export const setChildren = (elem: Element, children: Element[]) => {
   removeAllChildren(elem);
   children.forEach((child) => elem.appendChild(child));
 };
+export const setChild = (elem: Element, child: Node) => {
+  removeAllChildren(elem);
+  elem.appendChild(child);
+};
 
 export const fragment = (children: Element[]) => {
   const frag = document.createDocumentFragment();

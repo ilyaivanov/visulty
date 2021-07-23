@@ -19,7 +19,8 @@ for (let level = 0; level < numberOfLevelsToGenerate; level++) {
   const levelPadding = `${level * spacings.spacePerLevel}px`;
   style.class(rowForLevel(level), {
     paddingLeft: `calc(${base} + ${levelPadding})`,
-    paddingRight: `calc(${base} + ${levelPadding})`,
+    paddingRight: 20,
+    // paddingRight: `calc(${base} + ${levelPadding})`,
   });
   style.class(childrenBorderForLevel(level), {
     left: `calc(${base} + ${

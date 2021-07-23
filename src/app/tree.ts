@@ -1,4 +1,4 @@
-import { div, span, anim, style } from "../browser";
+import { div, span, anim, style, dom } from "../browser";
 import { spacings, levels } from "../designSystem";
 import { Item } from "../domain/item";
 import { viewItemIcon } from "./itemIcon";
@@ -50,7 +50,8 @@ const childrenBorder = (level: number) =>
     classNames: ["item-children-border", levels.childrenBorderForLevel(level)],
   });
 
-export const viewTree = () => viewChildren(itemsStore.root.children!, 0);
+export const viewTree = (item: Item): Node =>
+  dom.fragment(item.children!.map((child) => viewItem(child, 0)));
 
 style.class("item-row", {
   display: "flex",

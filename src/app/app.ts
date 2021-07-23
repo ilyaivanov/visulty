@@ -1,19 +1,9 @@
 import { viewTree } from "./tree";
-import { css, div, dom, style } from "../browser";
-import { button } from "../browser/dom";
-import { uiStore } from "./stores";
-import { autorun } from "mobx";
+import { css, div, button, style } from "../browser";
+import { itemsStore, uiStore } from "./stores";
+import { viewSearchTab as viewSearchTab } from "./searchTab";
 
 export const viewApp = () => {
-  const searchTab = div({ classNames: ["tab", "search-tab"] }, viewTree());
-
-  //memory leak in case of multipage navigation
-  autorun(() =>
-    dom.assignClassMap(searchTab, {
-      "search-tab_hidden": !uiStore.isSearchVisible,
-    })
-  );
-
   return div(
     { className: "app" },
     div(
@@ -22,8 +12,8 @@ export const viewApp = () => {
     ),
     div(
       { className: "gallery" },
-      div({ className: "tab" }, viewTree()),
-      searchTab
+      div({ className: "tab" }, viewTree(itemsStore.homeRoot)),
+      viewSearchTab()
     ),
     div({ className: "player" })
   );
@@ -49,7 +39,11 @@ style.tag("body", {
   fontFamily: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"`,
 });
 
+const HEADER_HEIGHT = 50;
+const PLAYER_HEIGHT = 50;
+
 style.class("gallery", {
+  height: `calc(100vh - ${HEADER_HEIGHT}px - ${PLAYER_HEIGHT}px)`,
   gridArea: "gallery",
   display: "flex",
 });
@@ -69,13 +63,13 @@ style.class("search-tab_hidden", { marginRight: "-100%" });
 
 style.class("header", {
   gridArea: "header",
-  height: 50,
+  height: HEADER_HEIGHT,
   backgroundColor: "blue",
 });
 
 style.class("player", {
   gridArea: "player",
-  height: 50,
+  height: PLAYER_HEIGHT,
   backgroundColor: "green",
 });
 
