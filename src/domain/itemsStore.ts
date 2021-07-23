@@ -65,7 +65,7 @@ export class ItemsStore {
 
   toggleItem = (item: Item) => {
     item.isOpen = !item.isOpen;
-    this.itemAutoruns.disposeItemReactions(item);
+    this.itemAutoruns.disposeItemChildrenReactions(item);
   };
 
   private itemAutoruns = new ItemReactions();

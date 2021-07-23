@@ -7,9 +7,9 @@ import {
 } from "mobx";
 import { Item } from "./item";
 
-//Managers item reactions and makes sure I don't have memory leaks for item reactions
-//the problem is that I can't simply detect when a node was removed.
-//Using MutationObserver API is not an option since every DOM change will be tracked and this is very inefficient
+//Manage disposal of item reactions and makes sure I don't any have memory leaks for item reactions
+//the problem is that I can't simply detect when a node has been removed from the DOM (and thus dispose MobX reactions)
+//Using MutationObserver API is not a good option since every DOM change will be tracked and this is very inefficient
 
 export class ItemReactions {
   private itemEffects: Record<string, IReactionDisposer[]> = {};
@@ -29,16 +29,16 @@ export class ItemReactions {
     this.addDisposeToItem(item, dispose);
   };
 
-  private addDisposeToItem = (item: Item, dispose: IReactionDisposer) => {
-    if (!this.itemEffects[item.id]) this.itemEffects[item.id] = [];
-    this.itemEffects[item.id].push(dispose);
-  };
-
-  disposeItemReactions = (item: Item) => {
+  disposeItemChildrenReactions = (item: Item) => {
     this.traverseOpenChildren(item, (child) => {
       this.itemEffects[child.id]?.forEach((dispose) => dispose());
       delete this.itemEffects[child.id];
     });
+  };
+
+  private addDisposeToItem = (item: Item, dispose: IReactionDisposer) => {
+    if (!this.itemEffects[item.id]) this.itemEffects[item.id] = [];
+    this.itemEffects[item.id].push(dispose);
   };
 
   private traverseOpenChildren = (parent: Item, action: Action<Item>) => {
