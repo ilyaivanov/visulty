@@ -67,7 +67,7 @@ const getInnerCircle = (item: Item) =>
         r: spacings.innerRadius,
         fill: "transparent",
         strokeWidth: 2,
-        stroke: "white",
+        stroke: "#DDDDDD",
       })
     : svg.circle({
         cx: iconSize / 2,

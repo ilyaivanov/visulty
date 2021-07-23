@@ -40,9 +40,15 @@ const viewItem = (item: Item, level: number): HTMLElement => {
 const viewChildren = (items: Item[], level: number): HTMLElement => {
   return div(
     { className: "item-row-children" },
-    ...items.map((item) => viewItem(item, level))
+    ...items
+      .map((item) => viewItem(item, level))
+      .concat(level != 0 ? childrenBorder(level - 1) : [])
   );
 };
+const childrenBorder = (level: number) =>
+  div({
+    classNames: ["item-children-border", levels.childrenBorderForLevel(level)],
+  });
 
 export const viewTree = () => viewChildren(itemsStore.root.children!, 0);
 
