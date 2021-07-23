@@ -1,7 +1,5 @@
 import { initFirebase, loadUserSettings } from "./src/api/userState";
 import { sampleUserName } from "./src/api/config";
-import { viewTree } from "./src/app/tree";
-import { div, style } from "./src/browser";
 import {
   createFolder,
   createChannel,
@@ -10,6 +8,7 @@ import {
   Item,
 } from "./src/domain/item";
 import { itemsStore } from "./src/app/stores";
+import { viewApp } from "./src/app/app";
 
 initFirebase(() => {
   loadUserSettings(sampleUserName).then((data) => {
@@ -21,9 +20,7 @@ initFirebase(() => {
 
     itemsStore.root = root;
 
-    document.body.appendChild(
-      div({ className: "app" }, div({ className: "tab" }, viewTree()))
-    );
+    document.body.appendChild(viewApp());
   });
 });
 
@@ -47,24 +44,3 @@ const mapItem = (items: LegacyItems, item: LegacyItem): Item => {
   res.isOpen = !item.isCollapsedInGallery;
   return res;
 };
-
-style.class("app", {
-  color: "white",
-  backgroundColor: "#1E1E1E",
-  height: "100vh",
-  width: "100vw",
-  display: "flex",
-  flexDirection: "row",
-  overflow: "hidden",
-});
-
-style.tag("body", {
-  margin: 0,
-  fontFamily: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"`,
-});
-
-style.class("tab", {
-  flex: 1,
-  overflowY: "overlay",
-  paddingBottom: "20vh",
-});

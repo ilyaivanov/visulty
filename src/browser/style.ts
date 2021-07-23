@@ -147,7 +147,7 @@ export type Styles = Partial<{
 
   //flex
   flex: number;
-  display: "flex" | "inline-block" | "block";
+  display: "flex" | "inline-block" | "block" | "grid";
   flexDirection: "row" | "column";
   justifyContent: "flex-start" | "center" | "flex-end";
   flexWrap: "wrap";
@@ -192,6 +192,12 @@ export type Styles = Partial<{
   backgroundSize: "cover";
   backgroundPosition: string;
   background: string;
+
+  //grid
+  gridTemplateColumns: string;
+  gridTemplateRows: string;
+  gridTemplateAreas: string;
+  gridArea: string;
 
   //Other
   cursor: "pointer";

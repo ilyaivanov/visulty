@@ -5,6 +5,9 @@ type Func1<TIn, TOut> = (arg: TIn) => TOut;
 
 type ClassName =
   | "app"
+  | "header"
+  | "player"
+  | "gallery"
   | "tab"
   | "main-tab"
   | "search-tab"
