@@ -21,6 +21,11 @@ export class CommandsDispatcher {
       );
     if (command.type === "item-removed")
       this.viewAction(command.itemId, (view) => view.remove());
+
+    if (command.type === "item-loaded")
+      this.viewAction(command.itemId, (view) =>
+        view.updateItemChildrenVisibility()
+      );
   };
   viewAction = (itemId: string, action: Action<ItemView>) => {
     const elem = document.getElementById(itemId);

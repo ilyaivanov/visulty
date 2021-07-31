@@ -5,6 +5,7 @@ import { ItemView } from "./view/itemView";
 document.body.appendChild(ItemView.viewChildrenFor(store.root));
 
 style.tag("body", {
+  paddingTop: 20,
   color: "white",
   backgroundColor: "#1E1E1E",
   margin: 0,

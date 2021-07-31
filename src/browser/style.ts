@@ -33,6 +33,7 @@ const handleCompoundStyles = (
 };
 
 export const style = {
+  text: (val: string) => (s.innerHTML += val),
   selector,
   tag: (tagName: keyof HTMLElementTagNameMap, styles: StylesWithVariables) =>
     selector(`${tagName}`, styles),
@@ -99,6 +100,7 @@ const whitelist: Styles = {
   flex: 1,
   // fontWeight: 1,
   lineHeight: 1,
+  animationDelay: 1,
 };
 
 const convertVal = (key: string, val: number | string) => {
@@ -170,6 +172,8 @@ export type Styles = Partial<{
 
   //transitions
   transition: string;
+  animation: string;
+  animationDelay: string | number;
 
   //typography
   fontFamily: string;
@@ -192,6 +196,7 @@ export type Styles = Partial<{
   backgroundSize: "cover";
   backgroundPosition: string;
   background: string;
+  backgroundRepeat: string;
 
   //grid
   gridTemplateColumns: string;

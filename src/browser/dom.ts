@@ -1,4 +1,4 @@
-import { chevron } from "../designSystem/icons";
+import { Styles, convertNumericStylesToProperJsOjbect } from "./style";
 
 export const insert = (
   elem: Element,
@@ -159,6 +159,7 @@ type ElementProps<T> = {
   id?: string;
   textContent?: string;
   ref?: MyRef<T>;
+  style?: Styles;
 } & ClassDefinitions &
   Events;
 
@@ -176,6 +177,13 @@ export const elem = <T extends keyof HTMLElementTagNameMap>(
   assignClasses(elem, props);
   assignElementEvents(elem, props);
   if (children) assignChildrenArrayToElement(elem, children);
+  if (props.style) {
+    console.log(convertNumericStylesToProperJsOjbect(props.style));
+    Object.assign(
+      elem.style,
+      convertNumericStylesToProperJsOjbect(props.style)
+    );
+  }
   return elem;
 };
 

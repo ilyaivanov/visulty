@@ -51,6 +51,11 @@ export class ItemView {
   };
 
   private open = (animate?: boolean) => {
+    if (this.childrenElem.elem) {
+      this.childrenElem.elem.remove();
+      //@ts-expect-error
+      this.childrenElem.elem = undefined;
+    }
     this.el.appendChild(this.viewChildren());
     if (animate) anim.expand(this.childrenElem.elem);
   };
@@ -59,8 +64,14 @@ export class ItemView {
     dom.elem(
       "div",
       { className: "item-row-children", ref: this.childrenElem },
-      this.item.children &&
-        this.item.children.map((item) => ItemView.view(item, this.level + 1))
+      this.item.isLoading
+        ? Array.from(new Array(10))
+            .map((_, index) => itemSkeleton(index, this.level + 1))
+            .concat(childrenBorder(this.level))
+        : this.item.children &&
+            this.item.children
+              .map((item) => ItemView.view(item, this.level + 1))
+              .concat(childrenBorder(this.level))
     );
 
   private static view = (item: MyItem, level: number) =>
@@ -71,7 +82,10 @@ export class ItemView {
       item.children ? item.children.map((item) => ItemView.view(item, 0)) : []
     );
 }
-
+const childrenBorder = (level: number) =>
+  dom.elem("div", {
+    classNames: ["item-children-border", levels.childrenBorderForLevel(level)],
+  });
 style.class("item-row", {
   display: "flex",
   alignItems: "center",
@@ -107,3 +121,66 @@ style.class("item-children-border", {
 });
 
 style.class("item-titleInput", { width: "100%" });
+
+//SKELETON
+
+const itemSkeleton = (index: number, level: number) => {
+  const elem = dom.elem(
+    "div",
+    {
+      classNames: ["avatar-row" as any, levels.rowForLevel(level)],
+    },
+    [
+      dom.elem("div", {
+        className: "avatar" as any,
+        style: { animationDelay: 100 * index + "ms" },
+      }),
+      dom.elem("div", {
+        className: "text-avatar" as any,
+        style: { animationDelay: 100 * index + "ms" },
+      }),
+    ]
+  );
+  return elem;
+};
+
+const time = 1500;
+style.text(`
+@keyframes opacity {
+  0%{
+    background-color: #4E505A;
+    }
+  20%{
+      background-color: #8D8F95;
+  }
+  80%, 100% {
+      background-color: #4E505A;
+  }
+}
+`);
+
+style.class("avatar-row" as any, {
+  height: 32,
+  paddingTop: 4,
+  paddingBottom: 4,
+  display: "flex",
+  alignItems: "center",
+});
+
+style.class("avatar" as any, {
+  marginLeft: spacings.chevronSize,
+  borderRadius: 4,
+  width: 32,
+  height: 32,
+  backgroundColor: "#4E505A",
+  animation: `opacity ${time}ms infinite linear`,
+});
+
+style.class("text-avatar" as any, {
+  height: 16,
+  width: 300,
+  marginLeft: 10,
+  borderRadius: 4,
+  backgroundColor: "#4E505A",
+  animation: `opacity ${time}ms infinite linear`,
+});
