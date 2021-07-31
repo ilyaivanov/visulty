@@ -1,4 +1,4 @@
-const timeScaleFactor = 1;
+const timeScaleFactor = 2;
 
 export const timings = {
   itemCollapse: 200 * timeScaleFactor,

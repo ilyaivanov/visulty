@@ -47,7 +47,10 @@ export const collapse = (
           { height: `0px`, opacity: 0 },
         ];
 
-  return container.animate(frames, { duration: timings.itemCollapse });
+  return container.animate(frames, {
+    duration: timings.itemCollapse,
+    easing: "ease-in-out",
+  });
 };
 export const expand = (container: HTMLElement): Animation => {
   const currentHeight = container.clientHeight;
@@ -56,7 +59,7 @@ export const expand = (container: HTMLElement): Animation => {
       { height: `0px`, opacity: 0 },
       { height: `${currentHeight}px`, opacity: 1 },
     ],
-    { duration: timings.itemExpand }
+    { duration: timings.itemExpand, easing: "ease-out" }
   );
 };
 
