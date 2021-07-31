@@ -64,6 +64,15 @@ export class ItemsStore {
     this.itemAutoruns.disposeItemChildrenReactions(item);
   };
 
+  remove = (item: Item) => {
+    const { parent } = item;
+    if (parent && parent.children) {
+      const index = parent.children.indexOf(item);
+      parent.children = parent.children.filter((child) => child != item);
+      console.log(`removed ${item.title} at ${index} of ${parent.title}`);
+    }
+  };
+
   private itemAutoruns = new ItemReactions();
 
   itemAutorun = this.itemAutoruns.itemAutorun;

@@ -6,7 +6,7 @@ module.exports = (env, argv) => {
   const isProd = argv.mode === "production";
   return {
     devtool: isProd ? undefined : "inline-source-map",
-    entry: "./main.ts",
+    entry: "./src2/main.ts",
     output: {
       path: path.resolve(__dirname, "dist"),
       filename: "app.[chunkhash].js",

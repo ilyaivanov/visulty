@@ -1,3 +1,5 @@
+import { chevron } from "../designSystem/icons";
+
 export const insert = (
   elem: Element,
   target: InsertPosition,
@@ -151,4 +153,36 @@ export const span = (props: SpanProps) => {
   elem.textContent = props.text;
   if (props.ref) props.ref(elem);
   return elem;
+};
+
+type ElementProps<T> = {
+  id?: string;
+  textContent?: string;
+  ref?: MyRef<T>;
+} & ClassDefinitions &
+  Events;
+
+export const elem = <T extends keyof HTMLElementTagNameMap>(
+  tag: T,
+  props: ElementProps<HTMLElementTagNameMap[T]>,
+  children?: ElementChild[]
+): HTMLElementTagNameMap[T] => {
+  const elem = document.createElement(tag);
+
+  if (props.textContent) elem.textContent = props.textContent;
+  if (props.id) elem.id = props.id;
+  if (props.ref) props.ref.elem = elem;
+
+  assignClasses(elem, props);
+  assignElementEvents(elem, props);
+  if (children) assignChildrenArrayToElement(elem, children);
+  return elem;
+};
+
+export const createRef = <T extends keyof HTMLElementTagNameMap>(
+  tag: T
+): MyRef<HTMLElementTagNameMap[T]> => ({ elem: undefined as any });
+
+export type MyRef<T> = {
+  elem: T;
 };

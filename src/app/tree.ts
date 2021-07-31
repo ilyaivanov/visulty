@@ -1,4 +1,4 @@
-import { div, span, anim, style, dom } from "../browser";
+import { div, span, anim, style, dom, button } from "../browser";
 import { spacings, levels } from "../designSystem";
 import { Item } from "../domain/item";
 import { viewItemIcon } from "./itemIcon";
@@ -12,7 +12,9 @@ const viewItem = (item: Item, level: number): HTMLElement => {
       className: "item-row-title",
       classMap: { "item-container-row-title": item.isContainer },
       text: item.title,
-    })
+    }),
+    button({ text: "X", onClick: () => itemsStore.remove(item) })
+    // button({ text: "X`", onClick: () => itemsStore.removeWithoutAnimations(item) }),
   );
   const childrenArea = div(
     { className: "item-row-children" },
@@ -40,6 +42,14 @@ const viewItem = (item: Item, level: number): HTMLElement => {
           .collapse(childrenArea)
           .addEventListener("finish", () => childrenArea.remove());
       }
+    }
+  );
+
+  itemsStore.itemReaction(
+    item,
+    () => item.children,
+    (val, prev, options) => {
+      console.log("children changed", val, prev);
     }
   );
   const container = div({}, row, item.isOpen && item.children && childrenArea);

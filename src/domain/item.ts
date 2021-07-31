@@ -1,4 +1,5 @@
 import { action, makeObservable, observable } from "mobx";
+import { itemsStore } from "../app/stores";
 
 export type ItemType = "folder" | "YTvideo" | "YTplaylist" | "YTchannel";
 
@@ -8,26 +9,36 @@ type ItemProps = {
   children?: Item[];
 };
 
+type ItemStatus = "regular" | "removing";
+
 export abstract class Item {
   id: string;
   isOpen = true;
   isLoading = false;
+  itemStatus: ItemStatus = "regular";
   children?: Item[];
   title: string;
   private type: ItemType;
+  parent?: Item;
   constructor(props: ItemProps) {
     this.id = Math.random() + "";
     this.type = props.type;
     this.title = props.title;
     this.children = props.children;
+    if (this.children) this.children.forEach((child) => (child.parent = this));
 
-    makeObservable(this, {
-      isOpen: observable,
-      isLoading: observable,
-      children: observable,
-      startLoading: action,
-      stopLoading: action,
-    });
+    makeObservable(
+      this,
+      {
+        isOpen: observable,
+        isLoading: observable,
+        itemStatus: observable,
+        children: observable,
+        startLoading: action,
+        stopLoading: action,
+      },
+      { name: "item " + this.title }
+    );
   }
 
   get isContainer() {
@@ -64,6 +75,9 @@ export abstract class Item {
   }
   stopLoading() {
     this.isLoading = false;
+  }
+  startRemoving() {
+    this.itemStatus = "removing";
   }
 }
 
