@@ -1,5 +1,5 @@
 import { DomainCommand } from "./domain";
-import { ItemView } from "./view";
+import { ItemView } from "./view/itemView";
 
 export class CommandsDispatcher {
   private itemViews: WeakMap<Element, ItemView> = new WeakMap();
@@ -15,13 +15,12 @@ export class CommandsDispatcher {
   };
 
   dispatchCommand = (command: DomainCommand) => {
-    if (command.type === "item-incremented")
-      this.viewAction(command.itemId, (view) => view.updateCounter());
-
     if (command.type === "item-toggled")
       this.viewAction(command.itemId, (view) =>
         view.updateItemChildrenVisibility(true)
       );
+    if (command.type === "item-removed")
+      this.viewAction(command.itemId, (view) => view.remove());
   };
   viewAction = (itemId: string, action: Action<ItemView>) => {
     const elem = document.getElementById(itemId);

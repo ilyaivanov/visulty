@@ -4,5 +4,4 @@ type MyItem = {
   isOpen?: boolean;
   children?: MyItem[];
   parent?: MyItem;
-  counter: number;
 };

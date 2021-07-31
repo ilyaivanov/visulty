@@ -91,6 +91,30 @@ export const flyAwayAndCollapse = (container: Element): Animation => {
   return collapseAnimation;
 };
 
+export const crossFadeIntoNewTextContent = (
+  elem: Element,
+  newText: string
+): Animation => {
+  const animation = elem.animate(
+    [
+      { transform: "translate(0,0)", opacity: 1 },
+      { transform: "translate(0,-10px)", opacity: 0 },
+    ],
+    { duration: 200, easing: "ease-in" }
+  );
+  animation.addEventListener("finish", () => {
+    elem.textContent = newText;
+    elem.animate(
+      [
+        { transform: "translate(0,10px)", opacity: 0 },
+        { transform: "translate(0,0)", opacity: 1 },
+      ],
+      { duration: 200, easing: "ease-out" }
+    );
+  });
+  return animation;
+};
+
 export const hasAnimations = (elem: HTMLElement) =>
   elem.getAnimations().length > 0;
 

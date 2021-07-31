@@ -8,7 +8,6 @@ const randomItems = (count: number): MyItem[] =>
 const item = (title: string, children?: MyItem[]): MyItem => ({
   title,
   children,
-  counter: 0,
   isOpen: children ? true : false,
   id: Math.random() + ` (${title})`,
 });
@@ -37,13 +36,10 @@ export class Store {
 
   removeItem = (item: MyItem) => {
     const parent = item.parent;
-    if (parent && parent.children)
+    if (parent && parent.children) {
       parent.children = parent.children.filter((sibling) => item != sibling);
-  };
-
-  increment = (item: MyItem) => {
-    item.counter += 1;
-    this.dispatchCommand({ type: "item-incremented", itemId: item.id });
+      this.dispatchCommand({ type: "item-removed", itemId: item.id });
+    }
   };
 
   toggleItem = (item: MyItem) => {
@@ -54,5 +50,4 @@ export class Store {
 
 export type DomainCommand =
   | { type: "item-removed"; itemId: string }
-  | { type: "item-toggled"; itemId: string }
-  | { type: "item-incremented"; itemId: string };
+  | { type: "item-toggled"; itemId: string };
