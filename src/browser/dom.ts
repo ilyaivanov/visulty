@@ -178,7 +178,6 @@ export const elem = <T extends keyof HTMLElementTagNameMap>(
   assignElementEvents(elem, props);
   if (children) assignChildrenArrayToElement(elem, children);
   if (props.style) {
-    console.log(convertNumericStylesToProperJsOjbect(props.style));
     Object.assign(
       elem.style,
       convertNumericStylesToProperJsOjbect(props.style)

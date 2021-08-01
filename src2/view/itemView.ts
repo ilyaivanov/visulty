@@ -20,14 +20,15 @@ export class ItemView {
         }),
       ]),
     ]);
-    this.updateItemChildrenVisibility();
+    if (this.item.isOpen) this.open(false);
+    else this.close(false);
     dispatcher.itemViewed(this);
   }
 
   updateItemChildrenVisibility = (animate?: boolean) => {
     if (this.item.isOpen) this.open(animate);
     else this.close(animate);
-    this.icon.updateChevron();
+    this.icon.onVisibilityChange();
   };
 
   public remove = () =>

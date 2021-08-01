@@ -9,8 +9,8 @@ export type IconEvents = {
 };
 
 export class ItemIcon {
-  chevron: SVGElement;
-
+  chevron!: SVGElement;
+  iconEl!: SVGSVGElement;
   el: Node;
   constructor(private item: MyItem, events: IconEvents) {
     this.chevron = icons.chevron({
@@ -18,33 +18,37 @@ export class ItemIcon {
       classMap: chevronMap(item),
       onClick: events.onChevronClick,
     });
-    this.el = dom.fragment([
-      this.chevron,
-      svg.svg({
-        className: "item-icon-svg",
-        viewBox: `0 0 ${iconSize} ${iconSize}`,
-        children: [
-          item.children
-            ? svg.circle({
-                cx: iconSize / 2,
-                cy: iconSize / 2,
-                r: spacings.outerRadius,
-                fill: "rgba(255,255,255,0.3)",
-                className: "item-icon-circle",
-                // classMap: outerCircleClassMap(item),
-              })
-            : undefined,
-          getInnerCircle(item),
-        ],
-        // onMouseDown: props?.onMouseDown,
-      }),
-    ]);
+    this.el = dom.fragment([this.chevron, this.viewIcon()]);
   }
   public static view = (item: MyItem, events: IconEvents) =>
     new ItemIcon(item, events).el;
 
-  updateChevron = () => {
+  onVisibilityChange = () => {
     dom.assignClassMap(this.chevron, chevronMap(this.item));
+    dom.setChildren(this.iconEl, this.viewCircles());
+  };
+
+  viewIcon = () => {
+    this.iconEl = svg.svg({
+      className: "item-icon-svg",
+      viewBox: `0 0 ${iconSize} ${iconSize}`,
+      children: this.viewCircles(),
+      // onMouseDown: props?.onMouseDown,
+    });
+    return this.iconEl;
+  };
+
+  viewCircles = (): SVGElement[] => {
+    const { item } = this;
+    const outerCircle = svg.circle({
+      cx: iconSize / 2,
+      cy: iconSize / 2,
+      r: spacings.outerRadius,
+      fill: "rgba(255,255,255,0.3)",
+      className: "item-icon-circle",
+      classMap: outerCircleClassMap(item),
+    });
+    return [outerCircle, getInnerCircle(item)];
   };
 }
 
@@ -115,9 +119,9 @@ const getInnerCircle = (item: MyItem) =>
         fill: "white",
       });
 
-// const outerCircleClassMap = (item: Item): dom.ClassMap => ({
-//   "item-icon-circle_hidden": item.isOpen || item.isEmpty,
-// });
+const outerCircleClassMap = (item: MyItem): dom.ClassMap => ({
+  "item-icon-circle_hidden": item.isOpen || !item.children,
+});
 
 const chevronMap = (item: MyItem): dom.ClassMap => ({
   "item-icon-chevron_open": item.isOpen,
