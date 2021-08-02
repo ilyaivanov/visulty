@@ -16,6 +16,7 @@ export class ItemView {
         this.icon.el,
         dom.elem("span", {
           className: "item-row-title",
+          classMap: { "item-container-row-title": store.isContainer(item) },
           textContent: item.title,
         }),
       ]),
@@ -94,6 +95,8 @@ style.class("item-row", {
   color: "#DDDDDD",
   paddingTop: spacings.rowVecticalPadding,
   paddingBottom: spacings.rowVecticalPadding,
+  fontSize: 15,
+  lineHeight: 1,
   onHover: {
     backgroundColor: "rgb(42,45,46)",
   },
@@ -103,11 +106,7 @@ style.class2("item-row", "item-row_selected", {
   backgroundColor: "#37373D",
 });
 
-style.class("item-row-title", {
-  marginBottom: 2,
-});
-
-style.class("item-container-row-title", { fontWeight: "bold" });
+style.class("item-container-row-title", { fontWeight: "bold", fontSize: 16 });
 
 style.class("item-row-children", {
   overflow: "hidden",

@@ -31,6 +31,8 @@ type ClassName =
   | "item-icon-circle_hidden"
   | "item-icon-image_square"
   | "item-icon-image_circle"
+  | "item-icon-video"
+  | "item-icon-image_closed"
   | "item-children"
   //DND
   | "item-dragAvatar"

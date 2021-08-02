@@ -27,9 +27,9 @@ export const setChild = (elem: Element, child: Node) => {
   elem.appendChild(child);
 };
 
-export const fragment = (children: Element[]) => {
+export const fragment = (children: (Element | undefined)[]) => {
   const frag = document.createDocumentFragment();
-  children.forEach((child) => frag.appendChild(child));
+  children.forEach((child) => child && frag.appendChild(child));
   return frag;
 };
 

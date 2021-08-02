@@ -1,6 +1,6 @@
 import { css, style, dom, svg } from "../../src/browser";
 import { icons, spacings, timings } from "../../src/designSystem";
-// import { itemsStore } from "./stores";
+import { store } from "../globals";
 
 const iconSize = spacings.outerRadius * 2;
 
@@ -9,32 +9,45 @@ export type IconEvents = {
 };
 
 export class ItemIcon {
-  chevron!: SVGElement;
+  chevron?: SVGElement;
   iconEl!: SVGSVGElement;
   el: Node;
   constructor(private item: MyItem, events: IconEvents) {
-    this.chevron = icons.chevron({
-      className: "item-icon-chevron",
-      classMap: chevronMap(item),
-      onClick: events.onChevronClick,
-    });
+    if (!store.isVideo(item))
+      this.chevron = icons.chevron({
+        className: "item-icon-chevron",
+        classMap: chevronMap(item),
+        onClick: events.onChevronClick,
+      });
+
     this.el = dom.fragment([this.chevron, this.viewIcon()]);
   }
   public static view = (item: MyItem, events: IconEvents) =>
     new ItemIcon(item, events).el;
 
   onVisibilityChange = () => {
-    dom.assignClassMap(this.chevron, chevronMap(this.item));
-    dom.setChildren(this.iconEl, this.viewCircles());
+    this.chevron && dom.assignClassMap(this.chevron, chevronMap(this.item));
+
+    if (!store.hasItemImage(this.item)) {
+      dom.setChildren(this.iconEl, this.viewCircles());
+    } else {
+      this.assignIconWithImageClasses();
+    }
   };
 
   viewIcon = () => {
     this.iconEl = svg.svg({
       className: "item-icon-svg",
       viewBox: `0 0 ${iconSize} ${iconSize}`,
-      children: this.viewCircles(),
       // onMouseDown: props?.onMouseDown,
     });
+    const { item } = this;
+    if (store.hasItemImage(item)) {
+      this.iconEl.style.backgroundImage = `url(${store.getPreviewImage(item)})`;
+      this.assignIconWithImageClasses();
+    } else {
+      dom.appendChildren(this.iconEl, this.viewCircles());
+    }
     return this.iconEl;
   };
 
@@ -50,57 +63,19 @@ export class ItemIcon {
     });
     return [outerCircle, getInnerCircle(item)];
   };
+
+  private assignIconWithImageClasses = () => {
+    const { item } = this;
+    dom.assignClasses(this.iconEl, {
+      classMap: {
+        "item-icon-image_square": store.isPlaylist(item) || store.isVideo(item),
+        "item-icon-image_circle": store.isChannel(item),
+        "item-icon-video": store.isVideo(item),
+        "item-icon-image_closed": !store.isVideo(item) && !item.isOpen,
+      },
+    });
+  };
 }
-
-// export const viewItemIcon = (item: Item, events: IconEvents) => {
-//   const outerCircle = svg.circle({
-//     cx: iconSize / 2,
-//     cy: iconSize / 2,
-//     r: spacings.outerRadius,
-//     fill: "rgba(255,255,255,0.3)",
-//     className: "item-icon-circle",
-//     classMap: outerCircleClassMap(item),
-//   });
-//   let innerCircle: SVGElement | undefined;
-
-//   const chevron = icons.chevron({
-//     className: "item-icon-chevron",
-//     classMap: chevronMap(item),
-//     onClick: events.onChevronClick,
-//   });
-
-//   const itemIconContainer = svg.svg({
-//     className: "item-icon-svg",
-//     viewBox: `0 0 ${iconSize} ${iconSize}`,
-//     children: [!item.imageUrl ? outerCircle : undefined, innerCircle],
-//     // onMouseDown: props?.onMouseDown,
-//   });
-
-//   if (item.imageUrl) {
-//     itemIconContainer.style.backgroundImage = `url(${item.imageUrl})`;
-//     dom.assignClasses(itemIconContainer, {
-//       classMap: {
-//         "item-icon-image_square": item.isPlaylist() || item.isVideo(),
-//         "item-icon-image_circle": item.isChannel(),
-//       },
-//     });
-//   } else {
-//     innerCircle = getInnerCircle(item);
-//     dom.appendChildren(itemIconContainer, [innerCircle]);
-//   }
-
-//   //reactions
-//   itemsStore.itemReaction(
-//     item,
-//     () => item.isOpen,
-//     () => {
-//       dom.assignClassMap(outerCircle, outerCircleClassMap(item));
-//       dom.assignClassMap(chevron, chevronMap(item));
-//     }
-//   );
-
-//   return dom.fragment([chevron, itemIconContainer]);
-// };
 
 const getInnerCircle = (item: MyItem) =>
   !item.children
@@ -186,4 +161,14 @@ style.class("item-icon-image_circle", {
 style.class("item-icon-image_square", {
   borderRadius: 4,
   boxShadow: inset(2, "rgba(255,255,255,0.15)"),
+});
+
+style.class("item-icon-image_closed", {
+  boxShadow: "0 0 4px 2px rgba(255, 255, 255, 0.7)",
+});
+
+//we need  this spacings because I'm not rendering chevron for videos
+//maybe in future I won't be rendering chevron at all to speedup rendering for lots of items
+style.class("item-icon-video", {
+  marginLeft: spacings.chevronSize,
 });
