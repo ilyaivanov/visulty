@@ -4,6 +4,7 @@ import { style } from "../src/browser";
 import { viewApp } from "./view/app";
 import { store } from "./globals";
 import { createThemeStyles } from "./designSystem";
+import { dummyRoot } from "../src/api/dummyUserState";
 
 createThemeStyles();
 
@@ -43,6 +44,7 @@ initFirebase(() => {
       document.body.appendChild(viewApp());
     });
   } else {
+    store.root = dummyRoot;
     document.body.appendChild(viewApp());
   }
 });
