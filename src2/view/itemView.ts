@@ -173,6 +173,7 @@ style.class("avatar-row" as any, {
 style.class("avatar" as any, {
   marginLeft: spacings.chevronSize,
   borderRadius: 4,
+  minWidth: 32,
   width: 32,
   height: 32,
   backgroundColor: "#4E505A",

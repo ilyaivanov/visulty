@@ -53,15 +53,36 @@ export class ItemIcon {
 
   viewCircles = (): SVGElement[] => {
     const { item } = this;
-    const outerCircle = svg.circle({
-      cx: iconSize / 2,
-      cy: iconSize / 2,
-      r: spacings.outerRadius,
-      fill: "rgba(255,255,255,0.3)",
-      className: "item-icon-circle",
-      classMap: outerCircleClassMap(item),
-    });
-    return [outerCircle, getInnerCircle(item)];
+    if (item.title === "Deep work") console.log(item);
+    if (store.isEmpty(item)) {
+      return [
+        svg.circle({
+          cx: iconSize / 2,
+          cy: iconSize / 2,
+          r: spacings.innerRadius,
+          fill: "transparent",
+          strokeWidth: 2,
+          stroke: "#DDDDDD",
+        }),
+      ];
+    } else {
+      return [
+        svg.circle({
+          cx: iconSize / 2,
+          cy: iconSize / 2,
+          r: spacings.outerRadius,
+          fill: "rgba(255,255,255,0.3)",
+          className: "item-icon-circle",
+          classMap: outerCircleClassMap(item),
+        }),
+        svg.circle({
+          cx: iconSize / 2,
+          cy: iconSize / 2,
+          r: spacings.innerRadius,
+          fill: "white",
+        }),
+      ];
+    }
   };
 
   private assignIconWithImageClasses = () => {
@@ -77,31 +98,14 @@ export class ItemIcon {
   };
 }
 
-const getInnerCircle = (item: MyItem) =>
-  !item.children
-    ? svg.circle({
-        cx: iconSize / 2,
-        cy: iconSize / 2,
-        r: spacings.innerRadius,
-        fill: "transparent",
-        strokeWidth: 2,
-        stroke: "#DDDDDD",
-      })
-    : svg.circle({
-        cx: iconSize / 2,
-        cy: iconSize / 2,
-        r: spacings.innerRadius,
-        fill: "white",
-      });
-
 const outerCircleClassMap = (item: MyItem): dom.ClassMap => ({
   "item-icon-circle_hidden": item.isOpen || !item.children,
 });
 
 const chevronMap = (item: MyItem): dom.ClassMap => ({
   "item-icon-chevron_open": item.isOpen,
-  "item-icon-chevron_active": true,
-  //   "item-icon-chevron_active": item.isEmpty || item.isNeededToBeFetched,
+  "item-icon-chevron_active":
+    !store.isEmpty(item) || store.isNeededToBeFetched(item),
 });
 
 style.class("item-icon-svg", {

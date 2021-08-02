@@ -1,7 +1,42 @@
+import { initFirebase, loadUserSettings } from "./api/userState";
+import { sampleUserName } from "./api/config";
 import { style } from "../src/browser";
 import { viewApp } from "./view/app";
+import { store } from "./globals";
 
-document.body.appendChild(viewApp());
+initFirebase(() => {
+  loadUserSettings(sampleUserName).then((data) => {
+    const items: LegacyItems = JSON.parse(data.itemsSerialized);
+
+    const mapItem = (id: string): MyItem | undefined => {
+      const legacy = items[id];
+      if (!legacy) return;
+
+      const item: MyItem = {
+        ...legacy,
+        //@ts-expect-error
+        isOpen: !legacy.isCollapsedInGallery,
+        children: legacy.children
+          ? (legacy.children.map(mapItem).filter((x) => x) as MyItem[])
+          : undefined,
+      };
+
+      return item;
+    };
+    const root: MyItem = {
+      type: "folder",
+      id: "HOME",
+      title: "Home",
+      children: items["HOME"]
+        .children!.map(mapItem)
+        .filter((x) => x) as MyItem[],
+    };
+
+    store.root = root;
+
+    document.body.appendChild(viewApp());
+  });
+});
 
 style.tag("body", {
   color: "white",

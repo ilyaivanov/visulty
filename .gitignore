@@ -3,3 +3,4 @@ node_modules
 dist
 package-lock.json
 src/api/config.ts
+src2/api/config.ts

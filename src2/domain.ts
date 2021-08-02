@@ -1,3 +1,6 @@
+import * as youtubeApi from "./api/youtube";
+import { store } from "./globals";
+
 const randomItems = (count: number): MyItem[] =>
   Array.from(new Array(count)).map(() =>
     folder("Item " + Math.floor(Math.random() * 100))
@@ -110,6 +113,12 @@ export class Store {
   ): item is YoutubePlaylist | YoutubeChannel | Folder =>
     item.type != "YTvideo";
 
+  isEmpty = (item: MyItem) => !item.children || item.children.length == 0;
+  isNeededToBeFetched = (item: MyItem) =>
+    this.isEmpty(item) &&
+    !item.isLoading &&
+    (this.isPlaylist(item) || this.isChannel(item));
+
   //ACTIONS
   assignParents = (parent: MyItem, children: MyItem[]) => {
     children.forEach((child) => {
@@ -128,13 +137,13 @@ export class Store {
 
   toggleItem = (item: MyItem) => {
     item.isOpen = !item.isOpen;
-    if (item.isOpen && !item.children) {
+    if (store.isNeededToBeFetched(item)) {
       item.isLoading = true;
-      setTimeout(() => {
-        item.children = randomItems(10);
+      this.loadItem(item).then((children) => {
+        item.children = children;
         item.isLoading = false;
         this.dispatchCommand({ type: "item-loaded", itemId: item.id });
-      }, 2000);
+      });
     }
     this.dispatchCommand({ type: "item-toggled", itemId: item.id });
   };
@@ -146,12 +155,79 @@ export class Store {
 
   findVideos = (term: string) => {
     this.dispatchCommand({ type: "searching-start" });
-    setTimeout(() => {
-      this.searchRoot = folder("SEARCH", randomItems(12));
+
+    this.searchVideos(term).then((searchRoot) => {
+      this.searchRoot = searchRoot;
       this.dispatchCommand({ type: "searching-end" });
-    }, 2000);
+    });
+  };
+
+  searchVideos = (term: string): Promise<MyItem> => {
+    return youtubeApi.loadSearchResults(term).then(
+      (response) =>
+        ({
+          id: "SEARCH",
+          title: "Search",
+          type: "folder",
+          children: response.items.map(mapResponseItem),
+        } as MyItem)
+    );
+  };
+
+  loadItem = (item: MyItem): Promise<MyItem[]> => {
+    if (store.isPlaylist(item)) {
+      return youtubeApi
+        .loadPlaylistItems(item.playlistId)
+        .then((response) => response.items.map(mapResponseItem));
+    }
+    if (store.isChannel(item)) {
+      return Promise.all([
+        youtubeApi.getChannelUploadsPlaylistId(item.channelId),
+        youtubeApi.loadChannelItems(item.channelId),
+      ]).then(([uploadsChannelId, response]) => {
+        const uploadsPlaytlist: youtubeApi.ResponseItem = {
+          itemType: "playlist",
+          channelId: item.channelId,
+          channelTitle: item.title,
+          id: Math.random() + "",
+          image: item.image,
+          itemId: uploadsChannelId,
+          name: item.title + " Uploads",
+        } as youtubeApi.ResponseItem;
+        return [uploadsPlaytlist].concat(response.items).map(mapResponseItem);
+      });
+    }
+    throw new Error(`Can't load ${item.title} of type ${item.type}`);
   };
 }
+
+const mapResponseItem = (item: youtubeApi.ResponseItem): MyItem => {
+  if (item.itemType === "video")
+    return {
+      type: "YTvideo",
+      id: item.id,
+      title: item.name,
+      videoId: item.itemId,
+    };
+  else if (item.itemType === "channel")
+    return {
+      type: "YTchannel",
+      id: item.id,
+      title: item.name,
+      channelId: item.itemId,
+      image: item.image,
+      isOpen: false,
+    };
+  else
+    return {
+      type: "YTplaylist",
+      id: item.id,
+      title: item.name,
+      playlistId: item.itemId,
+      image: item.image,
+      isOpen: false,
+    };
+};
 
 export type DomainCommand =
   | { type: "item-removed"; itemId: string }
