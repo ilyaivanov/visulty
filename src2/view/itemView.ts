@@ -1,5 +1,6 @@
 import { anim, dom, style } from "../../src/browser";
 import { levels, spacings } from "../../src/designSystem";
+import { colorsVars } from "../designSystem/colorVars";
 import { store, dispatcher } from "../globals";
 import { ItemIcon } from "./itemIcon";
 
@@ -92,13 +93,13 @@ style.class("item-row", {
   display: "flex",
   alignItems: "center",
   cursor: "pointer",
-  color: "#DDDDDD",
+  color: colorsVars.mainTextColor,
   paddingTop: spacings.rowVecticalPadding,
   paddingBottom: spacings.rowVecticalPadding,
   fontSize: 15,
   lineHeight: 1,
   onHover: {
-    backgroundColor: "rgb(42,45,46)",
+    backgroundColor: colorsVars.itemHover,
   },
 });
 
@@ -106,18 +107,22 @@ style.class2("item-row", "item-row_selected", {
   backgroundColor: "#37373D",
 });
 
-style.class("item-container-row-title", { fontWeight: "bold", fontSize: 16 });
+style.class("item-container-row-title", {
+  fontWeight: "bold",
+  fontSize: 16,
+});
 
 style.class("item-row-children", {
   overflow: "hidden",
   position: "relative",
 });
+
 style.class("item-children-border", {
   position: "absolute",
   width: 2,
   top: 0,
   bottom: 0,
-  backgroundColor: "#4C5155",
+  backgroundColor: colorsVars.itemChildrenLine,
 });
 
 style.class("item-titleInput", { width: "100%" });
@@ -151,13 +156,13 @@ const time = 1500;
 style.text(`
 @keyframes opacity {
   0%{
-    background-color: #4E505A;
+    background-color: ${colorsVars.itemSkeletonBackground};
     }
   20%{
-      background-color: #8D8F95;
+      background-color: ${colorsVars.itemSkeletonGradientCenter};
   }
   80%, 100% {
-      background-color: #4E505A;
+      background-color: ${colorsVars.itemSkeletonBackground};
   }
 }
 `);
@@ -176,7 +181,7 @@ style.class("avatar" as any, {
   minWidth: 32,
   width: 32,
   height: 32,
-  backgroundColor: "#4E505A",
+  backgroundColor: colorsVars.itemSkeletonBackground,
   animation: `opacity ${time}ms infinite linear`,
 });
 
@@ -185,6 +190,6 @@ style.class("text-avatar" as any, {
   width: 300,
   marginLeft: 10,
   borderRadius: 4,
-  backgroundColor: "#4E505A",
+  backgroundColor: colorsVars.itemSkeletonBackground,
   animation: `opacity ${time}ms infinite linear`,
 });

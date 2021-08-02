@@ -5,6 +5,8 @@ type Func1<TIn, TOut> = (arg: TIn) => TOut;
 
 type ClassName =
   | "app"
+  | "app-light"
+  | "app-dark"
   | "header"
   | "player"
   | "gallery"
@@ -43,3 +45,5 @@ type ClassName =
   | "player";
 
 type ElementId = string;
+
+type AppTheme = "dark" | "light";

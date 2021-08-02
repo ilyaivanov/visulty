@@ -1,5 +1,6 @@
 import { css, style, dom, svg } from "../../src/browser";
 import { icons, spacings, timings } from "../../src/designSystem";
+import { colorsVars } from "../designSystem/colorVars";
 import { store } from "../globals";
 
 const iconSize = spacings.outerRadius * 2;
@@ -62,7 +63,7 @@ export class ItemIcon {
           r: spacings.innerRadius,
           fill: "transparent",
           strokeWidth: 2,
-          stroke: "#DDDDDD",
+          stroke: colorsVars.itemEmptyCircle,
         }),
       ];
     } else {
@@ -71,7 +72,7 @@ export class ItemIcon {
           cx: iconSize / 2,
           cy: iconSize / 2,
           r: spacings.outerRadius,
-          fill: "rgba(255,255,255,0.3)",
+          fill: colorsVars.itemOuterCircle,
           className: "item-icon-circle",
           classMap: outerCircleClassMap(item),
         }),
@@ -79,7 +80,7 @@ export class ItemIcon {
           cx: iconSize / 2,
           cy: iconSize / 2,
           r: spacings.innerRadius,
-          fill: "white",
+          fill: colorsVars.itemInnerCircle,
         }),
       ];
     }
@@ -129,7 +130,7 @@ style.class("item-icon-chevron", {
   borderRadius: spacings.chevronSize,
   //   marginTop: spacings.imageSize / 2 - spacings.chevronSize / 2,
   minWidth: spacings.chevronSize,
-  color: "#B8BCBF",
+  color: colorsVars.itemChevron,
   opacity: 0,
   userSelect: "none",
   pointerEvents: "none",
@@ -159,16 +160,16 @@ const inset = (spread: number, color: string) =>
 
 style.class("item-icon-image_circle", {
   borderRadius: "50%",
-  boxShadow: inset(2, "rgba(255,255,255,0.15)"),
+  boxShadow: inset(2, colorsVars.itemImageInsetShadow),
 });
 
 style.class("item-icon-image_square", {
   borderRadius: 4,
-  boxShadow: inset(2, "rgba(255,255,255,0.15)"),
+  boxShadow: inset(2, colorsVars.itemImageInsetShadow),
 });
 
 style.class("item-icon-image_closed", {
-  boxShadow: "0 0 4px 2px rgba(255, 255, 255, 0.7)",
+  boxShadow: `0 0 4px 2px ${colorsVars.itemImageShadow}`,
 });
 
 //we need  this spacings because I'm not rendering chevron for videos

@@ -75,7 +75,7 @@ export class Store {
         "https://i.ytimg.com/vi/mNF9eMOuSUk/hqdefault.jpg?sqp=-oaymwEXCOADEI4CSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLDjbMzSolSufM4I6qWbwKNBEs8hZg"
       ),
     ]),
-    // item({ title: "Always Loading", isLoading: true, isOpen: true }),
+    folder({ title: "Always Loading", isLoading: true, isOpen: true }),
     folder("Third"),
     folder("Fourth"),
     folder("Five"),
@@ -86,6 +86,8 @@ export class Store {
   searchRoot: MyItem = folder("SEARCH", randomItems(12));
 
   isSearchVisible = false;
+
+  theme: AppTheme = "light";
 
   constructor(private dispatchCommand: Action<DomainCommand>) {
     this.assignParents(this.root, this.root.children!);
@@ -120,6 +122,11 @@ export class Store {
     (this.isPlaylist(item) || this.isChannel(item));
 
   //ACTIONS
+
+  toggleTheme = () => {
+    this.theme = this.theme === "dark" ? "light" : "dark";
+    this.dispatchCommand({ type: "theme-changed" });
+  };
   assignParents = (parent: MyItem, children: MyItem[]) => {
     children.forEach((child) => {
       child.parent = parent;
@@ -230,6 +237,7 @@ const mapResponseItem = (item: youtubeApi.ResponseItem): MyItem => {
 };
 
 export type DomainCommand =
+  | { type: "theme-changed" }
   | { type: "item-removed"; itemId: string }
   | { type: "item-toggled"; itemId: string }
   | { type: "item-loaded"; itemId: string }

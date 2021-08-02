@@ -1,10 +1,13 @@
 import { DomainCommand } from "./domain";
+import { AppView, Header } from "./view/app";
 import { ItemView } from "./view/itemView";
 import { SearchTab } from "./view/searchTab";
 
 export class CommandsDispatcher {
   private itemViews: WeakMap<Element, ItemView> = new WeakMap();
   public searchTab?: SearchTab;
+  public header?: Header;
+  public appView?: AppView;
   itemViewed = (view: ItemView) => {
     if (view.el.id) {
       throw new Error(
@@ -32,6 +35,10 @@ export class CommandsDispatcher {
       this.searchTab?.onSearchVisibilityChange();
     if (command.type === "searching-start") this.searchTab?.startSearching();
     if (command.type === "searching-end") this.searchTab?.stopSearching();
+    if (command.type === "theme-changed") {
+      this.header?.assignThemeButtonText();
+      this.appView?.assignTheme();
+    }
   };
   viewAction = (itemId: string, action: Action<ItemView>) => {
     const elem = document.getElementById(itemId);
