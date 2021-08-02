@@ -125,7 +125,10 @@ style.class("item-titleInput", { width: "100%" });
 
 //SKELETON
 
-const itemSkeleton = (index: number, level: number) => {
+export const showSkeletons = (count: number, level = 0) =>
+  Array.from(new Array(count)).map((_, index) => itemSkeleton(index, level));
+
+export const itemSkeleton = (index: number, level: number) => {
   const elem = dom.elem(
     "div",
     {

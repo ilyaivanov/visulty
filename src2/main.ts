@@ -1,11 +1,9 @@
 import { style } from "../src/browser";
-import { store } from "./globals";
-import { ItemView } from "./view/itemView";
+import { viewApp } from "./view/app";
 
-document.body.appendChild(ItemView.viewChildrenFor(store.root));
+document.body.appendChild(viewApp());
 
 style.tag("body", {
-  paddingTop: 20,
   color: "white",
   backgroundColor: "#1E1E1E",
   margin: 0,

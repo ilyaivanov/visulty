@@ -1,9 +1,10 @@
 import { DomainCommand } from "./domain";
 import { ItemView } from "./view/itemView";
+import { SearchTab } from "./view/searchTab";
 
 export class CommandsDispatcher {
   private itemViews: WeakMap<Element, ItemView> = new WeakMap();
-
+  public searchTab?: SearchTab;
   itemViewed = (view: ItemView) => {
     if (view.el.id) {
       throw new Error(
@@ -15,6 +16,7 @@ export class CommandsDispatcher {
   };
 
   dispatchCommand = (command: DomainCommand) => {
+    console.log(command);
     if (command.type === "item-toggled")
       this.viewAction(command.itemId, (view) =>
         view.updateItemChildrenVisibility(true)
@@ -26,6 +28,10 @@ export class CommandsDispatcher {
       this.viewAction(command.itemId, (view) =>
         view.updateItemChildrenVisibility()
       );
+    if (command.type === "search-visibility-toggled")
+      this.searchTab?.onSearchVisibilityChange();
+    if (command.type === "searching-start") this.searchTab?.startSearching();
+    if (command.type === "searching-end") this.searchTab?.stopSearching();
   };
   viewAction = (itemId: string, action: Action<ItemView>) => {
     const elem = document.getElementById(itemId);

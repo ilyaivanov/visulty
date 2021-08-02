@@ -3,8 +3,6 @@ const randomItems = (count: number): MyItem[] =>
     item("Item " + Math.floor(Math.random() * 100))
   );
 
-//DOMAIN
-
 const item = (props: string | Partial<MyItem>, children?: MyItem[]): MyItem => {
   const title = typeof props === "object" ? props.title || "" : props;
   return Object.assign(
@@ -21,13 +19,18 @@ const item = (props: string | Partial<MyItem>, children?: MyItem[]): MyItem => {
 export class Store {
   root: MyItem = item("HOME", [
     item({ title: "First", isOpen: false }, randomItems(12)),
-    item({ title: "Second", isLoading: true, isOpen: true }),
+    item({ title: "Second" }),
+    // item({ title: "Always Loading", isLoading: true, isOpen: true }),
     item("Third"),
     item("Fourth"),
     item("Five"),
     item("Six", randomItems(6)),
     item("Seven"),
   ]);
+
+  searchRoot: MyItem = item("SEARCH", randomItems(12));
+
+  isSearchVisible = false;
 
   constructor(private dispatchCommand: Action<DomainCommand>) {
     this.assignParents(this.root, this.root.children!);
@@ -60,9 +63,25 @@ export class Store {
     }
     this.dispatchCommand({ type: "item-toggled", itemId: item.id });
   };
+
+  toggleSearchVisibility = () => {
+    this.isSearchVisible = !this.isSearchVisible;
+    this.dispatchCommand({ type: "search-visibility-toggled" });
+  };
+
+  findVideos = (term: string) => {
+    this.dispatchCommand({ type: "searching-start" });
+    setTimeout(() => {
+      this.searchRoot = item("SEARCH", randomItems(12));
+      this.dispatchCommand({ type: "searching-end" });
+    }, 2000);
+  };
 }
 
 export type DomainCommand =
   | { type: "item-removed"; itemId: string }
   | { type: "item-toggled"; itemId: string }
-  | { type: "item-loaded"; itemId: string };
+  | { type: "item-loaded"; itemId: string }
+  | { type: "searching-start" }
+  | { type: "searching-end" }
+  | { type: "search-visibility-toggled" };

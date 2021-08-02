@@ -113,6 +113,8 @@ const convertVal = (key: string, val: number | string) => {
 export const camelToSnakeCase = (str: string): string =>
   str.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
 
+type Easing = "linear" | "ease" | "ease-in" | "ease-out" | "ease-in-out";
+
 export type Styles = Partial<{
   //display
   opacity: number;
@@ -172,6 +174,8 @@ export type Styles = Partial<{
 
   //transitions
   transition: string;
+  transitionTimingFunction: Easing;
+
   animation: string;
   animationDelay: string | number;
 
