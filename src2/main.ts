@@ -3,7 +3,9 @@ import { sampleUserName } from "./api/config";
 import { style } from "../src/browser";
 import { viewApp } from "./view/app";
 import { store } from "./globals";
-import { initThemes } from "./designSystem/colorVars";
+import { createThemeStyles } from "./designSystem";
+
+createThemeStyles();
 
 const USE_REAL_API = false;
 
@@ -50,5 +52,3 @@ style.tag("body", {
   margin: 0,
   fontFamily: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"`,
 });
-
-initThemes();

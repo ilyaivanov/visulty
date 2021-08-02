@@ -1,6 +1,6 @@
 import { anim, dom, style } from "../../src/browser";
 import { levels, spacings } from "../../src/designSystem";
-import { colorsVars } from "../designSystem/colorVars";
+import { colors } from "../designSystem";
 import { store, dispatcher } from "../globals";
 import { ItemIcon } from "./itemIcon";
 
@@ -93,18 +93,18 @@ style.class("item-row", {
   display: "flex",
   alignItems: "center",
   cursor: "pointer",
-  color: colorsVars.mainTextColor,
+  color: colors.mainTextColor,
   paddingTop: spacings.rowVecticalPadding,
   paddingBottom: spacings.rowVecticalPadding,
   fontSize: 15,
   lineHeight: 1,
   onHover: {
-    backgroundColor: colorsVars.itemHover,
+    backgroundColor: colors.itemHover,
   },
 });
 
 style.class2("item-row", "item-row_selected", {
-  backgroundColor: "#37373D",
+  backgroundColor: colors.itemSelected,
 });
 
 style.class("item-container-row-title", {
@@ -122,7 +122,7 @@ style.class("item-children-border", {
   width: 2,
   top: 0,
   bottom: 0,
-  backgroundColor: colorsVars.itemChildrenLine,
+  backgroundColor: colors.itemChildrenLine,
 });
 
 style.class("item-titleInput", { width: "100%" });
@@ -156,13 +156,13 @@ const time = 1500;
 style.text(`
 @keyframes opacity {
   0%{
-    background-color: ${colorsVars.itemSkeletonBackground};
+    background-color: ${colors.itemSkeletonBackground};
     }
   20%{
-      background-color: ${colorsVars.itemSkeletonGradientCenter};
+      background-color: ${colors.itemSkeletonGradientCenter};
   }
   80%, 100% {
-      background-color: ${colorsVars.itemSkeletonBackground};
+      background-color: ${colors.itemSkeletonBackground};
   }
 }
 `);
@@ -181,7 +181,7 @@ style.class("avatar" as any, {
   minWidth: 32,
   width: 32,
   height: 32,
-  backgroundColor: colorsVars.itemSkeletonBackground,
+  backgroundColor: colors.itemSkeletonBackground,
   animation: `opacity ${time}ms infinite linear`,
 });
 
@@ -190,6 +190,6 @@ style.class("text-avatar" as any, {
   width: 300,
   marginLeft: 10,
   borderRadius: 4,
-  backgroundColor: colorsVars.itemSkeletonBackground,
+  backgroundColor: colors.itemSkeletonBackground,
   animation: `opacity ${time}ms infinite linear`,
 });

@@ -1,7 +1,7 @@
 import { style } from "../../src/browser";
 import * as colors from "./colors";
 
-export const initThemes = () => {
+export const createThemeStyles = () => {
   style.class("app-dark", { variables: colors.darkThemeColors });
   style.class("app-light", { variables: colors.lightThemeColors });
 };

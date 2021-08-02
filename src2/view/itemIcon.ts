@@ -1,6 +1,6 @@
 import { css, style, dom, svg } from "../../src/browser";
 import { icons, spacings, timings } from "../../src/designSystem";
-import { colorsVars } from "../designSystem/colorVars";
+import { colors } from "../designSystem";
 import { store } from "../globals";
 
 const iconSize = spacings.outerRadius * 2;
@@ -63,7 +63,7 @@ export class ItemIcon {
           r: spacings.innerRadius,
           fill: "transparent",
           strokeWidth: 2,
-          stroke: colorsVars.itemEmptyCircle,
+          stroke: colors.itemEmptyCircle,
         }),
       ];
     } else {
@@ -72,7 +72,7 @@ export class ItemIcon {
           cx: iconSize / 2,
           cy: iconSize / 2,
           r: spacings.outerRadius,
-          fill: colorsVars.itemOuterCircle,
+          fill: colors.itemOuterCircle,
           className: "item-icon-circle",
           classMap: outerCircleClassMap(item),
         }),
@@ -80,7 +80,7 @@ export class ItemIcon {
           cx: iconSize / 2,
           cy: iconSize / 2,
           r: spacings.innerRadius,
-          fill: colorsVars.itemInnerCircle,
+          fill: colors.itemInnerCircle,
         }),
       ];
     }
@@ -130,7 +130,7 @@ style.class("item-icon-chevron", {
   borderRadius: spacings.chevronSize,
   //   marginTop: spacings.imageSize / 2 - spacings.chevronSize / 2,
   minWidth: spacings.chevronSize,
-  color: colorsVars.itemChevron,
+  color: colors.itemChevron,
   opacity: 0,
   userSelect: "none",
   pointerEvents: "none",
@@ -160,16 +160,16 @@ const inset = (spread: number, color: string) =>
 
 style.class("item-icon-image_circle", {
   borderRadius: "50%",
-  boxShadow: inset(2, colorsVars.itemImageInsetShadow),
+  boxShadow: inset(2, colors.itemImageInsetShadow),
 });
 
 style.class("item-icon-image_square", {
   borderRadius: 4,
-  boxShadow: inset(2, colorsVars.itemImageInsetShadow),
+  boxShadow: inset(2, colors.itemImageInsetShadow),
 });
 
 style.class("item-icon-image_closed", {
-  boxShadow: `0 0 4px 2px ${colorsVars.itemImageShadow}`,
+  boxShadow: `0 0 4px 2px ${colors.itemImageShadow}`,
 });
 
 //we need  this spacings because I'm not rendering chevron for videos
