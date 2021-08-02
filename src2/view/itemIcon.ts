@@ -106,7 +106,7 @@ const outerCircleClassMap = (item: MyItem): dom.ClassMap => ({
 const chevronMap = (item: MyItem): dom.ClassMap => ({
   "item-icon-chevron_open": item.isOpen,
   "item-icon-chevron_active":
-    !store.isEmpty(item) || store.isNeededToBeFetched(item),
+    item.isLoading || !store.isEmpty(item) || store.isNeededToBeFetched(item),
 });
 
 style.class("item-icon-svg", {
