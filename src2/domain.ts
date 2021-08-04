@@ -55,12 +55,15 @@ export class Store {
     this.dispatchCommand({ type: "theme-changed" });
   };
 
-  removeItem = (item: MyItem) => {
+  removeItem = (item: MyItem, props?: { instant?: boolean }) => {
     const parent = item.parent;
-    console.log(parent);
     if (parent && parent.children) {
       parent.children = parent.children.filter((sibling) => item != sibling);
-      this.dispatchCommand({ type: "item-removed", itemId: item.id });
+      this.dispatchCommand({
+        type: "item-removed",
+        itemId: item.id,
+        instant: props?.instant,
+      });
     }
   };
 
@@ -139,6 +142,48 @@ export class Store {
     item.children = item.children!.concat(newFolder);
     this.dispatchCommand({ type: "item-added", item: newFolder });
   };
+
+  moveItem = (props: {
+    itemOver: MyItem;
+    placement: DropPlacement;
+    itemUnder: MyItem;
+  }) => {
+    const { itemOver, placement, itemUnder } = props;
+
+    this.removeItem(itemOver, { instant: true });
+
+    if (placement === "after") {
+      this.insertItemAfter(itemUnder, itemOver);
+      this.dispatchCommand({ type: "item-added", item: itemOver });
+    } else if (placement == "before") {
+      this.insertItemBefore(itemUnder, itemOver);
+      this.dispatchCommand({ type: "item-added", item: itemOver });
+    } else if (placement == "inside") {
+      this.insertItemInside(itemUnder, itemOver);
+      this.dispatchCommand({ type: "item-added", item: itemOver });
+    }
+  };
+
+  insertItemAfter = (itemRelativeToInsert: MyItem, itemToInsert: MyItem) => {
+    const context = itemRelativeToInsert.parent!.children!;
+    const index = context.indexOf(itemRelativeToInsert);
+
+    context.splice(index + 1, 0, itemToInsert);
+    itemToInsert.parent = itemRelativeToInsert.parent;
+  };
+
+  insertItemBefore = (itemRelativeToInsert: MyItem, itemToInsert: MyItem) => {
+    const context = itemRelativeToInsert.parent!.children!;
+    const index = context.indexOf(itemRelativeToInsert);
+
+    context.splice(index, 0, itemToInsert);
+    itemToInsert.parent = itemRelativeToInsert.parent;
+  };
+
+  insertItemInside = (parentItem: MyItem, itemToInsert: MyItem) => {
+    parentItem.children = [itemToInsert].concat(parentItem.children || []);
+    itemToInsert.parent = parentItem;
+  };
 }
 
 const mapResponseItem = (item: youtubeApi.ResponseItem): MyItem => {
@@ -171,10 +216,11 @@ const mapResponseItem = (item: youtubeApi.ResponseItem): MyItem => {
 
 export type DomainCommand =
   | { type: "theme-changed" }
-  | { type: "item-removed"; itemId: string }
+  | { type: "item-removed"; itemId: string; instant?: boolean }
   | { type: "item-toggled"; itemId: string }
   | { type: "item-loaded"; itemId: string }
-  | { type: "item-added"; item: MyItem }
+  | { type: "item-added"; item: MyItem; instant?: boolean }
+  | { type: "item-moved"; item: MyItem }
   | { type: "searching-start" }
   | { type: "searching-end" }
   | { type: "search-visibility-toggled" };

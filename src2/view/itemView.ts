@@ -1,7 +1,7 @@
 import { anim, dom, style } from "../../src/browser";
 import { levels, spacings } from "../../src/designSystem";
 import { colors } from "../designSystem";
-import { store, dispatcher } from "../globals";
+import { store, dispatcher, dnd } from "../globals";
 import { ItemIcon } from "./itemIcon";
 
 export class ItemView {
@@ -12,6 +12,7 @@ export class ItemView {
   constructor(public item: MyItem, public level: number) {
     this.icon = new ItemIcon(item, {
       onChevronClick: () => store.toggleItem(item),
+      onIconMouseDown: (e) => dnd.onItemMouseDown(item, e),
     });
     this.el = dom.elem("div", {}, [
       dom.elem(
@@ -19,6 +20,7 @@ export class ItemView {
         {
           classNames: ["item-row", levels.rowForLevel(level)],
           onClick: () => this.enterRenameMode(),
+          onMouseMove: (e) => dnd.onItemMouseMoveOver(item, e),
         },
         [
           this.icon.el,
@@ -46,26 +48,46 @@ export class ItemView {
   updateItemChildrenVisibility = (animate?: boolean) => {
     if (this.item.isOpen) this.open(animate);
     else this.close(animate);
+    this.updateIcons();
+  };
+
+  updateIcons = () => {
     this.icon.onVisibilityChange();
   };
 
-  public remove = () =>
-    anim
-      .flyAwayAndCollapse(this.el)
-      .addEventListener("finish", () => this.el.remove());
+  public remove = (instant?: boolean) =>
+    instant
+      ? this.el.remove()
+      : anim
+          .flyAwayAndCollapse(this.el)
+          .addEventListener("finish", () => this.el.remove());
 
-  public insertItemAfter = (item: MyItem) => {
+  public insertItemAfter = (item: MyItem) =>
     this.el.insertAdjacentElement("afterend", ItemView.view(item, this.level));
+
+  public insertItemBefore = (item: MyItem) =>
+    this.el.insertAdjacentElement(
+      "beforebegin",
+      ItemView.view(item, this.level)
+    );
+
+  public insertItemAsFirstChild = (item: MyItem) => {
+    if (this.childrenElem.elem)
+      this.childrenElem.elem.insertAdjacentElement(
+        "afterbegin",
+        ItemView.view(item, this.level + 1)
+      );
   };
 
   private close = (animate?: boolean) => {
     if (animate) {
       //TODO: UGLY
-      anim.collapse(this.childrenElem.elem).addEventListener("finish", () => {
-        this.childrenElem.elem.remove();
-        //@ts-expect-error
-        this.childrenElem.elem = undefined;
-      });
+      if (this.childrenElem.elem)
+        anim.collapse(this.childrenElem.elem).addEventListener("finish", () => {
+          this.childrenElem.elem.remove();
+          //@ts-expect-error
+          this.childrenElem.elem = undefined;
+        });
     } else if (this.childrenElem.elem) {
       this.childrenElem.elem.remove();
       //@ts-expect-error

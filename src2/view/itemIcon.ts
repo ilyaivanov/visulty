@@ -6,7 +6,8 @@ import { store } from "../globals";
 const iconSize = spacings.outerRadius * 2;
 
 export type IconEvents = {
-  onChevronClick: () => void;
+  onChevronClick: Action<void>;
+  onIconMouseDown: Action<MouseEvent>;
 };
 
 export class ItemIcon {
@@ -24,7 +25,12 @@ export class ItemIcon {
         },
       });
 
-    this.el = dom.fragment([this.chevron, this.viewIcon()]);
+    this.iconEl = ItemIcon.viewIcon(this.item);
+    this.iconEl.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      events.onIconMouseDown(e);
+    });
+    this.el = dom.fragment([this.chevron, this.iconEl]);
   }
   public static view = (item: MyItem, events: IconEvents) =>
     new ItemIcon(item, events).el;
@@ -33,30 +39,31 @@ export class ItemIcon {
     this.chevron && dom.assignClassMap(this.chevron, chevronMap(this.item));
 
     if (!store.hasItemImage(this.item)) {
-      dom.setChildren(this.iconEl, this.viewCircles());
+      dom.setChildren(this.iconEl, ItemIcon.viewCircles(this.item));
     } else {
-      this.assignIconWithImageClasses();
+      ItemIcon.assignIconWithImageClasses(this.iconEl, this.item);
     }
   };
 
-  viewIcon = () => {
-    this.iconEl = svg.svg({
+  public static viewIcon = (
+    item: MyItem,
+    events?: { onIconMouseDown: Action<unknown> }
+  ) => {
+    const res = svg.svg({
       className: "item-icon-svg",
       viewBox: `0 0 ${iconSize} ${iconSize}`,
-      // onMouseDown: props?.onMouseDown,
+      onMouseDown: events?.onIconMouseDown,
     });
-    const { item } = this;
     if (store.hasItemImage(item)) {
-      this.iconEl.style.backgroundImage = `url(${store.getPreviewImage(item)})`;
-      this.assignIconWithImageClasses();
+      res.style.backgroundImage = `url(${store.getPreviewImage(item)})`;
+      ItemIcon.assignIconWithImageClasses(res, item);
     } else {
-      dom.appendChildren(this.iconEl, this.viewCircles());
+      dom.appendChildren(res, ItemIcon.viewCircles(item));
     }
-    return this.iconEl;
+    return res;
   };
 
-  viewCircles = (): SVGElement[] => {
-    const { item } = this;
+  private static viewCircles = (item: MyItem): SVGElement[] => {
     if (item.title === "Deep work") console.log(item);
     if (store.isEmpty(item)) {
       return [
@@ -89,9 +96,11 @@ export class ItemIcon {
     }
   };
 
-  private assignIconWithImageClasses = () => {
-    const { item } = this;
-    dom.assignClasses(this.iconEl, {
+  private static assignIconWithImageClasses = (
+    el: SVGElement,
+    item: MyItem
+  ) => {
+    dom.assignClasses(el, {
       classMap: {
         "item-icon-image_square": store.isPlaylist(item) || store.isVideo(item),
         "item-icon-image_circle": store.isChannel(item),

@@ -20,25 +20,36 @@ export class CommandsDispatcher {
   };
 
   dispatchCommand = (command: DomainCommand) => {
-    console.log(command);
     if (command.type === "item-toggled")
       this.viewAction(command.itemId, (view) =>
         view.updateItemChildrenVisibility(true)
       );
     if (command.type === "item-removed")
-      this.viewAction(command.itemId, (view) => view.remove());
+      this.viewAction(command.itemId, (view) => view.remove(command.instant));
 
     if (command.type === "item-loaded")
       this.viewAction(command.itemId, (view) =>
         view.updateItemChildrenVisibility()
       );
     if (command.type === "item-added") {
-      const context = command.item.parent!.children!;
+      const parent = command.item.parent!;
+      const context = parent.children!;
       const index = context.indexOf(command.item);
-      const prevItem = context[index - 1];
-      this.viewAction(prevItem.id, (view) =>
-        view.insertItemAfter(command.item)
-      );
+      if (!parent.parent && index === 0) {
+        this.viewAction(context[index + 1]!.id, (view) =>
+          view.insertItemBefore(command.item)
+        );
+      } else if (index == 0) {
+        this.viewAction(parent.id, (view) =>
+          view.insertItemAsFirstChild(command.item)
+        );
+      } else {
+        const prevItem = context[index - 1];
+        this.viewAction(prevItem.id, (view) =>
+          view.insertItemAfter(command.item)
+        );
+      }
+      this.viewAction(parent.id, (view) => view.updateIcons());
     }
     if (command.type === "search-visibility-toggled")
       this.searchTab?.onSearchVisibilityChange();
@@ -49,6 +60,7 @@ export class CommandsDispatcher {
       this.appView?.assignTheme();
     }
   };
+
   viewAction = (itemId: string, action: Action<ItemView>) => {
     const elem = document.getElementById(itemId);
     if (elem) {

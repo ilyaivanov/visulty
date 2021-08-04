@@ -47,3 +47,4 @@ type ClassName =
 type ElementId = string;
 
 type AppTheme = "dark" | "light";
+type DropPlacement = "after" | "before" | "inside";

@@ -1,5 +1,13 @@
 import { Styles, convertNumericStylesToProperJsOjbect } from "./style";
 
+//QEURIES
+export const getFirstElementWithClass = (
+  elem: Element,
+  className: ClassName
+): Element => {
+  return elem.getElementsByClassName(className)[0];
+};
+
 export const insert = (
   elem: Element,
   target: InsertPosition,
@@ -77,11 +85,13 @@ export const toggleClass = (
 type Events = {
   onKeyDown?: (e: KeyboardEvent) => void;
   onClick?: (e: MouseEvent) => void;
+  onMouseMove?: (e: MouseEvent) => void;
 };
 
 const assignElementEvents = (elem: HTMLElement, props: Events) => {
   if (props.onKeyDown) elem.addEventListener("keydown", props.onKeyDown);
   if (props.onClick) elem.addEventListener("click", props.onClick);
+  if (props.onMouseMove) elem.addEventListener("mousemove", props.onMouseMove);
 };
 
 //ELEMENTS

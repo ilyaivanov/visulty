@@ -26,6 +26,7 @@ const colors = {
   itemEmptyCircle: ["#DDDDDD", "rgb(76, 81, 85)"],
   itemImageShadow: ["rgba(255, 255, 255, 0.7)", "rgb(184, 188, 191)"],
   itemImageInsetShadow: ["rgba(255,255,255,0.15)", "rgba(184, 188, 191, 0.5)"],
+  dragDestination: ["white", "black"],
 };
 
 export type ThemeColors = StringKeys<typeof colors>;
