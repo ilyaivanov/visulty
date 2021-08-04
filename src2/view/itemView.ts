@@ -227,7 +227,7 @@ style.class("avatar" as any, {
 
 style.class("text-avatar" as any, {
   height: 16,
-  width: 300,
+  width: 200,
   marginLeft: 10,
   borderRadius: 4,
   backgroundColor: colors.itemSkeletonBackground,
