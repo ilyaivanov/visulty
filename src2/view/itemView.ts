@@ -1,5 +1,6 @@
 import { anim, dom, style } from "../../src/browser";
 import { levels, spacings } from "../../src/designSystem";
+import { play } from "../api/youtubePlayer";
 import { colors } from "../designSystem";
 import { store, dispatcher, dnd } from "../globals";
 import { ItemIcon } from "./itemIcon";
@@ -19,7 +20,6 @@ export class ItemView {
         "div",
         {
           classNames: ["item-row", levels.rowForLevel(level)],
-          onClick: () => this.enterRenameMode(),
           onMouseMove: (e) => dnd.onItemMouseMoveOver(item, e),
         },
         [
@@ -31,11 +31,17 @@ export class ItemView {
             ref: this.titleElem,
           }),
           dom.elem("button", {
+            textContent: "▶",
+            onClickStopPropagation: () =>
+              item.type === "YTvideo" && play(item.videoId),
+          }),
+          dom.elem("button", {
             textContent: "X",
-            onClick: (e) => {
-              e.stopPropagation();
-              store.removeItem(item);
-            },
+            onClickStopPropagation: () => store.removeItem(item),
+          }),
+          dom.elem("button", {
+            textContent: "E",
+            onClickStopPropagation: () => this.enterRenameMode(),
           }),
         ]
       ),

@@ -1,4 +1,4 @@
-import * as youtubeApi from "./api/youtube";
+import * as youtubeApi from "./api/youtubeApi";
 import { store } from "./globals";
 
 export class Store {

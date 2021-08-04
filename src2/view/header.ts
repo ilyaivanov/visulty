@@ -1,5 +1,6 @@
 import { dom, div, button, style } from "../../src/browser";
 import { spacings } from "../../src/designSystem";
+import { youtubeIframeId } from "../api/youtubePlayer";
 import { colors } from "../designSystem";
 import { dispatcher, store } from "../globals";
 
@@ -27,6 +28,8 @@ export class Header {
 }
 
 style.class("header", {
+  //relative positioning for youtu9ve iframe player
+  position: "relative",
   gridArea: "header",
   height: spacings.headerHeight,
   backgroundColor: colors.header,

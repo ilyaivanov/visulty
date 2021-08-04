@@ -85,13 +85,20 @@ export const toggleClass = (
 type Events = {
   onKeyDown?: (e: KeyboardEvent) => void;
   onClick?: (e: MouseEvent) => void;
+  onClickStopPropagation?: (e: MouseEvent) => void;
   onMouseMove?: (e: MouseEvent) => void;
 };
 
 const assignElementEvents = (elem: HTMLElement, props: Events) => {
-  if (props.onKeyDown) elem.addEventListener("keydown", props.onKeyDown);
-  if (props.onClick) elem.addEventListener("click", props.onClick);
-  if (props.onMouseMove) elem.addEventListener("mousemove", props.onMouseMove);
+  const { onClick, onClickStopPropagation, onKeyDown, onMouseMove } = props;
+  if (onKeyDown) elem.addEventListener("keydown", onKeyDown);
+  if (onClick) elem.addEventListener("click", onClick);
+  if (onClickStopPropagation)
+    elem.addEventListener("click", (e) => {
+      e.stopPropagation();
+      onClickStopPropagation(e);
+    });
+  if (onMouseMove) elem.addEventListener("mousemove", onMouseMove);
 };
 
 //ELEMENTS

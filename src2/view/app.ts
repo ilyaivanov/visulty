@@ -2,6 +2,7 @@ import { dom, div, style, css } from "../../src/browser";
 import { spacings } from "../../src/designSystem";
 import { colors } from "../designSystem";
 import { dispatcher, store } from "../globals";
+import { Footer } from "./footer";
 import { Header } from "./header";
 import { MainTab } from "./mainTab";
 import { SearchTab } from "./searchTab";
@@ -13,7 +14,7 @@ export class AppView {
       { className: "app" },
       new Header().el,
       div({ className: "gallery" }, MainTab.view(), SearchTab.view()),
-      div({ className: "player" })
+      new Footer().el
     );
     this.assignTheme();
     dispatcher.appView = this;
@@ -52,13 +53,6 @@ style.class("gallery", {
   height: `calc(100vh - ${spacings.playerFooterHeight}px - ${spacings.headerHeight}px)`,
   gridArea: "gallery",
   display: "flex",
-});
-
-style.class("player", {
-  gridArea: "player",
-  height: spacings.playerFooterHeight,
-  backgroundColor: colors.footer,
-  boxShadow: `0 0 6px 2px ${colors.menuShadow}`,
 });
 
 style.class("tab", {
