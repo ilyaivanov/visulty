@@ -32,3 +32,19 @@ style.class("header", {
   backgroundColor: colors.header,
   boxShadow: `0 0 6px 2px ${colors.menuShadow}`,
 });
+
+//I can't really recall why I used pseudoelement for shadows here
+//leaveing code in case i will need it
+// style.after("header", {
+//   position: "absolute",
+//   left: 0,
+//   right: 0,
+//   top: "100%",
+//   height: 4,
+//   content: `" "`,
+//   background: `linear-gradient(
+//     rgba(9, 30, 66, 0.13) 0px,
+//     rgba(9, 30, 66, 0.13) 1px,
+//     rgba(9, 30, 66, 0.08) 1px,
+//     rgba(9, 30, 66, 0) 4px)`,
+// });

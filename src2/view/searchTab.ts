@@ -1,19 +1,6 @@
-// import { autorun, reaction } from "mobx";
-// import { div, dom, input, span } from "../browser";
-// import { itemsStore, uiStore } from "./stores";
-// import { viewTree } from "./tree";
-// import * as youtubeApi from "../api/youtube";
-// import {
-//   VideoItem,
-//   ChannelItem,
-//   PlaylistItem,
-//   Item,
-//   FolderItem,
-// } from "../domain/item";
-
 import { dom, div, input, style, css } from "../../src/browser";
 import { dispatcher, store } from "../globals";
-import { itemSkeleton, ItemView, showSkeletons } from "./itemView";
+import { ItemView, showSkeletons } from "./itemView";
 
 export class SearchTab {
   el: HTMLElement;
@@ -59,37 +46,8 @@ const onKeyDown = (e: KeyboardEvent) => {
     e.preventDefault();
     const term = (e.currentTarget as HTMLInputElement).value;
     store.findVideos(term);
-    // uiStore.startLoading();
-
-    // youtubeApi.loadSearchResults(term).then((response) => {
-    //   const items = response.items.map(mapResponseItem);
-    //   itemsStore.searchRoot = new FolderItem({
-    //     title: "Search",
-    //     children: items,
-    //   });
-    // });
-    // setTimeout(() => {
-    //   uiStore.stopLoading();
-    // }, 2000);
   }
 };
-
-// export const mapResponseItem = (item: youtubeApi.ResponseItem): Item => {
-//   if (item.itemType === "video")
-//     return new VideoItem({ title: item.name, videoId: item.itemId });
-//   else if (item.itemType === "channel")
-//     return new ChannelItem({
-//       title: item.name,
-//       channelImage: item.image,
-//       channelId: item.itemId,
-//     });
-//   else
-//     return new PlaylistItem({
-//       title: item.name,
-//       playlistImage: item.image,
-//       playlistId: item.itemId,
-//     });
-// };
 
 style.class("search-tab", {
   borderLeft: "1px solid #444444",

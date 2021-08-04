@@ -8,19 +8,35 @@ export class ItemView {
   childrenElem = dom.createRef("div");
   icon: ItemIcon;
   el: HTMLElement;
+  titleElem = dom.createRef("span");
   constructor(public item: MyItem, public level: number) {
     this.icon = new ItemIcon(item, {
       onChevronClick: () => store.toggleItem(item),
     });
     this.el = dom.elem("div", {}, [
-      dom.elem("div", { classNames: ["item-row", levels.rowForLevel(level)] }, [
-        this.icon.el,
-        dom.elem("span", {
-          className: "item-row-title",
-          classMap: { "item-container-row-title": store.isContainer(item) },
-          textContent: item.title,
-        }),
-      ]),
+      dom.elem(
+        "div",
+        {
+          classNames: ["item-row", levels.rowForLevel(level)],
+          onClick: () => this.enterRenameMode(),
+        },
+        [
+          this.icon.el,
+          dom.elem("span", {
+            className: "item-row-title",
+            classMap: { "item-container-row-title": store.isContainer(item) },
+            textContent: item.title,
+            ref: this.titleElem,
+          }),
+          dom.elem("button", {
+            textContent: "X",
+            onClick: (e) => {
+              e.stopPropagation();
+              store.removeItem(item);
+            },
+          }),
+        ]
+      ),
     ]);
     if (this.item.isOpen) this.open(false);
     else this.close(false);
@@ -37,6 +53,10 @@ export class ItemView {
     anim
       .flyAwayAndCollapse(this.el)
       .addEventListener("finish", () => this.el.remove());
+
+  public insertItemAfter = (item: MyItem) => {
+    this.el.insertAdjacentElement("afterend", ItemView.view(item, this.level));
+  };
 
   private close = (animate?: boolean) => {
     if (animate) {
@@ -77,6 +97,26 @@ export class ItemView {
               .concat(childrenBorder(this.level))
     );
 
+  private enterRenameMode = () => {
+    const input = dom.elem("input", {});
+    input.value = this.item.title;
+    this.titleElem.elem.insertAdjacentElement("beforebegin", input);
+    this.titleElem.elem.remove();
+    input.focus();
+
+    const stopRenaming = () => {
+      this.item.title = input.value;
+      this.titleElem.elem.textContent = this.item.title;
+      input.insertAdjacentElement("beforebegin", this.titleElem.elem);
+      input.removeEventListener("blur", stopRenaming);
+      input.remove();
+    };
+    input.addEventListener("blur", stopRenaming);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key == "Escape") stopRenaming();
+    });
+  };
+
   private static view = (item: MyItem, level: number) =>
     new ItemView(item, level).el;
 
@@ -85,6 +125,7 @@ export class ItemView {
       item.children ? item.children.map((item) => ItemView.view(item, 0)) : []
     );
 }
+
 const childrenBorder = (level: number) =>
   dom.elem("div", {
     classNames: ["item-children-border", levels.childrenBorderForLevel(level)],
@@ -109,7 +150,6 @@ style.class2("item-row", "item-row_selected", {
 
 style.class("item-container-row-title", {
   fontWeight: "bold",
-  fontSize: 16,
 });
 
 style.class("item-row-children", {

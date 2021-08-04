@@ -32,6 +32,14 @@ export class CommandsDispatcher {
       this.viewAction(command.itemId, (view) =>
         view.updateItemChildrenVisibility()
       );
+    if (command.type === "item-added") {
+      const context = command.item.parent!.children!;
+      const index = context.indexOf(command.item);
+      const prevItem = context[index - 1];
+      this.viewAction(prevItem.id, (view) =>
+        view.insertItemAfter(command.item)
+      );
+    }
     if (command.type === "search-visibility-toggled")
       this.searchTab?.onSearchVisibilityChange();
     if (command.type === "searching-start") this.searchTab?.startSearching();

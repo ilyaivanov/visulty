@@ -18,7 +18,10 @@ export class ItemIcon {
       this.chevron = icons.chevron({
         className: "item-icon-chevron",
         classMap: chevronMap(item),
-        onClick: events.onChevronClick,
+        onClick: (e) => {
+          e.stopPropagation();
+          events.onChevronClick();
+        },
       });
 
     this.el = dom.fragment([this.chevron, this.viewIcon()]);

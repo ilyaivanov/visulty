@@ -18,9 +18,7 @@ export class Store {
 
   theme: AppTheme = "light";
 
-  constructor(private dispatchCommand: Action<DomainCommand>) {
-    if (this.root.children) this.assignParents(this.root, this.root.children);
-  }
+  constructor(private dispatchCommand: Action<DomainCommand>) {}
 
   //QUERIES
 
@@ -56,15 +54,10 @@ export class Store {
     this.theme = this.theme === "dark" ? "light" : "dark";
     this.dispatchCommand({ type: "theme-changed" });
   };
-  assignParents = (parent: MyItem, children: MyItem[]) => {
-    children.forEach((child) => {
-      child.parent = parent;
-      if (child.children) this.assignParents(child, child.children);
-    });
-  };
 
   removeItem = (item: MyItem) => {
     const parent = item.parent;
+    console.log(parent);
     if (parent && parent.children) {
       parent.children = parent.children.filter((sibling) => item != sibling);
       this.dispatchCommand({ type: "item-removed", itemId: item.id });
@@ -135,6 +128,17 @@ export class Store {
     }
     throw new Error(`Can't load ${item.title} of type ${item.type}`);
   };
+
+  addItemToTheEndOf = (item: MyItem) => {
+    const newFolder: Folder = {
+      title: "New Folder",
+      id: Math.random() + "",
+      type: "folder",
+      parent: item,
+    };
+    item.children = item.children!.concat(newFolder);
+    this.dispatchCommand({ type: "item-added", item: newFolder });
+  };
 }
 
 const mapResponseItem = (item: youtubeApi.ResponseItem): MyItem => {
@@ -170,6 +174,7 @@ export type DomainCommand =
   | { type: "item-removed"; itemId: string }
   | { type: "item-toggled"; itemId: string }
   | { type: "item-loaded"; itemId: string }
+  | { type: "item-added"; item: MyItem }
   | { type: "searching-start" }
   | { type: "searching-end" }
   | { type: "search-visibility-toggled" };

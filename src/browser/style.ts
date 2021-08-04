@@ -184,7 +184,7 @@ export type Styles = Partial<{
   color: string;
   lineHeight: number;
   fontSize: number;
-  fontWeight: "bold";
+  fontWeight: "bold" | "500" | "600";
   fontStyle: "italic";
 
   //shadows
