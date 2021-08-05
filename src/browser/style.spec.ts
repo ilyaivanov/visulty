@@ -12,7 +12,7 @@ it("converting js styles with pascal casing with numbers to css style camel-case
 //I know, I have format in my tests, which might make tests fragile (anytime format off CSS output will change - tests will fail)
 //but there is a bright side - I don't have a lot of tests here and I can pay that price, as long as I know when my code changed or broke anything
 
-describe("Testing style output into <style> element in head ", () => {
+describe("Testing style output into <style> element in head", () => {
   const stylesElement = document.getElementById("app-styles")!;
   beforeEach(() => {
     stylesElement.innerHTML = ``;
@@ -27,15 +27,15 @@ describe("Testing style output into <style> element in head ", () => {
 `);
   });
 
-  it("simple test for converting js object to css styles", () => {
-    style.keyframes("opacityAnimation", [
+  it("creating keyframes produce proper css animation defition", () => {
+    style.keyframes("myFontSideAnimation", [
       { at: "0%", fontSize: 18 },
       { at: "50%", fontSize: 20 },
       { at: "70%, 100%", fontSize: 12 },
     ]);
 
     expect(stylesElement.textContent).toEqual(`
-@keyframes opacityAnimation {
+@keyframes myFontSideAnimation {
 0%{
     font-size: 18px;
 }
