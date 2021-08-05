@@ -1,6 +1,7 @@
 import { dom, div, input, style, css } from "../browser";
 import { dispatcher, store } from "../globals";
-import { ItemView, showSkeletons } from "./itemView";
+import { showSkeletons } from "./itemSkeleton";
+import { ItemView } from "./itemView";
 
 export class SearchTab {
   el: HTMLElement;
