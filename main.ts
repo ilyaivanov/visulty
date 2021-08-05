@@ -1,10 +1,10 @@
-import { initFirebase, loadUserSettings } from "./src2/api/userState";
-import { sampleUserName } from "./src2/api/config";
-import { style } from "./src2/browser";
-import { viewApp } from "./src2/view/app";
-import { store } from "./src2/globals";
-import { createThemeStyles } from "./src2/designSystem";
-import { dummyRoot } from "./src2/api/dummyUserState";
+import { initFirebase, loadUserSettings } from "./src/api/userState";
+import { sampleUserName } from "./src/api/config";
+import { style } from "./src/browser";
+import { viewApp } from "./src/view/app";
+import { store } from "./src/globals";
+import { createThemeStyles } from "./src/designSystem";
+import { dummyRoot } from "./src/api/dummyUserState";
 
 createThemeStyles();
 
