@@ -1,6 +1,8 @@
+import { assignParents, randomItems } from "../api/dummyUserState";
 import * as youtubeApi from "../api/youtubeApi";
+import * as itemsQueries from "./itemQueries";
 
-export class Store {
+export class ItemsStore {
   root: MyItem = {
     id: "HOME",
     type: "folder",
@@ -11,9 +13,13 @@ export class Store {
     id: "SEARCH",
     type: "folder",
     title: "Search",
+    children: randomItems(20),
   };
 
-  constructor(private dispatchCommand: Action<DomainCommand>) {}
+  constructor(private dispatchCommand: Action<DomainCommand>) {
+    if (this.searchRoot.children)
+      assignParents(this.searchRoot, this.searchRoot.children);
+  }
 
   //QUERIES
 
@@ -62,7 +68,7 @@ export class Store {
     if (this.isNeededToBeFetched(item)) {
       item.isLoading = true;
       this.loadItem(item).then((children) => {
-        item.children = children;
+        itemsQueries.assignChildrenTo(item, children);
         item.isLoading = false;
         this.dispatchCommand({ type: "item-loaded", itemId: item.id });
       });
@@ -73,22 +79,16 @@ export class Store {
   findVideos = (term: string) => {
     this.dispatchCommand({ type: "searching-start" });
 
-    this.searchVideos(term).then((searchRoot) => {
-      this.searchRoot = searchRoot;
+    this.searchVideos(term).then((items) => {
+      itemsQueries.assignChildrenTo(this.searchRoot, items);
       this.dispatchCommand({ type: "searching-end" });
     });
   };
 
-  searchVideos = (term: string): Promise<MyItem> => {
-    return youtubeApi.loadSearchResults(term).then(
-      (response) =>
-        ({
-          id: "SEARCH",
-          title: "Search",
-          type: "folder",
-          children: response.items.map(mapResponseItem),
-        } as MyItem)
-    );
+  searchVideos = (term: string): Promise<MyItem[]> => {
+    return youtubeApi
+      .loadSearchResults(term)
+      .then((response) => response.items.map(mapResponseItem));
   };
 
   loadItem = (item: MyItem): Promise<MyItem[]> => {

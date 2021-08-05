@@ -1,4 +1,4 @@
-const randomItems = (count: number): MyItem[] =>
+export const randomItems = (count: number): MyItem[] =>
   Array.from(new Array(count)).map(() =>
     folder("Item " + Math.floor(Math.random() * 100))
   );
@@ -79,7 +79,7 @@ export const dummyRoot = folder("HOME", [
   folder("Seven"),
 ]);
 
-const assignParents = (parent: MyItem, children: MyItem[]) => {
+export const assignParents = (parent: MyItem, children: MyItem[]) => {
   children.forEach((child) => {
     child.parent = parent;
     if (child.children) assignParents(child, child.children);

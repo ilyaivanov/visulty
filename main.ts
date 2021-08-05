@@ -5,18 +5,19 @@ import { viewApp } from "./src/view/app";
 import { itemsStore } from "./src/globals";
 import { createThemeStyles } from "./src/designSystem";
 import { dummyRoot } from "./src/api/dummyUserState";
+import * as itemsQueries from "./src/domain/itemQueries";
 
 createThemeStyles();
 
-const USE_REAL_API = false;
+const USE_REAL_API = true;
 
 initFirebase(() => {
   if (USE_REAL_API) {
     loadUserSettings(sampleUserName).then((data) => {
-      const items: LegacyItems = JSON.parse(data.itemsSerialized);
+      const legacyItems: LegacyItems = JSON.parse(data.itemsSerialized);
 
       const mapItem = (id: string): MyItem | undefined => {
-        const legacy = items[id];
+        const legacy = legacyItems[id];
         if (!legacy) return;
 
         const item: MyItem = {
@@ -30,16 +31,11 @@ initFirebase(() => {
 
         return item;
       };
-      const root: MyItem = {
-        type: "folder",
-        id: "HOME",
-        title: "Home",
-        children: items["HOME"]
-          .children!.map(mapItem)
-          .filter((x) => x) as MyItem[],
-      };
+      const items = legacyItems["HOME"]
+        .children!.map(mapItem)
+        .filter((x) => x) as MyItem[];
 
-      itemsStore.root = root;
+      itemsQueries.assignChildrenTo(itemsStore.root, items);
 
       document.body.appendChild(viewApp());
     });

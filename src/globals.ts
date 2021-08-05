@@ -1,5 +1,5 @@
 import { CommandsDispatcher } from "./dispatcher";
-import { Store as ItemsStore } from "./domain/itemsStore";
+import { ItemsStore as ItemsStore } from "./domain/itemsStore";
 import { UIState } from "./domain/uiState";
 import Dnd from "./view/dnd";
 
