@@ -1,5 +1,5 @@
-import { dom } from "../../src/browser";
-import { levels } from "../../src/designSystem";
+import { dom } from "../browser";
+import { levels } from "../designSystem";
 import { store } from "../globals";
 import { ItemView } from "./itemView";
 

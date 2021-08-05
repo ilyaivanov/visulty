@@ -1,7 +1,6 @@
-import { anim, dom, style } from "../../src/browser";
-import { levels, spacings } from "../../src/designSystem";
+import { dom, input, style } from "../browser";
+import { colors, anim, levels, spacings } from "../designSystem";
 import { play } from "../api/youtubePlayer";
-import { colors } from "../designSystem";
 import { store, dispatcher, dnd } from "../globals";
 import { ItemIcon } from "./itemIcon";
 
@@ -126,23 +125,25 @@ export class ItemView {
     );
 
   private enterRenameMode = () => {
-    const input = dom.elem("input", {});
-    input.value = this.item.title;
-    this.titleElem.elem.insertAdjacentElement("beforebegin", input);
-    this.titleElem.elem.remove();
-    input.focus();
-
-    const stopRenaming = () => {
-      this.item.title = input.value;
-      this.titleElem.elem.textContent = this.item.title;
-      input.insertAdjacentElement("beforebegin", this.titleElem.elem);
-      input.removeEventListener("blur", stopRenaming);
-      input.remove();
-    };
-    input.addEventListener("blur", stopRenaming);
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key == "Escape") stopRenaming();
+    const inputElem = input({
+      value: this.item.title,
+      onBlur: stopRenaming,
+      onKeyDown: (e) => {
+        if (e.key === "Enter" || e.key == "Escape") stopRenaming();
+      },
     });
+    this.titleElem.elem.insertAdjacentElement("beforebegin", inputElem);
+    this.titleElem.elem.remove();
+    inputElem.focus();
+
+    const { item, titleElem } = this;
+    function stopRenaming() {
+      item.title = inputElem.value;
+      titleElem.elem.textContent = item.title;
+      inputElem.insertAdjacentElement("beforebegin", titleElem.elem);
+      inputElem.removeEventListener("blur", stopRenaming);
+      inputElem.remove();
+    }
   };
 
   private static view = (item: MyItem, level: number) =>

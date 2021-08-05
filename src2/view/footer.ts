@@ -1,17 +1,15 @@
-import { dom, div, button, style } from "../../src/browser";
-import { spacings } from "../../src/designSystem";
+import { dom, div, style } from "../browser";
+import { spacings } from "../designSystem";
 import { youtubeIframeId } from "../api/youtubePlayer";
 import { colors } from "../designSystem";
-import { dispatcher, store } from "../globals";
 
 export class Footer {
   el: HTMLElement;
 
   constructor() {
-    this.el = div(
-      { className: "player" },
-      dom.elem("div", { id: youtubeIframeId })
-    );
+    this.el = div({ className: "player" }, [
+      dom.elem("div", { id: youtubeIframeId }),
+    ]);
   }
 }
 

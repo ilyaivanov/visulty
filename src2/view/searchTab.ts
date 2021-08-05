@@ -1,4 +1,4 @@
-import { dom, div, input, style, css } from "../../src/browser";
+import { dom, div, input, style, css } from "../browser";
 import { dispatcher, store } from "../globals";
 import { ItemView, showSkeletons } from "./itemView";
 
@@ -6,16 +6,16 @@ export class SearchTab {
   el: HTMLElement;
   searchContent = dom.createRef("div");
   constructor() {
-    this.el = div(
-      { classNames: ["tab", "search-tab"] },
+    this.el = div({ classNames: ["tab", "search-tab"] }, [
       input({
         placeholder: "Search...",
+        value: "",
         onKeyDown,
       }),
       dom.elem("div", { ref: this.searchContent }, [
         ItemView.viewChildrenFor(store.searchRoot),
-      ])
-    );
+      ]),
+    ]);
 
     this.onSearchVisibilityChange();
     dispatcher.searchTab = this;

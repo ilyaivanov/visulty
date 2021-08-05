@@ -1,6 +1,5 @@
-import { dom, div, style, css } from "../../src/browser";
-import { spacings } from "../../src/designSystem";
-import { colors } from "../designSystem";
+import { dom, div, style, css } from "../browser";
+import { spacings, colors } from "../designSystem";
 import { dispatcher, store } from "../globals";
 import { Footer } from "./footer";
 import { Header } from "./header";
@@ -10,12 +9,11 @@ import { SearchTab } from "./searchTab";
 export class AppView {
   el: HTMLElement;
   constructor() {
-    this.el = div(
-      { className: "app" },
+    this.el = div({ className: "app" }, [
       new Header().el,
-      div({ className: "gallery" }, MainTab.view(), SearchTab.view()),
-      new Footer().el
-    );
+      div({ className: "gallery" }, [MainTab.view(), SearchTab.view()]),
+      new Footer().el,
+    ]);
     this.assignTheme();
     dispatcher.appView = this;
   }

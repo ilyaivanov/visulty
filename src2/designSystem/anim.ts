@@ -1,4 +1,4 @@
-import { timings } from "../designSystem/timings";
+import { timings } from "./timings";
 
 export const crossFade = (
   container: HTMLElement,

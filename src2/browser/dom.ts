@@ -1,6 +1,6 @@
 import { Styles, convertNumericStylesToProperJsOjbect } from "./style";
 
-//QEURIES
+//QUERIES
 export const getFirstElementWithClass = (
   elem: Element,
   className: ClassName
@@ -8,6 +8,7 @@ export const getFirstElementWithClass = (
   return elem.getElementsByClassName(className)[0];
 };
 
+//COMMANDS
 export const insert = (
   elem: Element,
   target: InsertPosition,
@@ -50,10 +51,6 @@ export type ClassDefinitions = {
 
 export type ElementChild = Node | undefined | false;
 
-type Ref<T> = {
-  ref?: (el: T) => void;
-};
-
 export const assignClasses = <T extends Element>(
   elem: T,
   classes: ClassDefinitions
@@ -87,10 +84,12 @@ type Events = {
   onClick?: (e: MouseEvent) => void;
   onClickStopPropagation?: (e: MouseEvent) => void;
   onMouseMove?: (e: MouseEvent) => void;
+  onBlur?: (e: FocusEvent) => void;
 };
 
 const assignElementEvents = (elem: HTMLElement, props: Events) => {
-  const { onClick, onClickStopPropagation, onKeyDown, onMouseMove } = props;
+  const { onClick, onClickStopPropagation, onKeyDown, onMouseMove, onBlur } =
+    props;
   if (onKeyDown) elem.addEventListener("keydown", onKeyDown);
   if (onClick) elem.addEventListener("click", onClick);
   if (onClickStopPropagation)
@@ -99,77 +98,32 @@ const assignElementEvents = (elem: HTMLElement, props: Events) => {
       onClickStopPropagation(e);
     });
   if (onMouseMove) elem.addEventListener("mousemove", onMouseMove);
+  if (onBlur) elem.addEventListener("blur", onBlur);
 };
 
 //ELEMENTS
 
-type DivProps = {
-  id?: string;
-  text?: string;
-} & ClassDefinitions &
-  Events &
-  Ref<HTMLDivElement>;
+const elemFactory =
+  <T extends keyof HTMLElementTagNameMap>(tag: T) =>
+  (
+    props: ElementProps<HTMLElementTagNameMap[T]>,
+    children?: ElementChild[]
+  ): HTMLElementTagNameMap[T] =>
+    elem(tag, props, children);
 
-export const div = (props: DivProps, ...children: ElementChild[]) => {
-  const elem = document.createElement("div");
+export const div = elemFactory("div");
+export const span = elemFactory("span");
+export const button = elemFactory("button");
 
-  assignClasses(elem, props);
-  assignElementEvents(elem, props);
-  assignChildrenArrayToElement(elem, children);
-
-  const { id, text } = props;
-  if (id) elem.id = id;
-  if (text) elem.textContent = text;
-  if (props.ref) props.ref(elem);
-  return elem;
-};
-
-type ButtonProps = {
-  text?: string;
-} & ClassDefinitions &
-  Events;
-
-export const button = (props: ButtonProps) => {
-  const elem = document.createElement("button");
-  assignClasses(elem, props);
-  assignElementEvents(elem, props);
-
-  if (props.text) elem.textContent = props.text;
-
-  return elem;
-};
-
-type InputProps = {
-  value?: string;
+type InputProps = ElementProps<HTMLInputElement> & {
   placeholder?: string;
-} & ClassDefinitions &
-  Events;
-
-export const input = (props: InputProps) => {
-  const elem = document.createElement("input");
-  assignClasses(elem, props);
-  if (props.value) elem.value = props.value;
-  if (props.placeholder) elem.placeholder = props.placeholder;
-
-  assignElementEvents(elem, props);
-
-  return elem;
+  value: string;
 };
-
-type SpanProps = {
-  text: string;
-} & ClassDefinitions &
-  Events &
-  Ref<HTMLSpanElement>;
-
-export const span = (props: SpanProps) => {
-  const elem = document.createElement("span");
-  assignClasses(elem, props);
-  assignElementEvents(elem, props);
-
-  elem.textContent = props.text;
-  if (props.ref) props.ref(elem);
-  return elem;
+export const input = (inputProps: InputProps) => {
+  const el = elem("input", inputProps);
+  if (inputProps.placeholder) el.placeholder = inputProps.placeholder;
+  el.value = inputProps.value;
+  return el;
 };
 
 type ElementProps<T> = {

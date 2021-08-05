@@ -1,6 +1,5 @@
-import { css, style, dom, svg } from "../../src/browser";
-import { icons, spacings, timings } from "../../src/designSystem";
-import { colors } from "../designSystem";
+import { css, style, dom, svg } from "../browser";
+import { icons, spacings, colors, timings } from "../designSystem";
 import { store } from "../globals";
 
 const iconSize = spacings.outerRadius * 2;
@@ -64,7 +63,6 @@ export class ItemIcon {
   };
 
   private static viewCircles = (item: MyItem): SVGElement[] => {
-    if (item.title === "Deep work") console.log(item);
     if (store.isEmpty(item)) {
       return [
         svg.circle({

@@ -1,6 +1,6 @@
 // import { items } from "../domain";
-import { css, dom, style } from "../../src/browser";
-import { spacings } from "../../src/designSystem";
+import { dom, style } from "../browser";
+import { spacings } from "../designSystem";
 import { colors } from "../designSystem";
 import { store } from "../globals";
 import { ItemIcon } from "./itemIcon";

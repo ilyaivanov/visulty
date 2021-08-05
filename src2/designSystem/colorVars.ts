@@ -1,4 +1,4 @@
-import { style } from "../../src/browser";
+import { style } from "../browser";
 import * as colors from "./colors";
 
 export const createThemeStyles = () => {

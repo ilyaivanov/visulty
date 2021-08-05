@@ -1,7 +1,5 @@
-import { dom, div, button, style } from "../../src/browser";
-import { spacings } from "../../src/designSystem";
-import { youtubeIframeId } from "../api/youtubePlayer";
-import { colors } from "../designSystem";
+import { dom, div, button, style } from "../browser";
+import { spacings, colors } from "../designSystem";
 import { dispatcher, store } from "../globals";
 
 export class Header {
@@ -9,14 +7,16 @@ export class Header {
   themeButton = dom.createRef("button");
 
   constructor() {
-    this.el = div(
-      { className: "header" },
-      button({ text: "search", onClick: () => store.toggleSearchVisibility() }),
+    this.el = div({ className: "header" }, [
+      button({
+        textContent: "search",
+        onClick: () => store.toggleSearchVisibility(),
+      }),
       dom.elem("button", {
         onClick: () => store.toggleTheme(),
         ref: this.themeButton,
-      })
-    );
+      }),
+    ]);
     this.assignThemeButtonText();
     dispatcher.header = this;
   }
