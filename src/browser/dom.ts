@@ -1,3 +1,14 @@
+import { Styles, convertNumericStylesToProperJsOjbect } from "./style";
+
+//QUERIES
+export const getFirstElementWithClass = (
+  elem: Element,
+  className: ClassName
+): Element => {
+  return elem.getElementsByClassName(className)[0];
+};
+
+//COMMANDS
 export const insert = (
   elem: Element,
   target: InsertPosition,
@@ -25,9 +36,9 @@ export const setChild = (elem: Element, child: Node) => {
   elem.appendChild(child);
 };
 
-export const fragment = (children: Element[]) => {
+export const fragment = (children: (Element | undefined)[]) => {
   const frag = document.createDocumentFragment();
-  children.forEach((child) => frag.appendChild(child));
+  children.forEach((child) => child && frag.appendChild(child));
   return frag;
 };
 
@@ -39,10 +50,6 @@ export type ClassDefinitions = {
 };
 
 export type ElementChild = Node | undefined | false;
-
-type Ref<T> = {
-  ref?: (el: T) => void;
-};
 
 export const assignClasses = <T extends Element>(
   elem: T,
@@ -75,80 +82,85 @@ export const toggleClass = (
 type Events = {
   onKeyDown?: (e: KeyboardEvent) => void;
   onClick?: (e: MouseEvent) => void;
+  onClickStopPropagation?: (e: MouseEvent) => void;
+  onMouseMove?: (e: MouseEvent) => void;
+  onBlur?: (e: FocusEvent) => void;
 };
 
 const assignElementEvents = (elem: HTMLElement, props: Events) => {
-  if (props.onKeyDown) elem.addEventListener("keydown", props.onKeyDown);
-  if (props.onClick) elem.addEventListener("click", props.onClick);
+  const { onClick, onClickStopPropagation, onKeyDown, onMouseMove, onBlur } =
+    props;
+  if (onKeyDown) elem.addEventListener("keydown", onKeyDown);
+  if (onClick) elem.addEventListener("click", onClick);
+  if (onClickStopPropagation)
+    elem.addEventListener("click", (e) => {
+      e.stopPropagation();
+      onClickStopPropagation(e);
+    });
+  if (onMouseMove) elem.addEventListener("mousemove", onMouseMove);
+  if (onBlur) elem.addEventListener("blur", onBlur);
 };
 
 //ELEMENTS
 
-type DivProps = {
-  id?: string;
-  text?: string;
-} & ClassDefinitions &
-  Events &
-  Ref<HTMLDivElement>;
+const elemFactory =
+  <T extends keyof HTMLElementTagNameMap>(tag: T) =>
+  (
+    props: ElementProps<HTMLElementTagNameMap[T]>,
+    children?: ElementChild[]
+  ): HTMLElementTagNameMap[T] =>
+    elem(tag, props, children);
 
-export const div = (props: DivProps, ...children: ElementChild[]) => {
-  const elem = document.createElement("div");
+export const div = elemFactory("div");
+export const span = elemFactory("span");
+export const button = elemFactory("button");
 
-  assignClasses(elem, props);
-  assignElementEvents(elem, props);
-  assignChildrenArrayToElement(elem, children);
-
-  const { id, text } = props;
-  if (id) elem.id = id;
-  if (text) elem.textContent = text;
-  if (props.ref) props.ref(elem);
-  return elem;
-};
-
-type ButtonProps = {
-  text?: string;
-} & ClassDefinitions &
-  Events;
-
-export const button = (props: ButtonProps) => {
-  const elem = document.createElement("button");
-  assignClasses(elem, props);
-  assignElementEvents(elem, props);
-
-  if (props.text) elem.textContent = props.text;
-
-  return elem;
-};
-
-type InputProps = {
-  value?: string;
+type InputProps = ElementProps<HTMLInputElement> & {
   placeholder?: string;
+  value: string;
+};
+export const input = (inputProps: InputProps) => {
+  const el = elem("input", inputProps);
+  if (inputProps.placeholder) el.placeholder = inputProps.placeholder;
+  el.value = inputProps.value;
+  return el;
+};
+
+type ElementProps<T> = {
+  id?: string;
+  textContent?: string;
+  ref?: MyRef<T>;
+  style?: Styles;
 } & ClassDefinitions &
   Events;
 
-export const input = (props: InputProps) => {
-  const elem = document.createElement("input");
+export const elem = <T extends keyof HTMLElementTagNameMap>(
+  tag: T,
+  props: ElementProps<HTMLElementTagNameMap[T]>,
+  children?: ElementChild[]
+): HTMLElementTagNameMap[T] => {
+  const elem = document.createElement(tag);
+
+  if (props.textContent) elem.textContent = props.textContent;
+  if (props.id) elem.id = props.id;
+  if (props.ref) props.ref.elem = elem;
+
   assignClasses(elem, props);
-  if (props.value) elem.value = props.value;
-  if (props.placeholder) elem.placeholder = props.placeholder;
-
   assignElementEvents(elem, props);
-
+  if (children) assignChildrenArrayToElement(elem, children);
+  if (props.style) {
+    Object.assign(
+      elem.style,
+      convertNumericStylesToProperJsOjbect(props.style)
+    );
+  }
   return elem;
 };
 
-type SpanProps = {
-  text: string;
-} & ClassDefinitions &
-  Events &
-  Ref<HTMLSpanElement>;
+export const createRef = <T extends keyof HTMLElementTagNameMap>(
+  tag: T
+): MyRef<HTMLElementTagNameMap[T]> => ({ elem: undefined as any });
 
-export const span = (props: SpanProps) => {
-  const elem = document.createElement("span");
-  assignClasses(elem, props);
-  assignElementEvents(elem, props);
-
-  elem.textContent = props.text;
-  if (props.ref) props.ref(elem);
-  return elem;
+export type MyRef<T> = {
+  elem: T;
 };

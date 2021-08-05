@@ -5,6 +5,8 @@ type Func1<TIn, TOut> = (arg: TIn) => TOut;
 
 type ClassName =
   | "app"
+  | "app-light"
+  | "app-dark"
   | "header"
   | "player"
   | "gallery"
@@ -12,10 +14,8 @@ type ClassName =
   | "main-tab"
   | "search-tab"
   | "search-tab_hidden"
-  | "search-tab-input"
   | "item-title"
   | "item-titleInput"
-  | "item-done"
   | "item-row"
   | "item-row-title"
   | "item-container-row-title"
@@ -31,13 +31,14 @@ type ClassName =
   | "item-icon-circle_hidden"
   | "item-icon-image_square"
   | "item-icon-image_circle"
-  | "item-children"
+  | "item-icon-video"
+  | "item-icon-image_closed"
   //DND
   | "item-dragAvatar"
   | "item-dragDestinationLine"
-  | "item-dragDestinationBulp"
-
-  //
-  | "player";
+  | "item-dragDestinationBulp";
 
 type ElementId = string;
+
+type AppTheme = "dark" | "light";
+type DropPlacement = "after" | "before" | "inside";
