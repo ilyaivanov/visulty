@@ -1,14 +1,15 @@
 import { dom, input, style } from "../browser";
 import { colors, anim, levels, spacings } from "../designSystem";
 import { play } from "../api/youtubePlayer";
-import { itemsStore, dispatcher, dnd } from "../globals";
+import { itemsStore, dispatcher, dnd, uiState } from "../globals";
 import { ItemIcon } from "./itemIcon";
 import { showSkeletons } from "./itemSkeleton";
 
 export class ItemView {
-  childrenElem = dom.createRef("div");
   icon: ItemIcon;
   el: HTMLElement;
+  rowElem = dom.createRef("div");
+  childrenElem = dom.createRef("div");
   titleElem = dom.createRef("span");
   constructor(public item: MyItem, public level: number) {
     this.icon = new ItemIcon(item, {
@@ -20,6 +21,8 @@ export class ItemView {
         "div",
         {
           classNames: ["item-row", levels.rowForLevel(level)],
+          ref: this.rowElem,
+          onClick: () => uiState.select(item),
           onMouseMove: (e) => dnd.onItemMouseMoveOver(item, e),
         },
         [
@@ -86,6 +89,10 @@ export class ItemView {
         ItemView.view(item, this.level + 1)
       );
   };
+
+  public select = () => dom.addClass(this.rowElem.elem, "item-row_selected");
+  public unselect = () =>
+    dom.removeClass(this.rowElem.elem, "item-row_selected");
 
   private close = (animate?: boolean) => {
     if (animate) {

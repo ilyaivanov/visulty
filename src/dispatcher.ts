@@ -23,14 +23,17 @@ export class CommandsDispatcher {
       this.viewAction(command.itemId, (view) =>
         view.updateItemChildrenVisibility(true)
       );
-    if (command.type === "item-removed")
+    else if (command.type === "item-removed")
       this.viewAction(command.itemId, (view) => view.remove(command.instant));
-
-    if (command.type === "item-loaded")
+    else if (command.type === "item-selected")
+      this.viewAction(command.item.id, (view) => view.select());
+    else if (command.type === "item-unselected")
+      this.viewAction(command.item.id, (view) => view.unselect());
+    else if (command.type === "item-loaded")
       this.viewAction(command.itemId, (view) =>
         view.updateItemChildrenVisibility()
       );
-    if (command.type === "item-added") {
+    else if (command.type === "item-added") {
       const parent = command.item.parent!;
       const context = parent.children!;
       const index = context.indexOf(command.item);
@@ -49,15 +52,15 @@ export class CommandsDispatcher {
         );
       }
       this.viewAction(parent.id, (view) => view.updateIcons());
-    }
-    if (command.type === "search-visibility-toggled")
+    } else if (command.type === "search-visibility-toggled")
       this.searchTab?.onSearchVisibilityChange();
-    if (command.type === "searching-start") this.searchTab?.startSearching();
-    if (command.type === "searching-end") this.searchTab?.stopSearching();
-    if (command.type === "theme-changed") {
+    else if (command.type === "searching-start")
+      this.searchTab?.startSearching();
+    else if (command.type === "searching-end") this.searchTab?.stopSearching();
+    else if (command.type === "theme-changed") {
       this.header?.assignThemeButtonText();
       this.appView?.assignTheme();
-    }
+    } else assertDispatcherHandlesAllCommands(command);
   };
 
   viewAction = (itemId: string, action: Action<ItemView>) => {
@@ -67,4 +70,11 @@ export class CommandsDispatcher {
       if (view) action(view);
     }
   };
+}
+
+function assertDispatcherHandlesAllCommands(p: never): never;
+function assertDispatcherHandlesAllCommands(x: DomainCommand): never {
+  throw new Error(
+    "Dispatcher should handle all of the command types, but it got " + x.type
+  );
 }
