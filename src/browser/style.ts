@@ -1,4 +1,5 @@
 const s = document.createElement("style");
+s.id = "app-styles";
 document.head.appendChild(s);
 
 const selector = (selector: string, styles: StylesWithVariables) => {
@@ -10,6 +11,7 @@ const ignoredStyles: Record<string, number> = {
   onHover: 1,
   themes: 1,
   variables: 1,
+  at: 1,
 };
 
 type StylesWithVariables = Styles & {
@@ -33,20 +35,21 @@ const handleCompoundStyles = (
 };
 
 export const style = {
-  text: (val: string) => (s.innerHTML += val),
   selector,
   tag: (tagName: keyof HTMLElementTagNameMap, styles: StylesWithVariables) =>
     selector(`${tagName}`, styles),
 
+  keyframes: (animationName: string, frames: (Styles & { at: string })[]) => {
+    s.innerHTML += keyframesToString(animationName, frames);
+  },
   class: (className: CN, styles: CompoundStyles) =>
     handleCompoundStyles(`.${className}`, styles),
   class2: (className1: CN, className2: CN, styles: CompoundStyles) =>
     handleCompoundStyles(`.${className1}.${className2}`, styles),
   id: (id: ElementId, styles: CompoundStyles) =>
     handleCompoundStyles(`#${id}`, styles),
-  after: (className: CN, styles: Styles) => {
-    selector(`.${className}::after`, styles);
-  },
+  after: (className: CN, styles: Styles) =>
+    selector(`.${className}::after`, styles),
   parentHover: (parent: CN, child: CN, styles: StylesWithVariables) =>
     selector(`.${parent}:hover > .${child}`, styles),
   parentChild: (parent: CN, child: CN, styles: StylesWithVariables) =>
@@ -57,7 +60,7 @@ export const style = {
 
 const cssToString = (selector: string, props: StylesWithVariables) => {
   let values = Object.entries(convertNumericStylesToProperCssOjbect(props)).map(
-    ([key, val]) => `\t${key}: ${val};`
+    ([key, val]) => `    ${key}: ${val};`
   );
   if (props.variables) {
     const variablesFormatted = Object.entries(props.variables).map(
@@ -66,6 +69,17 @@ const cssToString = (selector: string, props: StylesWithVariables) => {
     values = values.concat(variablesFormatted);
   }
   return `\n${selector}{\n${values.join("\n")}\n}\n`;
+};
+
+const keyframesToString = (
+  animationName: string,
+  frames: (Styles & { at: string })[]
+) => {
+  return (
+    `\n@keyframes ${animationName} {` +
+    frames.map((frame) => cssToString(frame.at, frame)).join("") +
+    "\n}"
+  );
 };
 
 export const convertNumericStylesToProperCssOjbect = (styles: Styles): {} =>

@@ -126,6 +126,7 @@ export class ItemView {
 
   private enterRenameMode = () => {
     const inputElem = input({
+      className: "item-titleInput",
       value: this.item.title,
       onBlur: stopRenaming,
       onKeyDown: (e) => {
@@ -222,19 +223,11 @@ export const itemSkeleton = (index: number, level: number) => {
 };
 
 const time = 1500;
-style.text(`
-@keyframes opacity {
-  0%{
-    background-color: ${colors.itemSkeletonBackground};
-    }
-  20%{
-      background-color: ${colors.itemSkeletonGradientCenter};
-  }
-  80%, 100% {
-      background-color: ${colors.itemSkeletonBackground};
-  }
-}
-`);
+style.keyframes("opacity", [
+  { at: "0%", backgroundColor: colors.itemSkeletonBackground },
+  { at: "20%", backgroundColor: colors.itemSkeletonGradientCenter },
+  { at: "80%, 100%", backgroundColor: colors.itemSkeletonBackground },
+]);
 
 style.class("avatar-row" as any, {
   height: 32,

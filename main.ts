@@ -8,7 +8,7 @@ import { dummyRoot } from "./src/api/dummyUserState";
 
 createThemeStyles();
 
-const USE_REAL_API = true;
+const USE_REAL_API = false;
 
 initFirebase(() => {
   if (USE_REAL_API) {
@@ -50,7 +50,6 @@ initFirebase(() => {
 });
 
 style.tag("body", {
-  color: "white",
   margin: 0,
   fontFamily: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"`,
 });

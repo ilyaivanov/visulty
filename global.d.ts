@@ -14,10 +14,8 @@ type ClassName =
   | "main-tab"
   | "search-tab"
   | "search-tab_hidden"
-  | "search-tab-input"
   | "item-title"
   | "item-titleInput"
-  | "item-done"
   | "item-row"
   | "item-row-title"
   | "item-container-row-title"
@@ -35,14 +33,10 @@ type ClassName =
   | "item-icon-image_circle"
   | "item-icon-video"
   | "item-icon-image_closed"
-  | "item-children"
   //DND
   | "item-dragAvatar"
   | "item-dragDestinationLine"
-  | "item-dragDestinationBulp"
-
-  //
-  | "player";
+  | "item-dragDestinationBulp";
 
 type ElementId = string;
 
