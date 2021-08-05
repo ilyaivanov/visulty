@@ -1,6 +1,6 @@
-//   'colorName' : [darkColor, lightColor]
+// 'colorName' : [darkTheme, lightTheme]
 
-const colors = {
+export const colors = {
   //KEY ELEMENTS
   appBackground: ["#1E1E1E", "white"],
   header: ["#3C3C3C", "white"],
@@ -27,19 +27,4 @@ const colors = {
   itemImageShadow: ["rgba(255, 255, 255, 0.7)", "rgb(184, 188, 191)"],
   itemImageInsetShadow: ["rgba(255,255,255,0.15)", "rgba(184, 188, 191, 0.5)"],
   dragDestination: ["white", "black"],
-};
-
-export type ThemeColors = StringKeys<typeof colors>;
-export const darkThemeColors: ThemeColors = takeNthKey(colors, 0);
-
-export const lightThemeColors: ThemeColors = takeNthKey(colors, 1);
-
-function takeNthKey<T>(theme: T, index: number): StringKeys<T> {
-  return Object.fromEntries(
-    Object.entries(theme).map(([key, values]) => [key, values[index]])
-  ) as StringKeys<T>;
-}
-
-type StringKeys<Type> = {
-  [Property in keyof Type]: string;
 };
