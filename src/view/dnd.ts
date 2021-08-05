@@ -2,7 +2,7 @@
 import { dom, style } from "../browser";
 import { spacings } from "../designSystem";
 import { colors } from "../designSystem";
-import { store } from "../globals";
+import { itemsStore } from "../globals";
 import { ItemIcon } from "./itemIcon";
 // import FolderIcon from "./FolderIcon";
 
@@ -82,7 +82,7 @@ export class Dnd {
     const { itemBeingDragged, itemViewUnder, dropPlacement } = this;
     if (itemBeingDragged && itemViewUnder && dropPlacement) {
       if (itemBeingDragged != itemViewUnder)
-        store.moveItem({
+        itemsStore.moveItem({
           itemOver: itemBeingDragged,
           placement: dropPlacement,
           itemUnder: itemViewUnder,

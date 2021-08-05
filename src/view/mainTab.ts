@@ -1,6 +1,6 @@
 import { dom } from "../browser";
 import { levels } from "../designSystem";
-import { store } from "../globals";
+import { itemsStore } from "../globals";
 import { ItemView } from "./itemView";
 
 export class MainTab {
@@ -8,7 +8,7 @@ export class MainTab {
 
   constructor() {
     this.el = dom.elem("div", { className: "tab" }, [
-      ItemView.viewChildrenFor(store.root),
+      ItemView.viewChildrenFor(itemsStore.root),
       this.addButton(),
     ]);
   }
@@ -17,7 +17,7 @@ export class MainTab {
     return dom.elem("div", { className: levels.rowForLevel(0) }, [
       dom.elem("button", {
         textContent: "add",
-        onClick: () => store.addItemToTheEndOf(store.root),
+        onClick: () => itemsStore.addItemToTheEndOf(itemsStore.root),
       }),
     ]);
   }

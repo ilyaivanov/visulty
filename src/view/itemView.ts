@@ -1,7 +1,7 @@
 import { dom, input, style } from "../browser";
 import { colors, anim, levels, spacings } from "../designSystem";
 import { play } from "../api/youtubePlayer";
-import { store, dispatcher, dnd } from "../globals";
+import { itemsStore, dispatcher, dnd } from "../globals";
 import { ItemIcon } from "./itemIcon";
 import { showSkeletons } from "./itemSkeleton";
 
@@ -12,7 +12,7 @@ export class ItemView {
   titleElem = dom.createRef("span");
   constructor(public item: MyItem, public level: number) {
     this.icon = new ItemIcon(item, {
-      onChevronClick: () => store.toggleItem(item),
+      onChevronClick: () => itemsStore.toggleItem(item),
       onIconMouseDown: (e) => dnd.onItemMouseDown(item, e),
     });
     this.el = dom.elem("div", {}, [
@@ -26,7 +26,9 @@ export class ItemView {
           this.icon.el,
           dom.elem("span", {
             className: "item-row-title",
-            classMap: { "item-container-row-title": store.isContainer(item) },
+            classMap: {
+              "item-container-row-title": itemsStore.isContainer(item),
+            },
             textContent: item.title,
             ref: this.titleElem,
           }),
@@ -37,7 +39,7 @@ export class ItemView {
           }),
           dom.elem("button", {
             textContent: "X",
-            onClickStopPropagation: () => store.removeItem(item),
+            onClickStopPropagation: () => itemsStore.removeItem(item),
           }),
           dom.elem("button", {
             textContent: "E",

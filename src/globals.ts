@@ -1,7 +1,9 @@
 import { CommandsDispatcher } from "./dispatcher";
-import { Store } from "./domain";
+import { Store as ItemsStore } from "./domain/itemsStore";
+import { UIState } from "./domain/uiState";
 import Dnd from "./view/dnd";
 
 export const dispatcher = new CommandsDispatcher();
-export const store = new Store(dispatcher.dispatchCommand);
 export const dnd = new Dnd();
+export const itemsStore = new ItemsStore(dispatcher.dispatchCommand);
+export const uiState = new UIState(dispatcher.dispatchCommand);

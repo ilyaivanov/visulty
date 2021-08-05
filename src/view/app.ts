@@ -1,6 +1,6 @@
 import { dom, div, style, css } from "../browser";
 import { spacings, colors } from "../designSystem";
-import { dispatcher, store } from "../globals";
+import { dispatcher, itemsStore, uiState } from "../globals";
 import { Footer } from "./footer";
 import { Header } from "./header";
 import { MainTab } from "./mainTab";
@@ -20,8 +20,8 @@ export class AppView {
 
   assignTheme = () =>
     dom.assignClassMap(this.el, {
-      "app-light": store.theme === "light",
-      "app-dark": store.theme === "dark",
+      "app-light": uiState.theme === "light",
+      "app-dark": uiState.theme === "dark",
     });
 }
 
@@ -48,6 +48,8 @@ style.tag("body", {
 });
 
 style.class("gallery", {
+  //this width fixes forced center shift for smaller screens
+  width: "100vw",
   height: `calc(100vh - ${spacings.playerFooterHeight}px - ${spacings.headerHeight}px)`,
   gridArea: "gallery",
   display: "flex",

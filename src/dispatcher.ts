@@ -1,4 +1,3 @@
-import { DomainCommand } from "./domain";
 import { AppView } from "./view/app";
 import { Header } from "./view/header";
 import { ItemView } from "./view/itemView";

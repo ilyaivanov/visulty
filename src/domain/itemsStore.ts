@@ -1,5 +1,4 @@
-import * as youtubeApi from "./api/youtubeApi";
-import { store } from "./globals";
+import * as youtubeApi from "../api/youtubeApi";
 
 export class Store {
   root: MyItem = {
@@ -13,10 +12,6 @@ export class Store {
     type: "folder",
     title: "Search",
   };
-
-  isSearchVisible = false;
-
-  theme: AppTheme = "light";
 
   constructor(private dispatchCommand: Action<DomainCommand>) {}
 
@@ -50,11 +45,6 @@ export class Store {
 
   //ACTIONS
 
-  toggleTheme = () => {
-    this.theme = this.theme === "dark" ? "light" : "dark";
-    this.dispatchCommand({ type: "theme-changed" });
-  };
-
   removeItem = (item: MyItem, props?: { instant?: boolean }) => {
     const parent = item.parent;
     if (parent && parent.children) {
@@ -69,7 +59,7 @@ export class Store {
 
   toggleItem = (item: MyItem) => {
     item.isOpen = !item.isOpen;
-    if (store.isNeededToBeFetched(item)) {
+    if (this.isNeededToBeFetched(item)) {
       item.isLoading = true;
       this.loadItem(item).then((children) => {
         item.children = children;
@@ -78,11 +68,6 @@ export class Store {
       });
     }
     this.dispatchCommand({ type: "item-toggled", itemId: item.id });
-  };
-
-  toggleSearchVisibility = () => {
-    this.isSearchVisible = !this.isSearchVisible;
-    this.dispatchCommand({ type: "search-visibility-toggled" });
   };
 
   findVideos = (term: string) => {
@@ -107,12 +92,12 @@ export class Store {
   };
 
   loadItem = (item: MyItem): Promise<MyItem[]> => {
-    if (store.isPlaylist(item)) {
+    if (this.isPlaylist(item)) {
       return youtubeApi
         .loadPlaylistItems(item.playlistId)
         .then((response) => response.items.map(mapResponseItem));
     }
-    if (store.isChannel(item)) {
+    if (this.isChannel(item)) {
       return Promise.all([
         youtubeApi.getChannelUploadsPlaylistId(item.channelId),
         youtubeApi.loadChannelItems(item.channelId),
@@ -213,14 +198,3 @@ const mapResponseItem = (item: youtubeApi.ResponseItem): MyItem => {
       isOpen: false,
     };
 };
-
-export type DomainCommand =
-  | { type: "theme-changed" }
-  | { type: "item-removed"; itemId: string; instant?: boolean }
-  | { type: "item-toggled"; itemId: string }
-  | { type: "item-loaded"; itemId: string }
-  | { type: "item-added"; item: MyItem; instant?: boolean }
-  | { type: "item-moved"; item: MyItem }
-  | { type: "searching-start" }
-  | { type: "searching-end" }
-  | { type: "search-visibility-toggled" };

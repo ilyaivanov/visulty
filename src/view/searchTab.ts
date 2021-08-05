@@ -1,5 +1,5 @@
 import { dom, div, input, style, css } from "../browser";
-import { dispatcher, store } from "../globals";
+import { dispatcher, itemsStore, uiState } from "../globals";
 import { showSkeletons } from "./itemSkeleton";
 import { ItemView } from "./itemView";
 
@@ -14,7 +14,7 @@ export class SearchTab {
         onKeyDown,
       }),
       dom.elem("div", { ref: this.searchContent }, [
-        ItemView.viewChildrenFor(store.searchRoot),
+        ItemView.viewChildrenFor(itemsStore.searchRoot),
       ]),
     ]);
 
@@ -26,7 +26,7 @@ export class SearchTab {
 
   onSearchVisibilityChange = () => {
     dom.assignClassMap(this.el, {
-      "search-tab_hidden": !store.isSearchVisible,
+      "search-tab_hidden": !uiState.isSearchVisible,
     });
   };
 
@@ -37,7 +37,7 @@ export class SearchTab {
   stopSearching = () => {
     dom.setChild(
       this.searchContent.elem,
-      ItemView.viewChildrenFor(store.searchRoot)
+      ItemView.viewChildrenFor(itemsStore.searchRoot)
     );
   };
 }
@@ -46,7 +46,7 @@ const onKeyDown = (e: KeyboardEvent) => {
   if (e.code === "Enter") {
     e.preventDefault();
     const term = (e.currentTarget as HTMLInputElement).value;
-    store.findVideos(term);
+    itemsStore.findVideos(term);
   }
 };
 

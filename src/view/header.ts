@@ -1,6 +1,6 @@
 import { dom, div, button, style } from "../browser";
 import { spacings, colors } from "../designSystem";
-import { dispatcher, store } from "../globals";
+import { dispatcher, uiState } from "../globals";
 
 export class Header {
   el: HTMLElement;
@@ -10,10 +10,10 @@ export class Header {
     this.el = div({ className: "header" }, [
       button({
         textContent: "search",
-        onClick: () => store.toggleSearchVisibility(),
+        onClick: () => uiState.toggleSearchVisibility(),
       }),
       dom.elem("button", {
-        onClick: () => store.toggleTheme(),
+        onClick: () => uiState.toggleTheme(),
         ref: this.themeButton,
       }),
     ]);
@@ -23,7 +23,7 @@ export class Header {
 
   assignThemeButtonText = () => {
     this.themeButton.elem.textContent =
-      store.theme == "dark" ? "Switch to light" : "Switch to dark";
+      uiState.theme == "dark" ? "Switch to light" : "Switch to dark";
   };
 }
 
