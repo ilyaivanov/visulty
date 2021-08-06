@@ -1,6 +1,7 @@
 import { AppView } from "./view/app";
 import { Header } from "./view/header";
 import { ItemView } from "./view/itemView";
+import { MainTab } from "./view/mainTab";
 import { SearchTab } from "./view/searchTab";
 
 export class CommandsDispatcher {
@@ -8,6 +9,7 @@ export class CommandsDispatcher {
   public searchTab?: SearchTab;
   public header?: Header;
   public appView?: AppView;
+  public mainTab?: MainTab;
   itemViewed = (view: ItemView) => {
     if (view.el.id) {
       throw new Error(
@@ -27,7 +29,10 @@ export class CommandsDispatcher {
       this.viewAction(command.itemId, (view) => view.remove(command.instant));
     else if (command.type === "item-selected")
       this.viewAction(command.item.id, (view) => view.select());
-    else if (command.type === "item-unselected")
+    else if (command.type === "item-focused") {
+      this.header?.focusOn(command.item);
+      this.mainTab?.focusOn(command.item);
+    } else if (command.type === "item-unselected")
       this.viewAction(command.item.id, (view) => view.unselect());
     else if (command.type === "item-loaded")
       this.viewAction(command.itemId, (view) =>

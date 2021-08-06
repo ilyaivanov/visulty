@@ -5,6 +5,7 @@ type DomainCommand =
   | { type: "item-loaded"; itemId: string }
   | { type: "item-added"; item: MyItem; instant?: boolean }
   | { type: "item-selected"; item: MyItem }
+  | { type: "item-focused"; item: MyItem }
   | { type: "item-unselected"; item: MyItem }
   | { type: "search-input-focus" }
   | { type: "search-input-blur" }

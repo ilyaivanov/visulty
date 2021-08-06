@@ -1,16 +1,11 @@
 import * as dom from "./dom";
 import { camelToSnakeCase, Styles } from "./style";
 
-type ClassDefinitions = {
-  className?: ClassName;
-  classMap?: Partial<Record<ClassName, boolean>>;
-};
-
 type SvgEvents = {
   onMouseDown?: Action<MouseEvent>;
   onClick?: Action<MouseEvent>;
 };
-type BaseSvg = ClassDefinitions & SvgEvents;
+type BaseSvg = dom.ClassDefinitions & SvgEvents;
 type SvgInlineStyles = Pick<Styles, "backgroundImage">;
 
 export interface SvgProps extends BaseSvg {
@@ -34,7 +29,7 @@ export const svg = (props: SvgProps): SVGSVGElement =>
     props
   );
 
-export interface CircleProps extends ClassDefinitions {
+export interface CircleProps extends dom.ClassDefinitions {
   cx: number;
   cy: number;
   r: number;
@@ -48,7 +43,7 @@ export const circle = (circleProps: CircleProps) =>
     circleProps
   );
 
-export interface PolygonProps extends ClassDefinitions {
+export interface PolygonProps extends dom.ClassDefinitions {
   points: string;
   fill: string;
   stroke?: string;
@@ -58,7 +53,7 @@ export interface PolygonProps extends ClassDefinitions {
 export const polygon = (props: PolygonProps) =>
   assignSvgAttributes(svgElem("polygon"), props);
 
-export interface PathProps extends ClassDefinitions {
+export interface PathProps extends dom.ClassDefinitions {
   d: string;
   fill?: string;
   stroke?: string;
@@ -87,7 +82,7 @@ const attributesInPascal: Record<string, boolean> = {
 };
 const assignSvgAttributes = <T extends Element>(
   elem: T,
-  attributes: {} & ClassDefinitions
+  attributes: {} & dom.ClassDefinitions
 ): T => {
   if (attributes.className) elem.classList.add(attributes.className);
   Object.entries(attributes).forEach(([key, value]) => {

@@ -44,6 +44,10 @@ export const style = {
   },
   class: (className: CN, styles: CompoundStyles) =>
     handleCompoundStyles(`.${className}`, styles),
+  classHover: (className: CN, styles: CompoundStyles) =>
+    handleCompoundStyles(`.${className}:hover`, styles),
+  classActive: (className: CN, styles: CompoundStyles) =>
+    handleCompoundStyles(`.${className}:active`, styles),
   class2: (className1: CN, className2: CN, styles: CompoundStyles) =>
     handleCompoundStyles(`.${className1}.${className2}`, styles),
   id: (id: ElementId, styles: CompoundStyles) =>
@@ -142,8 +146,8 @@ export type Styles = Partial<{
 
   //margins and paddings
   margin: number;
-  marginRight: number | "-100%";
-  marginLeft: number;
+  marginRight: number | "-100%" | "auto";
+  marginLeft: number | "auto";
   marginTop: number;
   marginBottom: number;
   padding: number | string;
@@ -223,7 +227,7 @@ export type Styles = Partial<{
   gridArea: string;
 
   //Other
-  cursor: "pointer";
+  cursor: "pointer" | "default";
   userSelect: "none";
   transform: string;
   transformOrigin: string;

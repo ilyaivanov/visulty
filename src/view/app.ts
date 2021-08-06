@@ -28,7 +28,6 @@ export class AppView {
 export const viewApp = () => new AppView().el;
 
 style.class("app", {
-  color: "white",
   backgroundColor: colors.appBackground,
   height: "100vh",
   width: "100vw",

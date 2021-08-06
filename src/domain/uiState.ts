@@ -12,6 +12,8 @@ export class UIState {
   mainTabItemSelected?: MyItem;
   searchTabItemSelected?: MyItem;
 
+  mainTabItemFocused?: MyItem;
+
   constructor(
     private dispatchCommand: Action<DomainCommand>,
     private itemsStore: ItemsStore
@@ -116,6 +118,14 @@ export class UIState {
         this.focusOnSearchInput();
       }
     }
+  };
+
+  focusOnItem = (item: MyItem) => {
+    this.mainTabItemFocused = item;
+    this.dispatchCommand({
+      type: "item-focused",
+      item,
+    });
   };
 
   private unSelectCommand = (item: MyItem) =>

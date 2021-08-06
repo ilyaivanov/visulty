@@ -1,3 +1,4 @@
+//TODO: introduce swatches (color palletes)
 // 'colorName' : [darkTheme, lightTheme]
 
 export const colors = {
@@ -8,8 +9,13 @@ export const colors = {
   scrollThumb: ["#424242", "#B8BCBF"],
   menuShadow: ["rgba(9, 30, 66, 0.13)", "rgb(220, 224, 226)"],
 
+  //HEADER
+  headerMenuHover: ["rgba(255,255,255,0.2)", "rgb(236, 238, 240)"],
+  headerMenuClick: ["rgba(255,255,255,0.3)", "rgb(220, 224, 226)"],
+
   //TYPOGRAPHY
   mainTextColor: ["#DDDDDD", "rgb(76, 81, 85)"],
+  disabledTextColor: ["#DDDDDD", "rgb(184, 188, 191)"],
 
   //ITEMS
   itemHover: ["rgb(42,45,46)", "rgba(0, 0, 0, 0.03)"],

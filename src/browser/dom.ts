@@ -27,7 +27,7 @@ const assignChildrenArrayToElement = (
   children: ElementChild[]
 ) => children.forEach((child) => child && elem.appendChild(child));
 
-export const setChildren = (elem: Element, children: Element[]) => {
+export const setChildren = (elem: Element, children: Node[]) => {
   removeAllChildren(elem);
   children.forEach((child) => elem.appendChild(child));
 };
@@ -84,21 +84,26 @@ type Events = {
   onClick?: (e: MouseEvent) => void;
   onClickStopPropagation?: (e: MouseEvent) => void;
   onMouseMove?: (e: MouseEvent) => void;
+  onMouseEnter?: (e: MouseEvent) => void;
+  onMouseLeave?: (e: MouseEvent) => void;
   onBlur?: (e: FocusEvent) => void;
 };
 
 const assignElementEvents = (elem: HTMLElement, props: Events) => {
-  const { onClick, onClickStopPropagation, onKeyDown, onMouseMove, onBlur } =
-    props;
-  if (onKeyDown) elem.addEventListener("keydown", onKeyDown);
-  if (onClick) elem.addEventListener("click", onClick);
+  const { onClickStopPropagation } = props;
+  if (props.onKeyDown) elem.addEventListener("keydown", props.onKeyDown);
+  if (props.onClick) elem.addEventListener("click", props.onClick);
   if (onClickStopPropagation)
     elem.addEventListener("click", (e) => {
       e.stopPropagation();
       onClickStopPropagation(e);
     });
-  if (onMouseMove) elem.addEventListener("mousemove", onMouseMove);
-  if (onBlur) elem.addEventListener("blur", onBlur);
+  if (props.onMouseMove) elem.addEventListener("mousemove", props.onMouseMove);
+  if (props.onMouseEnter)
+    elem.addEventListener("mouseenter", props.onMouseEnter);
+  if (props.onMouseLeave)
+    elem.addEventListener("mouseleave", props.onMouseLeave);
+  if (props.onBlur) elem.addEventListener("blur", props.onBlur);
 };
 
 //ELEMENTS

@@ -43,6 +43,10 @@ export class ItemView {
                 item.type === "YTvideo" && play(item.videoId),
             }),
             dom.elem("button", {
+              textContent: "F",
+              onClickStopPropagation: () => uiState.focusOnItem(item),
+            }),
+            dom.elem("button", {
               textContent: "X",
               onClickStopPropagation: () => itemsStore.removeItem(item),
             }),
