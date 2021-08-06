@@ -15,7 +15,7 @@ export const colors = {
 
   //TYPOGRAPHY
   mainTextColor: ["#DDDDDD", "rgb(76, 81, 85)"],
-  disabledTextColor: ["#DDDDDD", "rgb(184, 188, 191)"],
+  disabledTextColor: ["gray", "rgb(184, 188, 191)"],
 
   //ITEMS
   itemHover: ["rgb(42,45,46)", "rgba(0, 0, 0, 0.03)"],

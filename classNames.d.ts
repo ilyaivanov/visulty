@@ -11,6 +11,8 @@ type ClassName =
   | "main-tab"
   | "search-tab"
   | "search-tab_hidden"
+
+  //ITEM TREE
   | "item-title"
   | "item-titleInput"
   | "item-row"
@@ -32,10 +34,16 @@ type ClassName =
   | "item-icon-image_circle"
   | "item-icon-video"
   | "item-icon-image_closed"
+
   //DND
   | "item-dragAvatar"
   | "item-dragDestinationLine"
   | "item-dragDestinationBulp"
+
+  //LEFT SIDEBAR
+  | "left-sidebar"
+  | "left-sidebar-item"
+  | "left-sidebar-item-children"
 
   //HEADER
   | "header"

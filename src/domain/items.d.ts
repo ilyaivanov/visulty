@@ -2,6 +2,7 @@ type ItemBase = {
   id: string;
   title: string;
   isOpen?: boolean;
+  isOpenInSidebar?: boolean;
   isLoading?: boolean;
   children?: MyItem[];
   parent?: MyItem;

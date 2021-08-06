@@ -1,8 +1,9 @@
 import { dom, div, style, css } from "../browser";
 import { spacings, colors } from "../designSystem";
-import { dispatcher, itemsStore, uiState } from "../globals";
+import { dispatcher, uiState } from "../globals";
 import { Footer } from "./footer";
 import { Header } from "./header";
+import { LeftSidebar } from "./leftSidebar";
 import { MainTab } from "./mainTab";
 import { SearchTab } from "./searchTab";
 
@@ -12,6 +13,7 @@ export class AppView {
     this.el = div({ className: "app" }, [
       new Header().el,
       div({ className: "gallery" }, [MainTab.view(), SearchTab.view()]),
+      new LeftSidebar().el,
       new Footer().el,
     ]);
     this.assignTheme();

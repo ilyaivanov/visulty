@@ -204,6 +204,7 @@ export type Styles = Partial<{
   fontSize: number;
   fontWeight: "bold" | "500" | "600";
   fontStyle: "italic";
+  whiteSpace: "nowrap";
 
   //shadows
   boxShadow: string;

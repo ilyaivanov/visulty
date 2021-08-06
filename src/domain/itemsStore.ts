@@ -76,6 +76,11 @@ export class ItemsStore {
     this.dispatchCommand({ type: "item-toggled", itemId: item.id });
   };
 
+  toggleItemOnSidebar = (item: MyItem) => {
+    item.isOpenInSidebar = !item.isOpenInSidebar;
+    this.dispatchCommand({ type: "item-toggled-in-sidebar", item });
+  };
+
   findVideos = (term: string) => {
     this.dispatchCommand({ type: "searching-start" });
 
