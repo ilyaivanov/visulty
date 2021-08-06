@@ -60,6 +60,11 @@ export class CommandsDispatcher {
     else if (command.type === "theme-changed") {
       this.header?.assignThemeButtonText();
       this.appView?.assignTheme();
+    } else if (command.type === "search-input-focus")
+      this.searchTab?.searchInput.elem.focus({ preventScroll: true });
+    else if (command.type === "search-input-blur") {
+      if (document.activeElement == this.searchTab?.searchInput.elem)
+        this.searchTab?.searchInput.elem.blur();
     } else assertDispatcherHandlesAllCommands(command);
   };
 

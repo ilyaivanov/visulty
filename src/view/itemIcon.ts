@@ -116,7 +116,7 @@ const outerCircleClassMap = (item: MyItem): dom.ClassMap => ({
 
 const chevronMap = (item: MyItem): dom.ClassMap => ({
   "item-icon-chevron_open": item.isOpen,
-  "item-icon-chevron_active":
+  "item-row_showOnHoverOrSelected":
     item.isLoading ||
     !itemsStore.isEmpty(item) ||
     itemsStore.isNeededToBeFetched(item),
@@ -146,7 +146,6 @@ style.class("item-icon-chevron", {
   color: colors.itemChevron,
   opacity: 0,
   userSelect: "none",
-  pointerEvents: "none",
   onHover: { color: "currentColor" },
   transition: css.transition({
     transform: timings.itemCollapse,
@@ -160,12 +159,14 @@ style.class("item-icon-chevron_open", {
 
 style.class("item-icon-chevron_visible", {
   opacity: 1,
-  pointerEvents: "all",
 });
 
-style.parentHover("item-row", "item-icon-chevron_active", {
+style.parentHover("item-row", "item-row_showOnHoverOrSelected", {
   opacity: 1,
-  pointerEvents: "all",
+});
+
+style.parentChild("item-row_selected", "item-row_showOnHoverOrSelected", {
+  opacity: 1,
 });
 
 const inset = (spread: number, color: string) =>

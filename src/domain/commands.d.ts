@@ -6,6 +6,8 @@ type DomainCommand =
   | { type: "item-added"; item: MyItem; instant?: boolean }
   | { type: "item-selected"; item: MyItem }
   | { type: "item-unselected"; item: MyItem }
+  | { type: "search-input-focus" }
+  | { type: "search-input-blur" }
   | { type: "searching-start" }
   | { type: "searching-end" }
   | { type: "search-visibility-toggled" };

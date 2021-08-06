@@ -1,5 +1,5 @@
-import { itemsStore } from "../globals";
 import * as items from "./itemQueries";
+import { ItemsStore } from "./itemsStore";
 
 type TabName = "main" | "search";
 
@@ -12,60 +12,60 @@ export class UIState {
   mainTabItemSelected?: MyItem;
   searchTabItemSelected?: MyItem;
 
-  constructor(private dispatchCommand: Action<DomainCommand>) {
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "2" && e.ctrlKey) {
-        e.preventDefault();
-        this.focusOnTab("search");
-      }
-      if (e.key === "1" && e.ctrlKey) {
-        e.preventDefault();
-        this.focusOnTab("main");
-      }
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        const currentlySelected = this.getCurrentlySelectedItem();
-        if (currentlySelected) {
-          const itemBelow = items.getItemBelow(currentlySelected);
-          if (itemBelow) this.select(itemBelow);
-        }
-      }
-      if (e.key === "ArrowUp") {
-        e.preventDefault();
-        const currentlySelected = this.getCurrentlySelectedItem();
-        if (currentlySelected) {
-          const itemBelow = items.getItemAbove(currentlySelected);
-          if (itemBelow) this.select(itemBelow);
-        }
-      }
-      if (e.key === "ArrowRight") {
-        e.preventDefault();
-        const currentlySelected = this.getCurrentlySelectedItem();
-        if (currentlySelected) {
-          if (!currentlySelected.isOpen && currentlySelected.children) {
-            itemsStore.toggleItem(currentlySelected);
-          } else {
-            const firstChild = items.getFirstChild(currentlySelected);
-            if (firstChild) this.select(firstChild);
-          }
-        }
-      }
-      if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        const currentlySelected = this.getCurrentlySelectedItem();
-        if (currentlySelected) {
-          if (currentlySelected.isOpen) {
-            itemsStore.toggleItem(currentlySelected);
-          } else {
-            const parent = currentlySelected.parent;
-            if (parent && !items.isRoot(parent)) this.select(parent);
-          }
-        }
-      }
-    });
-  }
+  constructor(
+    private dispatchCommand: Action<DomainCommand>,
+    private itemsStore: ItemsStore
+  ) {}
 
-  getCurrentlySelectedItem = () => {
+  moveSelectionDown = () => {
+    const currentlySelected = this.getCurrentlySelectedItem();
+    if (currentlySelected) {
+      const itemBelow = items.getItemBelow(currentlySelected);
+      if (itemBelow) this.select(itemBelow);
+    } else if (this.tabFocused === "search" && !currentlySelected) {
+      this.select(this.itemsStore.searchRoot.children![0]);
+      this.blurOnSearchInput();
+    }
+  };
+
+  moveSelectionUp = () => {
+    const currentlySelected = this.getCurrentlySelectedItem();
+    if (currentlySelected) {
+      const itemAbove = items.getItemAbove(currentlySelected);
+      if (itemAbove) this.select(itemAbove);
+      else if (this.tabFocused === "search") {
+        this.unSelectCommand(currentlySelected);
+        this.searchTabItemSelected = undefined;
+        this.focusOnSearchInput();
+      }
+    }
+  };
+
+  moveSelectionLeft = () => {
+    const currentlySelected = this.getCurrentlySelectedItem();
+    if (currentlySelected) {
+      if (currentlySelected.isOpen) {
+        this.itemsStore.toggleItem(currentlySelected);
+      } else {
+        const parent = currentlySelected.parent;
+        if (parent && !items.isRoot(parent)) this.select(parent);
+      }
+    }
+  };
+
+  moveSelectionRight = () => {
+    const currentlySelected = this.getCurrentlySelectedItem();
+    if (currentlySelected) {
+      if (!currentlySelected.isOpen && currentlySelected.children) {
+        this.itemsStore.toggleItem(currentlySelected);
+      } else {
+        const firstChild = items.getFirstChild(currentlySelected);
+        if (firstChild) this.select(firstChild);
+      }
+    }
+  };
+
+  getCurrentlySelectedItem = (): MyItem | undefined => {
     if (this.tabFocused === "main") return this.mainTabItemSelected;
     if (this.tabFocused === "search") return this.searchTabItemSelected;
   };
@@ -103,8 +103,19 @@ export class UIState {
   focusOnTab = (tabName: TabName) => {
     if (tabName === "main" && this.mainTabItemSelected) {
       this.select(this.mainTabItemSelected);
-    } else if (tabName === "search" && this.searchTabItemSelected)
-      this.select(this.searchTabItemSelected);
+      if (!this.searchTabItemSelected) this.blurOnSearchInput();
+    } else if (tabName === "search") {
+      if (!this.isSearchVisible) this.toggleSearchVisibility();
+
+      if (this.mainTabItemSelected)
+        this.unSelectCommand(this.mainTabItemSelected);
+      if (this.searchTabItemSelected) {
+        this.select(this.searchTabItemSelected);
+      } else {
+        this.tabFocused = "search";
+        this.focusOnSearchInput();
+      }
+    }
   };
 
   private unSelectCommand = (item: MyItem) =>
@@ -112,4 +123,9 @@ export class UIState {
 
   private selectCommand = (item: MyItem) =>
     this.dispatchCommand({ type: "item-selected", item });
+
+  private focusOnSearchInput = () =>
+    this.dispatchCommand({ type: "search-input-focus" });
+  private blurOnSearchInput = () =>
+    this.dispatchCommand({ type: "search-input-blur" });
 }

@@ -6,7 +6,7 @@ describe("Having a default UI State", () => {
 
   beforeEach(() => {
     commandsLogger = createLoggingDispatcher();
-    uiState = new UIState((c) => commandsLogger.dispatch(c));
+    uiState = new UIState((c) => commandsLogger.dispatch(c), undefined as any);
   });
 
   it("selecting an item dispatch select command", () => {
@@ -39,7 +39,7 @@ describe("Having a default UI State", () => {
     expectEqual(uiState.tabFocused, "search");
   });
 
-  fit("Selecting one item in main, then selecting another in search, when switching focus to main it should select first", () => {
+  it("Selecting one item in main, then selecting another in search, when switching focus to main it should select first", () => {
     const item1 = createDummyItem("my-item1");
     item1.parent = createDummyItem("HOME");
     uiState.select(item1);

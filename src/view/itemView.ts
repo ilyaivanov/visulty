@@ -1,4 +1,4 @@
-import { dom, input, style } from "../browser";
+import { dom, div, input, style } from "../browser";
 import { colors, anim, levels, spacings } from "../designSystem";
 import { play } from "../api/youtubePlayer";
 import { itemsStore, dispatcher, dnd, uiState } from "../globals";
@@ -11,6 +11,7 @@ export class ItemView {
   rowElem = dom.createRef("div");
   childrenElem = dom.createRef("div");
   titleElem = dom.createRef("span");
+
   constructor(public item: MyItem, public level: number) {
     this.icon = new ItemIcon(item, {
       onChevronClick: () => itemsStore.toggleItem(item),
@@ -35,19 +36,21 @@ export class ItemView {
             textContent: item.title,
             ref: this.titleElem,
           }),
-          dom.elem("button", {
-            textContent: "▶",
-            onClickStopPropagation: () =>
-              item.type === "YTvideo" && play(item.videoId),
-          }),
-          dom.elem("button", {
-            textContent: "X",
-            onClickStopPropagation: () => itemsStore.removeItem(item),
-          }),
-          dom.elem("button", {
-            textContent: "E",
-            onClickStopPropagation: () => this.enterRenameMode(),
-          }),
+          div({ classNames: ["hide", "item-row_showOnHoverOrSelected"] }, [
+            dom.elem("button", {
+              textContent: "▶",
+              onClickStopPropagation: () =>
+                item.type === "YTvideo" && play(item.videoId),
+            }),
+            dom.elem("button", {
+              textContent: "X",
+              onClickStopPropagation: () => itemsStore.removeItem(item),
+            }),
+            dom.elem("button", {
+              textContent: "E",
+              onClickStopPropagation: () => this.enterRenameMode(),
+            }),
+          ]),
         ]
       ),
     ]);
@@ -181,6 +184,8 @@ style.class("item-row", {
     backgroundColor: colors.itemHover,
   },
 });
+
+style.class("hide", { opacity: 0 });
 
 style.class2("item-row", "item-row_selected", {
   backgroundColor: colors.itemSelected,

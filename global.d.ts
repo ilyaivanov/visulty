@@ -28,6 +28,8 @@ type ClassName =
   | "item-icon-chevron_open"
   | "item-icon-chevron_visible"
   | "item-icon-chevron_active"
+  | "hide"
+  | "item-row_showOnHoverOrSelected"
   | "item-icon-circle_hidden"
   | "item-icon-image_square"
   | "item-icon-image_circle"

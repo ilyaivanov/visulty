@@ -6,9 +6,11 @@ import { ItemView } from "./itemView";
 export class SearchTab {
   el: HTMLElement;
   searchContent = dom.createRef("div");
+  searchInput = dom.createRef("input");
   constructor() {
     this.el = div({ classNames: ["tab", "search-tab"] }, [
       input({
+        ref: this.searchInput,
         placeholder: "Search...",
         value: "",
         onKeyDown,

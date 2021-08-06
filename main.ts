@@ -2,7 +2,7 @@ import { initFirebase, loadUserSettings } from "./src/api/userState";
 import { sampleUserName } from "./src/api/config";
 import { style } from "./src/browser";
 import { viewApp } from "./src/view/app";
-import { itemsStore } from "./src/globals";
+import { itemsStore, uiState } from "./src/globals";
 import { createThemeStyles } from "./src/designSystem";
 import { dummyRoot } from "./src/api/dummyUserState";
 import * as itemsQueries from "./src/domain/itemQueries";
@@ -36,8 +36,9 @@ initFirebase(() => {
         .filter((x) => x) as MyItem[];
 
       itemsQueries.assignChildrenTo(itemsStore.root, items);
-
+      const firstChild = itemsQueries.getFirstChild(itemsStore.root);
       document.body.appendChild(viewApp());
+      firstChild && uiState.select(firstChild);
     });
   } else {
     itemsStore.root = dummyRoot;
