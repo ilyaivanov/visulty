@@ -32,6 +32,7 @@ export class Dnd {
     if (e.buttons == 1 && itemBeingDragged) {
       if (!dragAvatar) {
         const dist = distance(initialMousePosition, getScreenPosition(e));
+        console.log(dist);
         if (dist > 5) {
           const icon = ItemIcon.viewIcon(itemBeingDragged);
           this.dragAvatar = dom.elem("div", { className: "item-dragAvatar" }, [
@@ -70,23 +71,6 @@ export class Dnd {
         e.currentTarget as HTMLElement,
         e
       );
-    }
-  };
-
-  onMouseUp = () => {
-    this.drop();
-    this.finishDrag();
-  };
-
-  drop = () => {
-    const { itemBeingDragged, itemViewUnder, dropPlacement } = this;
-    if (itemBeingDragged && itemViewUnder && dropPlacement) {
-      if (itemBeingDragged != itemViewUnder)
-        itemsStore.moveItem({
-          itemOver: itemBeingDragged,
-          placement: dropPlacement,
-          itemUnder: itemViewUnder,
-        });
     }
   };
 
@@ -130,6 +114,23 @@ export class Dnd {
     avatar.style.left = e.pageX - spacings.outerRadius * 2 + "px";
   };
 
+  onMouseUp = () => {
+    this.drop();
+    this.finishDrag();
+  };
+
+  drop = () => {
+    const { itemBeingDragged, itemViewUnder, dropPlacement } = this;
+    if (itemBeingDragged && itemViewUnder && dropPlacement) {
+      if (itemBeingDragged != itemViewUnder)
+        itemsStore.moveItem({
+          itemOver: itemBeingDragged,
+          placement: dropPlacement,
+          itemUnder: itemViewUnder,
+        });
+    }
+  };
+
   finishDrag = () => {
     if (this.dragAvatar) {
       this.dragAvatar.remove();
@@ -139,11 +140,12 @@ export class Dnd {
       this.dragDestination.remove();
       this.dragDestination = undefined;
     }
+    this.itemBeingDragged = undefined;
+    this.itemViewUnder = undefined;
     document.body.style.removeProperty("user-select");
     document.body.style.removeProperty("cursor");
     document.removeEventListener("mousemove", this.onMouseMove);
     document.removeEventListener("mouseup", this.onMouseUp);
-    //   // store.mouseUp();
   };
 }
 interface Vector {
