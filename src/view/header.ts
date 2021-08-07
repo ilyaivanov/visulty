@@ -1,7 +1,7 @@
 import { dom, div, button, style } from "../browser";
 import { spacings, colors, icons } from "../designSystem";
-import { colorsVars } from "../designSystem/colorVars";
 import { dispatcher, itemsStore, uiState } from "../globals";
+import * as itemsQueires from "../domain/itemQueries";
 
 export class Header {
   el: HTMLElement;
@@ -12,19 +12,8 @@ export class Header {
     dispatcher.header = this;
   }
 
-  getItemPath = (item: MyItem) => {
-    const path: MyItem[] = [];
-
-    let parent = item;
-    while (parent.parent) {
-      path.push(parent);
-      parent = parent.parent;
-    }
-    return path.reverse();
-  };
-
   focusOn = (item: MyItem) => {
-    const path = this.getItemPath(item);
+    const path = itemsQueires.getItemPath(item);
     const pathElements = [
       this.separator(itemsStore.root, path[0]),
       ...path
@@ -140,19 +129,19 @@ style.class("header-icon", {
   justifyContent: "center",
   alignItems: "center",
   cursor: "pointer",
-  color: colorsVars.mainTextColor,
+  color: colors.mainTextColor,
 });
 
 style.classHover("header-icon", {
-  backgroundColor: colorsVars.headerMenuHover,
+  backgroundColor: colors.headerMenuHover,
 });
 
 style.classActive("header-icon", {
-  backgroundColor: colorsVars.headerMenuClick,
+  backgroundColor: colors.headerMenuClick,
 });
 
 style.class2("header-icon", "header-icon-disabled", {
-  color: colorsVars.disabledTextColor,
+  color: colors.disabledTextColor,
   backgroundColor: "transparent",
   cursor: "default",
 });
@@ -165,12 +154,12 @@ style.class("header-icon-separator", {
   alignItems: "center",
   justifyContent: "center",
   position: "relative",
-  color: colorsVars.mainTextColor,
+  color: colors.mainTextColor,
   cursor: "pointer",
 });
 
 style.classHover("header-icon-separator", {
-  backgroundColor: colorsVars.headerMenuHover,
+  backgroundColor: colors.headerMenuHover,
 });
 
 style.class("header-icon-separator-svg", {
@@ -199,15 +188,15 @@ style.class("header-icon-text", {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  color: colorsVars.mainTextColor,
+  color: colors.mainTextColor,
 });
 
 style.classHover("header-icon-text", {
-  backgroundColor: colorsVars.headerMenuHover,
+  backgroundColor: colors.headerMenuHover,
 });
 
 style.classActive("header-icon-text", {
-  backgroundColor: colorsVars.headerMenuClick,
+  backgroundColor: colors.headerMenuClick,
 });
 
 style.class("header-context-menu", {
@@ -221,7 +210,7 @@ style.class("header-context-menu", {
   minWidth: 200,
   zIndex: 10,
   boxShadow: "rgb(0 0 0 / 25%) 0px 2px 2px",
-  backgroundColor: colorsVars.header,
+  backgroundColor: colors.header,
   borderBottomLeftRadius: 4,
   borderBottomRightRadius: 4,
   fontSize: 14,
@@ -239,10 +228,10 @@ style.class("header-context-menu-item", {
 });
 
 style.classHover("header-context-menu-item", {
-  backgroundColor: colorsVars.headerMenuHover,
+  backgroundColor: colors.headerMenuHover,
 });
 style.classActive("header-context-menu-item", {
-  backgroundColor: colorsVars.headerMenuClick,
+  backgroundColor: colors.headerMenuClick,
 });
 
 style.class("header-context-menu-item-active", {

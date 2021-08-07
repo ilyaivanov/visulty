@@ -8,6 +8,8 @@ export const transition = (transitionDefinition: Transition): string =>
     .join(", ");
 
 export const translate = (x: number, y: number) => `translate(${x}px, ${y}px)`;
+export const translate3d = (x: number, y: number, z: number) =>
+  `translate3d(${x}px, ${y}px, ${z}px)`;
 
 export const paddingVertical = (v: number): Styles => ({
   paddingBottom: v,

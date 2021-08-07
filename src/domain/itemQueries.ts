@@ -83,3 +83,17 @@ export const getRoot = (item: MyItem): MyItem => {
   }
   return parent;
 };
+
+export const getItemPath = (item: MyItem) => {
+  const path: MyItem[] = [];
+
+  let parent = item;
+  while (parent.parent) {
+    path.push(parent);
+    parent = parent.parent;
+  }
+  return path.reverse();
+};
+
+export const getItemDistanceFromRoot = (item: MyItem): number =>
+  getItemPath(item).length;
