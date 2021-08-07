@@ -48,6 +48,8 @@ export const style = {
     handleCompoundStyles(`.${className}:hover`, styles),
   classActive: (className: CN, styles: CompoundStyles) =>
     handleCompoundStyles(`.${className}:active`, styles),
+  classFocus: (className: CN, styles: CompoundStyles) =>
+    handleCompoundStyles(`.${className}:focus`, styles),
   class2: (className1: CN, className2: CN, styles: CompoundStyles) =>
     handleCompoundStyles(`.${className1}.${className2}`, styles),
   id: (id: ElementId, styles: CompoundStyles) =>
@@ -139,13 +141,14 @@ export type Styles = Partial<{
 
   //sizing
   height: number | "100vh" | "100%" | string;
+  maxHeight: number;
   width: number | string;
   minWidth: number;
   minHeight: number;
   boxSizing: "border-box";
 
   //margins and paddings
-  margin: number;
+  margin: number | string;
   marginRight: number | "-100%" | "auto";
   marginLeft: number | "auto";
   marginTop: number;
@@ -181,6 +184,7 @@ export type Styles = Partial<{
   borderLeft: string;
   borderTop: string;
   outline: string;
+  borderColor: string;
   borderRadius: number | "50%";
   borderTopRightRadius: number;
   borderTopLeftRadius: number;
@@ -200,11 +204,12 @@ export type Styles = Partial<{
   //typography
   fontFamily: string;
   color: string;
-  lineHeight: number;
+  lineHeight: number | string;
   fontSize: number;
   fontWeight: "bold" | "500" | "600";
   fontStyle: "italic";
   whiteSpace: "nowrap";
+  textDecoration: "underline";
 
   //shadows
   boxShadow: string;

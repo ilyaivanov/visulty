@@ -5,6 +5,7 @@ type TabName = "main" | "search";
 
 export class UIState {
   isSearchVisible = false;
+  isModalShown = false;
 
   theme: AppTheme = "light";
 
@@ -126,6 +127,11 @@ export class UIState {
       type: "item-focused",
       item,
     });
+  };
+
+  showQuickFindModal = () => {
+    this.isModalShown = true;
+    this.dispatchCommand({ type: "show-quick-find-modal" });
   };
 
   private unSelectCommand = (item: MyItem) =>

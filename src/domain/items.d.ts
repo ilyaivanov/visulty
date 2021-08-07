@@ -30,3 +30,12 @@ type YoutubeChannel = ItemBase & {
 };
 
 type MyItem = Folder | YoutubeVideo | YoutubePlaylist | YoutubeChannel;
+
+type LocalSearchResults = {
+  items: LocalSearchEntry[];
+  term: string;
+};
+type LocalSearchEntry = { item: MyItem; highlights: Highlight[] };
+
+type TermsFound = { term: string; foundAt: number };
+type Highlight = { from: number; to: number };

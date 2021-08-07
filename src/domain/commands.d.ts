@@ -10,6 +10,8 @@ type DomainCommand =
   | { type: "item-unselected"; item: MyItem }
   | { type: "search-input-focus" }
   | { type: "search-input-blur" }
+  | { type: "show-quick-find-modal" }
   | { type: "searching-start" }
   | { type: "searching-end" }
+  | { type: "searching-local-end"; results: LocalSearchResults }
   | { type: "search-visibility-toggled" };

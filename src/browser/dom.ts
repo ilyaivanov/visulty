@@ -25,7 +25,13 @@ export const removeAllChildren = (elem: Element) => {
 const assignChildrenArrayToElement = (
   elem: Element,
   children: ElementChild[]
-) => children.forEach((child) => child && elem.appendChild(child));
+) =>
+  children.forEach((child) => {
+    if (child) {
+      if (typeof child === "string") elem.append(child);
+      else elem.appendChild(child);
+    }
+  });
 
 export const setChildren = (elem: Element, children: Node[]) => {
   removeAllChildren(elem);
@@ -49,7 +55,7 @@ export type ClassDefinitions = {
   classMap?: ClassMap;
 };
 
-export type ElementChild = Node | undefined | false;
+export type ElementChild = Node | undefined | string | false;
 
 export const assignClasses = <T extends Element>(
   elem: T,
@@ -123,9 +129,11 @@ export const button = elemFactory("button");
 type InputProps = ElementProps<HTMLInputElement> & {
   placeholder?: string;
   value: string;
+  onInput?: Action<Event>;
 };
 export const input = (inputProps: InputProps) => {
   const el = elem("input", inputProps);
+  if (inputProps.onInput) el.addEventListener("input", inputProps.onInput);
   if (inputProps.placeholder) el.placeholder = inputProps.placeholder;
   el.value = inputProps.value;
   return el;

@@ -2,8 +2,14 @@ import { UIState } from "./uiState";
 
 export class Shortcuts {
   constructor(private uiState: UIState) {
-    document.addEventListener("keydown", this.onKeyDown);
+    this.startListeningToKeyboard();
   }
+
+  startListeningToKeyboard = () =>
+    document.addEventListener("keydown", this.onKeyDown);
+
+  stopListeningToKeyboard = () =>
+    document.removeEventListener("keydown", this.onKeyDown);
 
   onKeyDown = (e: KeyboardEvent) => {
     if (e.key === "ArrowDown")
@@ -18,6 +24,8 @@ export class Shortcuts {
       this.preventDefault(e, this.switchToMainTab);
     if (e.key === "2" && e.ctrlKey)
       this.preventDefault(e, this.switchToSearchTab);
+    if (e.key === "k" && e.ctrlKey)
+      this.preventDefault(e, this.uiState.showQuickFindModal);
   };
 
   switchToMainTab = () => this.uiState.focusOnTab("main");

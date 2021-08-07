@@ -1,6 +1,7 @@
 import { assignParents, randomItems } from "../api/dummyUserState";
 import * as youtubeApi from "../api/youtubeApi";
 import * as itemsQueries from "./itemQueries";
+import { findLocalItems } from "./localSearch";
 
 export class ItemsStore {
   root: MyItem = {
@@ -88,6 +89,11 @@ export class ItemsStore {
       itemsQueries.assignChildrenTo(this.searchRoot, items);
       this.dispatchCommand({ type: "searching-end" });
     });
+  };
+
+  searchForLocalItems = (term: string) => {
+    const results = findLocalItems(this.root, term);
+    this.dispatchCommand({ type: "searching-local-end", results });
   };
 
   searchVideos = (term: string): Promise<MyItem[]> => {

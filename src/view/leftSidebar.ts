@@ -1,5 +1,5 @@
 import { button, css, div, dom, span, style } from "../browser";
-import { colors } from "../designSystem";
+import { colors, zIndexes } from "../designSystem";
 import { dispatcher, itemsStore, uiState } from "../globals";
 
 export class LeftSidebar {
@@ -56,7 +56,7 @@ style.class("left-sidebar", {
   paddingBottom: 10,
   width: 20,
   transition: "width 200ms ease 0s",
-  zIndex: 250,
+  zIndex: zIndexes.leftSidebar,
 });
 
 style.classHover("left-sidebar", { width: 250 });

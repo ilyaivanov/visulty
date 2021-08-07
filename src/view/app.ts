@@ -1,14 +1,17 @@
 import { dom, div, style, css } from "../browser";
 import { spacings, colors } from "../designSystem";
-import { dispatcher, uiState } from "../globals";
+import { LocalSearchResults } from "../domain";
+import { dispatcher, shortcuts, uiState } from "../globals";
 import { Footer } from "./footer";
 import { Header } from "./header";
 import { LeftSidebar } from "./leftSidebar";
 import { MainTab } from "./mainTab";
+import { Modal } from "./modal";
 import { SearchTab } from "./searchTab";
 
 export class AppView {
   el: HTMLElement;
+  modal?: Modal;
   constructor() {
     this.el = div({ className: "app" }, [
       new Header().el,
@@ -25,6 +28,20 @@ export class AppView {
       "app-light": uiState.theme === "light",
       "app-dark": uiState.theme === "dark",
     });
+
+  showModal = () => {
+    this.modal = new Modal(() => {
+      shortcuts.startListeningToKeyboard();
+      this.modal = undefined;
+    });
+    shortcuts.stopListeningToKeyboard();
+    this.el.appendChild(this.modal.el);
+    this.modal.focusOnInput();
+  };
+
+  showLocalResults = (results: LocalSearchResults) => {
+    if (this.modal) this.modal.renderItems(results);
+  };
 }
 
 export const viewApp = () => new AppView().el;

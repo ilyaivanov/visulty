@@ -8,4 +8,4 @@ export const dispatcher = new CommandsDispatcher();
 export const dnd = new Dnd();
 export const itemsStore = new ItemsStore(dispatcher.dispatchCommand);
 export const uiState = new UIState(dispatcher.dispatchCommand, itemsStore);
-const shortcuts = new Shortcuts(uiState);
+export const shortcuts = new Shortcuts(uiState);

@@ -57,4 +57,13 @@ type ClassName =
   | "header-context-menu"
   | "header-context-menu-visible"
   | "header-context-menu-item"
-  | "header-context-menu-item-active";
+  | "header-context-menu-item-active"
+
+  //MODAL
+  | "modal-overlay"
+  | "modal"
+  | "modal-input"
+  | "modal-row-item"
+  | "modal-row-item-highlight"
+  | "modal-row-list"
+  | "modal-row-item-selected";

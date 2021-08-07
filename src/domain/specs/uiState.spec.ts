@@ -1,4 +1,9 @@
-import { UIState } from "./uiState";
+import { UIState } from "../uiState";
+import {
+  createDummyItem,
+  createLoggingDispatcher,
+  expectEqual,
+} from "./testUtils";
 
 describe("Having a default UI State", () => {
   let uiState: UIState;
@@ -60,20 +65,3 @@ describe("Having a default UI State", () => {
     ]);
   });
 });
-
-const createLoggingDispatcher = () => ({
-  commands: [] as DomainCommand[],
-  dispatch(command: DomainCommand) {
-    this.commands.push(command);
-  },
-  clearLogs() {
-    this.commands = [];
-  },
-});
-
-const expectEqual = <T>(a: T, b: T) => expect(a).toEqual(b);
-
-const createDummyItem = (id: string): MyItem =>
-  ({
-    id,
-  } as MyItem);

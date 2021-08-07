@@ -64,9 +64,13 @@ export class CommandsDispatcher {
       this.viewAction(parent.id, (view) => view.updateIcons());
     } else if (command.type === "search-visibility-toggled")
       this.searchTab?.onSearchVisibilityChange();
+    else if (command.type === "show-quick-find-modal")
+      this.appView?.showModal();
     else if (command.type === "searching-start")
       this.searchTab?.startSearching();
     else if (command.type === "searching-end") this.searchTab?.stopSearching();
+    else if (command.type === "searching-local-end")
+      this.appView?.showLocalResults(command.results);
     else if (command.type === "theme-changed") {
       this.header?.assignThemeButtonText();
       this.appView?.assignTheme();
