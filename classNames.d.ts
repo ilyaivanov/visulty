@@ -43,7 +43,10 @@ type ClassName =
   //LEFT SIDEBAR
   | "left-sidebar"
   | "left-sidebar-item"
+  | "left-sidebar-item-circle"
   | "left-sidebar-item-children"
+  | "left-sidebar-item-chevron"
+  | "left-sidebar-item-chevron-rotated"
 
   //HEADER
   | "header"

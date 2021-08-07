@@ -1,12 +1,14 @@
 import { AppView } from "./view/app";
 import { Header } from "./view/header";
 import { ItemView } from "./view/itemView";
-import { LeftSidebar } from "./view/leftSidebar";
+import { LeaftSidebarItem, LeftSidebar } from "./view/leftSidebar";
 import { MainTab } from "./view/mainTab";
 import { SearchTab } from "./view/searchTab";
 
 export class CommandsDispatcher {
   private itemViews: WeakMap<Element, ItemView> = new WeakMap();
+  private leftSidebarItemViews: WeakMap<Element, LeaftSidebarItem> =
+    new WeakMap();
   public searchTab?: SearchTab;
   public header?: Header;
   public appView?: AppView;
@@ -23,13 +25,26 @@ export class CommandsDispatcher {
     this.itemViews.set(view.el, view);
   };
 
+  leftSidebarItemViewed = (view: LeaftSidebarItem) => {
+    if (view.el.id) {
+      throw new Error(
+        `CommandDispatcher expects HTML element not to have id. Check el property for ${view.item.title}`
+      );
+    }
+    view.el.id = "left-sidebar" + view.item.id;
+    this.leftSidebarItemViews.set(view.el, view);
+  };
+
   dispatchCommand = (command: DomainCommand) => {
     if (command.type === "item-toggled")
       this.viewAction(command.itemId, (view) =>
         view.updateItemChildrenVisibility(true)
       );
     else if (command.type === "item-toggled-in-sidebar") {
-      this.leftSidebar?.render();
+      this.sidebarViewAction(command.item.id, (view) =>
+        view.updateItemChildrenVisibility()
+      );
+      // this.leftSidebar?.render();
     } else if (command.type === "item-removed")
       this.viewAction(command.itemId, (view) => view.remove(command.instant));
     else if (command.type === "item-selected")
@@ -86,6 +101,13 @@ export class CommandsDispatcher {
     const elem = document.getElementById(itemId);
     if (elem) {
       const view = this.itemViews.get(elem);
+      if (view) action(view);
+    }
+  };
+  sidebarViewAction = (itemId: string, action: Action<LeaftSidebarItem>) => {
+    const elem = document.getElementById("left-sidebar" + itemId);
+    if (elem) {
+      const view = this.leftSidebarItemViews.get(elem);
       if (view) action(view);
     }
   };

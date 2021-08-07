@@ -83,7 +83,7 @@ export const toggleClass = (
   elem: Element,
   className: ClassName,
   isSet?: boolean
-) => elem.classList.toggle(className, isSet);
+) => elem.classList.toggle(className, !!isSet);
 
 type Events = {
   onKeyDown?: (e: KeyboardEvent) => void;

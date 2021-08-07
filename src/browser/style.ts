@@ -57,6 +57,8 @@ export const style = {
   after: (className: CN, styles: Styles) =>
     selector(`.${className}::after`, styles),
   parentHover: (parent: CN, child: CN, styles: StylesWithVariables) =>
+    selector(`.${parent}:hover .${child}`, styles),
+  directParentHover: (parent: CN, child: CN, styles: StylesWithVariables) =>
     selector(`.${parent}:hover > .${child}`, styles),
   parentChild: (parent: CN, child: CN, styles: StylesWithVariables) =>
     selector(`.${parent} .${child}`, styles),

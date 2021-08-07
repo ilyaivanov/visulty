@@ -1,11 +1,31 @@
 import { camelToSnakeCase, Styles, style } from "./style";
 
-type Transition = Partial<Record<keyof Styles, number>>;
+type Transition = Partial<Record<keyof Styles, TransitionDefinition>>;
+
+type Easing = "ease-in" | "ease-out";
+type TransitionDefinition =
+  | number
+  | {
+      duration: number;
+      easing: Easing;
+      delay?: number;
+    };
 
 export const transition = (transitionDefinition: Transition): string =>
   Object.entries(transitionDefinition)
-    .map(([key, value]) => `${camelToSnakeCase(key)} ${value}ms`)
+    .map(
+      ([key, value]) =>
+        `${camelToSnakeCase(key)} ${formatTransitionDefinition(value)}`
+    )
     .join(", ");
+
+const formatTransitionDefinition = (def: TransitionDefinition) => {
+  if (typeof def === "number") return `${def}ms`;
+  else
+    return `${def.duration}ms ${def.easing} ${
+      def.delay ? def.delay + "ms" : ""
+    }`;
+};
 
 export const translate = (x: number, y: number) => `translate(${x}px, ${y}px)`;
 export const translate3d = (x: number, y: number, z: number) =>

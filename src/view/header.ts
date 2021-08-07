@@ -168,7 +168,7 @@ style.class("header-icon-separator-svg", {
   transition: "transform 200ms ease 0s",
 });
 
-style.parentHover("header-icon-separator", "header-icon-separator-svg", {
+style.directParentHover("header-icon-separator", "header-icon-separator-svg", {
   transform: "rotateZ(90deg)",
 });
 
