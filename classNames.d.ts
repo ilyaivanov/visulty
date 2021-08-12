@@ -48,6 +48,10 @@ type ClassName =
   | "left-sidebar-item-chevron"
   | "left-sidebar-item-chevron-rotated"
 
+  //RIGHT SIDEBAR
+  | "right-sidebar"
+  | "right-sidebar-hidden"
+
   //HEADER
   | "header"
   | "header-icon"

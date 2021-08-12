@@ -3,6 +3,7 @@ import { Header } from "./view/header";
 import { ItemView } from "./view/itemView";
 import { LeaftSidebarItem, LeftSidebar } from "./view/leftSidebar";
 import { MainTab } from "./view/mainTab";
+import { RightSidebar } from "./view/rightSidebar";
 import { SearchTab } from "./view/searchTab";
 
 export class CommandsDispatcher {
@@ -14,6 +15,7 @@ export class CommandsDispatcher {
   public appView?: AppView;
   public mainTab?: MainTab;
   public leftSidebar?: LeftSidebar;
+  public rightSidebar?: RightSidebar;
 
   itemViewed = (view: ItemView) => {
     if (view.el.id) {
@@ -44,7 +46,6 @@ export class CommandsDispatcher {
       this.sidebarViewAction(command.item.id, (view) =>
         view.updateItemChildrenVisibility()
       );
-      // this.leftSidebar?.render();
     } else if (command.type === "item-removed")
       this.viewAction(command.itemId, (view) => view.remove(command.instant));
     else if (command.type === "item-selected")
@@ -79,6 +80,10 @@ export class CommandsDispatcher {
       this.viewAction(parent.id, (view) => view.updateIcons());
     } else if (command.type === "search-visibility-toggled")
       this.searchTab?.onSearchVisibilityChange();
+    else if (command.type === "left-sidebar-visibility-changed")
+      throw new Error("not yet suported");
+    else if (command.type === "right-sidebar-visibility-changed")
+      this.rightSidebar?.assignVisibility();
     else if (command.type === "show-quick-find-modal")
       this.appView?.showModal();
     else if (command.type === "searching-start")

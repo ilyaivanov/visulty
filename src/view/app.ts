@@ -7,6 +7,7 @@ import { Header } from "./header";
 import { LeftSidebar } from "./leftSidebar";
 import { MainTab } from "./mainTab";
 import { Modal } from "./modal";
+import { RightSidebar } from "./rightSidebar";
 import { SearchTab } from "./searchTab";
 
 export class AppView {
@@ -17,6 +18,7 @@ export class AppView {
       new Header().el,
       div({ className: "gallery" }, [MainTab.view(), SearchTab.view()]),
       new LeftSidebar().el,
+      new RightSidebar().el,
       new Footer().el,
     ]);
     this.assignTheme();
@@ -66,8 +68,6 @@ style.tag("body", {
 });
 
 style.class("gallery", {
-  //this width fixes forced center shift for smaller screens
-  width: "100vw",
   height: `calc(100vh - ${spacings.playerFooterHeight}px - ${spacings.headerHeight}px)`,
   gridArea: "gallery",
   display: "flex",

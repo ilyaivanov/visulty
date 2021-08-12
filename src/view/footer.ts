@@ -1,7 +1,8 @@
-import { dom, div, style } from "../browser";
+import { dom, div, style, button } from "../browser";
 import { spacings } from "../designSystem";
 import { youtubeIframeId } from "../api/youtubePlayer";
 import { colors } from "../designSystem";
+import { uiState } from "../globals";
 
 export class Footer {
   el: HTMLElement;
@@ -9,6 +10,10 @@ export class Footer {
   constructor() {
     this.el = div({ className: "player" }, [
       dom.elem("div", { id: youtubeIframeId }),
+      button({
+        textContent: "queue",
+        onClick: () => uiState.toggleRightSidebarVisibility(),
+      }),
     ]);
   }
 }

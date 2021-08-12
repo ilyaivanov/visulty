@@ -22,8 +22,7 @@ initFirebase(() => {
 
         const item: MyItem = {
           ...legacy,
-          //@ts-expect-error
-          isOpen: !legacy.isCollapsedInGallery,
+          // isOpen: !legacy.isCollapsedInGallery,
           children: legacy.children
             ? (legacy.children.map(mapItem).filter((x) => x) as MyItem[])
             : undefined,

@@ -6,6 +6,7 @@ type TabName = "main" | "search";
 export class UIState {
   isSearchVisible = false;
   isModalShown = false;
+  isRightSidebarVisible = false;
 
   theme: AppTheme = "light";
 
@@ -76,6 +77,11 @@ export class UIState {
   toggleSearchVisibility = () => {
     this.isSearchVisible = !this.isSearchVisible;
     this.dispatchCommand({ type: "search-visibility-toggled" });
+  };
+
+  toggleRightSidebarVisibility = () => {
+    this.isRightSidebarVisible = !this.isRightSidebarVisible;
+    this.dispatchCommand({ type: "right-sidebar-visibility-changed" });
   };
 
   toggleTheme = () => {

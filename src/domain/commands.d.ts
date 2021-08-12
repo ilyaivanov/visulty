@@ -8,6 +8,8 @@ type DomainCommand =
   | { type: "item-selected"; item: MyItem }
   | { type: "item-focused"; item: MyItem }
   | { type: "item-unselected"; item: MyItem }
+  | { type: "right-sidebar-visibility-changed" }
+  | { type: "left-sidebar-visibility-changed" }
   | { type: "search-input-focus" }
   | { type: "search-input-blur" }
   | { type: "show-quick-find-modal" }
