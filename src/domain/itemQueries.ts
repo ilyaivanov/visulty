@@ -97,3 +97,17 @@ export const getItemPath = (item: MyItem) => {
 
 export const getItemDistanceFromRoot = (item: MyItem): number =>
   getItemPath(item).length;
+
+export const traverseChildrenDFS = (
+  item: MyItem,
+  filter?: (item: MyItem) => boolean
+): MyItem[] => {
+  const results: MyItem[] = [];
+  const traverseChildren = (item: MyItem) => {
+    if (!filter || filter(item)) results.push(item);
+
+    if (item.children) item.children.forEach(traverseChildren);
+  };
+  traverseChildren(item);
+  return results;
+};

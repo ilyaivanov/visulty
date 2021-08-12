@@ -4,7 +4,6 @@ type ClassName =
   | "app"
   | "app-light"
   | "app-dark"
-  | "player"
   | "gallery"
   | "tab"
   | "tab-title"
@@ -66,6 +65,13 @@ type ClassName =
   | "header-context-menu-visible"
   | "header-context-menu-item"
   | "header-context-menu-item-active"
+
+  //PLAYER
+  | "player"
+  | "play-button"
+  | "footer-icon"
+  | "footer-icon-play-previous"
+  | "footer-icon-container"
 
   //MODAL
   | "modal-overlay"

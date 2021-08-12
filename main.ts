@@ -2,7 +2,7 @@ import { initFirebase, loadUserSettings } from "./src/api/userState";
 import { sampleUserName } from "./src/api/config";
 import { style } from "./src/browser";
 import { viewApp } from "./src/view/app";
-import { dispatcher, itemsStore, uiState } from "./src/globals";
+import { dispatcher, itemsStore, playerState, uiState } from "./src/globals";
 import { createThemeStyles } from "./src/designSystem";
 import { dummyRoot } from "./src/api/dummyUserState";
 import * as itemsQueries from "./src/domain/itemQueries";
@@ -45,6 +45,10 @@ initFirebase(() => {
     document.body.appendChild(viewApp());
   }
 });
+
+// setTimeout(() => {
+//   playerState.playItem(itemsStore.root.children![1]);
+// }, 2000);
 
 style.tag("body", {
   margin: 0,

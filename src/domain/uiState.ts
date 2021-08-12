@@ -6,7 +6,7 @@ type TabName = "main" | "search";
 export class UIState {
   isSearchVisible = false;
   isModalShown = false;
-  isRightSidebarVisible = false;
+  isRightSidebarVisible = true;
   isLeftSidebarVisible = false;
 
   theme: AppTheme = "light";
