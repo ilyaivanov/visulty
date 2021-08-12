@@ -8,12 +8,20 @@ export class LeftSidebar {
 
   constructor() {
     this.el = div({ className: "left-sidebar" }, this.viewChildren());
+    this.assignVisibility();
     dispatcher.leftSidebar = this;
   }
 
   render() {
     dom.setChildren(this.el, this.viewChildren());
   }
+
+  assignVisibility = () =>
+    dom.toggleClass(
+      this.el,
+      "left-sidebar-hidden",
+      !uiState.isLeftSidebarVisible
+    );
 
   viewChildren = () =>
     itemsStore.root.children!.map((item) => LeaftSidebarItem.view(item, 0));
@@ -97,22 +105,19 @@ export class LeaftSidebarItem {
 }
 
 style.class("left-sidebar", {
-  position: "absolute",
-  top: 48,
-  bottom: 49,
-  left: 0,
+  gridArea: "sidebar",
   backgroundColor: colors.leftSidebar,
   boxShadow: "rgb(0 0 0 / 20%) 2px 0px 2px",
   overflowX: "hidden",
   overflowY: "overlay",
   paddingTop: 10,
   paddingBottom: 10,
-  width: 20,
+  width: 250,
   transition: "width 200ms ease 0s",
   zIndex: zIndexes.leftSidebar,
 });
 
-style.classHover("left-sidebar", { width: 250 });
+style.class("left-sidebar-hidden", { width: 0 });
 
 style.class("left-sidebar-item", {
   whiteSpace: "nowrap",

@@ -42,6 +42,7 @@ type ClassName =
 
   //LEFT SIDEBAR
   | "left-sidebar"
+  | "left-sidebar-hidden"
   | "left-sidebar-item"
   | "left-sidebar-item-circle"
   | "left-sidebar-item-children"

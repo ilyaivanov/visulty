@@ -24,9 +24,13 @@ export class Header {
         .flat(),
     ];
     dom.setChildren(this.el, [
-      div({ className: "header-icon" }, [
-        icons.bars({ className: "header-icon-svg" }),
-      ]),
+      div(
+        {
+          className: "header-icon",
+          onClick: () => uiState.toggleLeftSidebarVisibility(),
+        },
+        [icons.bars({ className: "header-icon-svg" })]
+      ),
 
       div(
         {

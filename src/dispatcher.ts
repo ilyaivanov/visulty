@@ -10,6 +10,7 @@ export class CommandsDispatcher {
   private itemViews: WeakMap<Element, ItemView> = new WeakMap();
   private leftSidebarItemViews: WeakMap<Element, LeaftSidebarItem> =
     new WeakMap();
+
   public searchTab?: SearchTab;
   public header?: Header;
   public appView?: AppView;
@@ -81,7 +82,7 @@ export class CommandsDispatcher {
     } else if (command.type === "search-visibility-toggled")
       this.searchTab?.onSearchVisibilityChange();
     else if (command.type === "left-sidebar-visibility-changed")
-      throw new Error("not yet suported");
+      this.leftSidebar?.assignVisibility();
     else if (command.type === "right-sidebar-visibility-changed")
       this.rightSidebar?.assignVisibility();
     else if (command.type === "show-quick-find-modal")
