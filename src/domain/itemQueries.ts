@@ -105,6 +105,20 @@ export const getPreviewImage = (item: MyItem): string => {
   else return "";
 };
 
+export const forEachChild = (
+  item: MyItem,
+  action: (item: MyItem, parent: MyItem) => void
+) => {
+  const traverseChildren = (parent: MyItem, item: MyItem) => {
+    action(item, parent);
+
+    if (item.children)
+      item.children.forEach((child) => traverseChildren(item, child));
+  };
+  if (item.children)
+    item.children.forEach((child) => traverseChildren(item, child));
+};
+
 export const traverseChildrenDFS = (
   item: MyItem,
   filter?: (item: MyItem) => boolean

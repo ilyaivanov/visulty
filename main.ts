@@ -1,8 +1,12 @@
-import { initFirebase, loadUserSettings } from "./src/api/userState";
+import {
+  deserializeRootItem,
+  initFirebase,
+  loadUserSettings,
+} from "./src/api/userState";
 import { sampleUserName } from "./src/api/config";
 import { style } from "./src/browser";
 import { viewApp } from "./src/view/app";
-import { dispatcher, itemsStore, playerState, uiState } from "./src/globals";
+import { itemsStore, uiState } from "./src/globals";
 import { createThemeStyles } from "./src/designSystem";
 import { dummyRoot } from "./src/api/dummyUserState";
 import * as itemsQueries from "./src/domain/itemQueries";
@@ -14,27 +18,7 @@ const USE_REAL_API = true;
 initFirebase(() => {
   if (USE_REAL_API) {
     loadUserSettings(sampleUserName).then((data) => {
-      const legacyItems: LegacyItems = JSON.parse(data.itemsSerialized);
-
-      const mapItem = (id: string): MyItem | undefined => {
-        const legacy = legacyItems[id];
-        if (!legacy) return;
-
-        const item: MyItem = {
-          ...legacy,
-          // isOpen: !legacy.isCollapsedInGallery,
-          children: legacy.children
-            ? (legacy.children.map(mapItem).filter((x) => x) as MyItem[])
-            : undefined,
-        };
-
-        return item;
-      };
-      const items = legacyItems["HOME"]
-        .children!.map(mapItem)
-        .filter((x) => x) as MyItem[];
-
-      itemsQueries.assignChildrenTo(itemsStore.root, items);
+      itemsStore.root = deserializeRootItem(data.itemsSerialized);
       const firstChild = itemsQueries.getFirstChild(itemsStore.root);
       document.body.appendChild(viewApp());
       uiState.focusOnItem(itemsStore.root);
@@ -45,10 +29,6 @@ initFirebase(() => {
     document.body.appendChild(viewApp());
   }
 });
-
-// setTimeout(() => {
-//   playerState.playItem(itemsStore.root.children![1]);
-// }, 2000);
 
 style.tag("body", {
   margin: 0,
