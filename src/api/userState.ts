@@ -1,3 +1,4 @@
+import { forEachChild } from "../domain/itemQueries";
 import { firebaseConfig } from "./config";
 declare const firebase: any;
 
@@ -42,3 +43,17 @@ const api = {
   auth,
 };
 export default api;
+
+export const serializeRootItem = (item: MyItem): string =>
+  JSON.stringify(item, (key, value) => {
+    if (key !== "parent") {
+      return value;
+    }
+    return undefined;
+  });
+
+export const deserializeRootItem = (item: string): MyItem => {
+  const parsed = JSON.parse(item) as MyItem;
+  forEachChild(parsed, (item, parent) => (item.parent = parent));
+  return parsed;
+};

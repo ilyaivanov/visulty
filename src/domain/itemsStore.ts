@@ -1,4 +1,10 @@
+import { sampleUserName } from "../api/config";
 import { assignParents, randomItems } from "../api/dummyUserState";
+import {
+  deserializeRootItem,
+  saveUserSettings,
+  serializeRootItem,
+} from "../api/userState";
 import * as youtubeApi from "../api/youtubeApi";
 import * as itemsQueries from "./itemQueries";
 import { findLocalItems } from "./localSearch";
@@ -172,6 +178,13 @@ export class ItemsStore {
   insertItemInside = (parentItem: MyItem, itemToInsert: MyItem) => {
     parentItem.children = [itemToInsert].concat(parentItem.children || []);
     itemToInsert.parent = parentItem;
+  };
+
+  save = () => {
+    saveUserSettings(
+      { itemsSerialized: serializeRootItem(this.root) },
+      sampleUserName
+    );
   };
 }
 

@@ -61,6 +61,10 @@ export class Header {
       ...pathElements,
       button({
         style: { marginLeft: "auto" },
+        textContent: "save",
+        onClick: () => itemsStore.save(),
+      }),
+      button({
         textContent: "search",
         onClick: () => uiState.toggleSearchVisibility(),
       }),
