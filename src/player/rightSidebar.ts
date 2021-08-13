@@ -1,6 +1,7 @@
 import { css, div, dom, img, style } from "../browser";
 import { colors, timings, zIndexes } from "../designSystem";
-import { dispatcher, itemsStore, playerState, uiState } from "../globals";
+import { getPreviewImage } from "../domain/itemQueries";
+import { dispatcher, playerState, uiState } from "../globals";
 
 export class RightSidebar {
   el: HTMLElement;
@@ -19,9 +20,6 @@ export class RightSidebar {
       !uiState.isRightSidebarVisible
     );
 
-  queueLabel = () =>
-    div({ className: "right-sidebar-label", textContent: "Current Queue" });
-
   viewQueue = (parentItem: MyItem, queueItems: YoutubeVideo[]) => {
     dom.setChildren(
       this.el,
@@ -35,7 +33,10 @@ export class RightSidebar {
     );
   };
 
-  viewItem = (item: YoutubeVideo) =>
+  private queueLabel = () =>
+    div({ className: "right-sidebar-label", textContent: "Current Queue" });
+
+  private viewItem = (item: YoutubeVideo) =>
     div(
       {
         id: "queue-item-" + item.id,
@@ -45,7 +46,7 @@ export class RightSidebar {
       [
         img({
           className: "right-sidebar-item-image",
-          src: itemsStore.getPreviewImage(item),
+          src: getPreviewImage(item),
         }),
         div({
           className: "right-sidebar-item-title",

@@ -26,13 +26,6 @@ export class ItemsStore {
 
   hasItemImage = (item: MyItem) => "image" in item || "videoId" in item;
 
-  getPreviewImage = (item: MyItem): string => {
-    if ("videoId" in item)
-      return `https://i.ytimg.com/vi/${item.videoId}/mqdefault.jpg`;
-    else if ("image" in item) return item.image;
-    else return "";
-  };
-
   isVideo = (item: MyItem): item is YoutubeVideo => item.type === "YTvideo";
   isPlaylist = (item: MyItem): item is YoutubePlaylist =>
     item.type === "YTplaylist";

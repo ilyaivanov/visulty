@@ -1,8 +1,8 @@
 import { dom, div, style, css, img, span } from "../browser";
 import { icons, spacings, colors, timings, zIndexes } from "../designSystem";
 import { youtubeIframeId } from "../api/youtubePlayer";
-import { getItemPath } from "../domain/itemQueries";
-import { dispatcher, itemsStore, playerState, uiState } from "../globals";
+import { getItemPath, getPreviewImage } from "../domain/itemQueries";
+import { dispatcher, playerState, uiState } from "../globals";
 
 export class Footer {
   el: HTMLElement;
@@ -38,7 +38,7 @@ export class Footer {
     dom.setChildren(this.textArea.elem, [
       img({
         className: "footer-video-image",
-        src: itemsStore.getPreviewImage(item),
+        src: getPreviewImage(item),
       }),
 
       div({ className: "text-area-titles-container" }, [

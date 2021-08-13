@@ -1,5 +1,6 @@
 import { css, style, dom, svg } from "../browser";
 import { icons, spacings, colors, timings } from "../designSystem";
+import { getPreviewImage } from "../domain/itemQueries";
 import { itemsStore } from "../globals";
 
 const iconSize = spacings.outerRadius * 2;
@@ -54,7 +55,7 @@ export class ItemIcon {
       onMouseDown: events?.onIconMouseDown,
     });
     if (itemsStore.hasItemImage(item)) {
-      res.style.backgroundImage = `url(${itemsStore.getPreviewImage(item)})`;
+      res.style.backgroundImage = `url(${getPreviewImage(item)})`;
       ItemIcon.assignIconWithImageClasses(res, item);
     } else {
       dom.appendChildren(res, ItemIcon.viewCircles(item));

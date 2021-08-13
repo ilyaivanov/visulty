@@ -98,6 +98,13 @@ export const getItemPath = (item: MyItem) => {
 export const getItemDistanceFromRoot = (item: MyItem): number =>
   getItemPath(item).length;
 
+export const getPreviewImage = (item: MyItem): string => {
+  if ("videoId" in item)
+    return `https://i.ytimg.com/vi/${item.videoId}/mqdefault.jpg`;
+  else if ("image" in item) return item.image;
+  else return "";
+};
+
 export const traverseChildrenDFS = (
   item: MyItem,
   filter?: (item: MyItem) => boolean
