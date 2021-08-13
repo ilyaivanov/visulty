@@ -1,7 +1,7 @@
 import { dom, div, input, style } from "../browser";
 import { colors, anim, levels, spacings } from "../designSystem";
 import { play } from "../api/youtubePlayer";
-import { itemsStore, dispatcher, dnd, uiState } from "../globals";
+import { itemsStore, dispatcher, dnd, uiState, playerState } from "../globals";
 import { ItemIcon } from "./itemIcon";
 import { showSkeletons } from "./itemSkeleton";
 
@@ -39,8 +39,7 @@ export class ItemView {
           div({ classNames: ["hide", "item-row_showOnHoverOrSelected"] }, [
             dom.elem("button", {
               textContent: "▶",
-              onClickStopPropagation: () =>
-                item.type === "YTvideo" && play(item.videoId),
+              onClickStopPropagation: () => playerState.playItem(item),
             }),
             dom.elem("button", {
               textContent: "F",

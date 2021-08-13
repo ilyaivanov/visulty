@@ -48,10 +48,6 @@ type ClassName =
   | "left-sidebar-item-chevron"
   | "left-sidebar-item-chevron-rotated"
 
-  //RIGHT SIDEBAR
-  | "right-sidebar"
-  | "right-sidebar-hidden"
-
   //HEADER
   | "header"
   | "header-icon"
@@ -69,9 +65,31 @@ type ClassName =
   //PLAYER
   | "player"
   | "play-button"
+  | "text-area"
+  | "text-area-titles-container"
+  | "text-area-item-path"
+  | "text-area-item-path-element"
+  | "text-area-title"
   | "footer-icon"
+  | "footer-video-image"
   | "footer-icon-play-previous"
   | "footer-icon-container"
+  | "player-progress-container-padding"
+  | "player-progress-container"
+  | "player-progress-buffer"
+  | "player-progress-ellapsed"
+  | "player-progress-bulp"
+  | "player-progress-text"
+
+  //RIGHT SIDEBAR (part of PLAYER feature)
+  | "right-sidebar"
+  | "right-sidebar-label"
+  | "right-sidebar-queue-title"
+  | "right-sidebar-queue-title_currentlyPlayed"
+  | "right-sidebar-hidden"
+  | "right-sidebar-item"
+  | "right-sidebar-item-image"
+  | "right-sidebar-item-title"
 
   //MODAL
   | "modal-overlay"

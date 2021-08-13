@@ -1,6 +1,6 @@
 import { css, div, dom, span, style, svg } from "../browser";
 import { ClassMap } from "../browser/dom";
-import { anim, colors, icons, zIndexes } from "../designSystem";
+import { anim, colors, icons, timings, zIndexes } from "../designSystem";
 import { dispatcher, itemsStore, uiState } from "../globals";
 
 export class LeftSidebar {
@@ -113,7 +113,7 @@ style.class("left-sidebar", {
   paddingTop: 10,
   paddingBottom: 10,
   width: 250,
-  transition: "width 200ms ease 0s",
+  transition: css.transition({ width: timings.sidebarCollapse }),
   zIndex: zIndexes.leftSidebar,
 });
 

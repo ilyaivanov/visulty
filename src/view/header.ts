@@ -1,5 +1,5 @@
 import { dom, div, button, style } from "../browser";
-import { spacings, colors, icons } from "../designSystem";
+import { spacings, colors, icons, zIndexes } from "../designSystem";
 import { dispatcher, itemsStore, uiState } from "../globals";
 import * as itemsQueires from "../domain/itemQueries";
 
@@ -14,6 +14,7 @@ export class Header {
 
   focusOn = (item: MyItem) => {
     const path = itemsQueires.getItemPath(item);
+    console.log(path.map((i) => i.title));
     const pathElements = [
       this.separator(itemsStore.root, path[0]),
       ...path
@@ -122,6 +123,7 @@ style.class("header", {
   boxShadow: `0 0 6px 2px ${colors.menuShadow}`,
   display: "flex",
   alignItems: "center",
+  zIndex: zIndexes.header,
 });
 
 style.class("header-icon", {

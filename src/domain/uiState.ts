@@ -6,7 +6,8 @@ type TabName = "main" | "search";
 export class UIState {
   isSearchVisible = false;
   isModalShown = false;
-  isRightSidebarVisible = true;
+  isRightSidebarVisible = false;
+  isVideoFrameShown = true;
   isLeftSidebarVisible = false;
 
   theme: AppTheme = "light";
@@ -92,6 +93,11 @@ export class UIState {
 
   toggleTheme = () => {
     this.theme = this.theme === "dark" ? "light" : "dark";
+    this.dispatchCommand({ type: "theme-changed" });
+  };
+
+  toggleVideoFrameVisibility = () => {
+    this.isVideoFrameShown = !this.isVideoFrameShown;
     this.dispatchCommand({ type: "theme-changed" });
   };
 

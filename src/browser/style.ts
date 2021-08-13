@@ -164,7 +164,7 @@ export type Styles = Partial<{
   //positioning
   position: "absolute" | "relative" | "fixed";
   top: number | "100%" | string;
-  right: number;
+  right: number | string;
   bottom: number;
   left: number | string;
   zIndex: number;
@@ -176,7 +176,7 @@ export type Styles = Partial<{
   flex: number;
   display: "flex" | "inline-block" | "block" | "grid";
   flexDirection: "row" | "column";
-  justifyContent: "flex-start" | "center" | "flex-end";
+  justifyContent: "flex-start" | "center" | "flex-end" | "space-between";
   flexWrap: "wrap";
   alignSelf: "stretch";
   alignItems: "flex-start" | "center" | "flex-end";
@@ -215,6 +215,7 @@ export type Styles = Partial<{
 
   //shadows
   boxShadow: string;
+  textShadow: string;
 
   //svg
   stroke: string;
@@ -242,4 +243,5 @@ export type Styles = Partial<{
   pointerEvents: "none" | "all";
   visibility: "hidden";
   content: `" "`;
+  objectFit: "cover";
 }>;

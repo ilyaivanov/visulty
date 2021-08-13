@@ -23,6 +23,7 @@ export const spacings = {
   spaceBetweenCircleAndText: 8,
   headerHeight: 48,
   playerFooterHeight: 49,
+  rightSidebarDefaultWidth: 250,
   //   bodyScrollWidth: 6,
   //   pageFontSize: 16,
   //   pageTitleFontSize: 23,

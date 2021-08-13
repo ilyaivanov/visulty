@@ -5,6 +5,7 @@ export const timings = {
   focusFlyTime: 300,
   itemExpand: 350,
   modalShow: 150,
+  sidebarCollapse: 250,
 };
 
 Object.keys(timings).forEach((key) => {

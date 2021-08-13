@@ -1,4 +1,5 @@
 import { AppView } from "./view/app";
+import { Footer } from "./view/footer";
 import { Header } from "./view/header";
 import { ItemView } from "./view/itemView";
 import { LeaftSidebarItem, LeftSidebar } from "./view/leftSidebar";
@@ -17,6 +18,7 @@ export class CommandsDispatcher {
   public mainTab?: MainTab;
   public leftSidebar?: LeftSidebar;
   public rightSidebar?: RightSidebar;
+  public footer?: Footer;
 
   itemViewed = (view: ItemView) => {
     if (view.el.id) {
@@ -83,9 +85,10 @@ export class CommandsDispatcher {
       this.searchTab?.onSearchVisibilityChange();
     else if (command.type === "left-sidebar-visibility-changed")
       this.leftSidebar?.assignVisibility();
-    else if (command.type === "right-sidebar-visibility-changed")
+    else if (command.type === "right-sidebar-visibility-changed") {
       this.rightSidebar?.assignVisibility();
-    else if (command.type === "show-quick-find-modal")
+      this.footer?.onRightSidebarVisibilityChanged();
+    } else if (command.type === "show-quick-find-modal")
       this.appView?.showModal();
     else if (command.type === "searching-start")
       this.searchTab?.startSearching();

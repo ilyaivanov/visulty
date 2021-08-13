@@ -139,6 +139,15 @@ export const input = (inputProps: InputProps) => {
   return el;
 };
 
+type ImageProps = ElementProps<HTMLImageElement> & {
+  src: string;
+};
+export const img = (inputProps: ImageProps) => {
+  const el = elem("img", inputProps);
+  el.src = inputProps.src;
+  return el;
+};
+
 type ElementProps<T> = {
   id?: string;
   textContent?: string;
