@@ -31,6 +31,7 @@ module.exports = (env, argv) => {
     plugins: [
       new HtmlWebpackPlugin({
         template: "index.html",
+        favicon: "./favicon.svg",
       }),
       isProd ? new CleanWebpackPlugin() : undefined,
     ].filter((x) => x),
