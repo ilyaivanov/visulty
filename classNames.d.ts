@@ -64,6 +64,8 @@ type ClassName =
 
   //PLAYER
   | "player"
+  | "player-iframe"
+  | "player-iframeHidden"
   | "play-button"
   | "text-area"
   | "text-area-titles-container"

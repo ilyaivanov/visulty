@@ -13,7 +13,11 @@ export class Footer {
   targetText = dom.createRef("div");
   constructor() {
     this.el = div({ className: "player" }, [
-      dom.elem("div", { id: youtubeIframeId, ref: this.youtubePlayer }),
+      dom.elem("div", {
+        id: youtubeIframeId,
+        className: "player-iframe",
+        ref: this.youtubePlayer,
+      }),
 
       this.icon(icons.playNext, () => playerState.playPreviousItemInQueue(), [
         "footer-icon-play-previous",
@@ -21,7 +25,9 @@ export class Footer {
       this.icon(icons.play, () => 42),
       this.icon(icons.playNext, () => playerState.playNextItemInQueue()),
       div({ className: "text-area", ref: this.textArea }),
-      this.icon(icons.videoHide, () => 42),
+      this.icon(icons.videoHide, () =>
+        playerState.toggleVideoFrameVisibility()
+      ),
       this.icon(icons.playlist, () => uiState.toggleRightSidebarVisibility()),
       this.viewProgress(),
     ]);
@@ -64,6 +70,13 @@ export class Footer {
         .flat()
     );
   };
+
+  onVideoFrameVisibilityChanged = () =>
+    dom.toggleClass(
+      document.getElementById(youtubeIframeId)!,
+      "player-iframeHidden",
+      !playerState.isVideoFrameShown
+    );
 
   onRightSidebarVisibilityChanged = () => {
     //using in case player has not yet been initialized
@@ -118,7 +131,6 @@ export class Footer {
 
           div({
             className: "player-progress-text",
-            textContent: "0:32",
             ref: this.targetText,
           }),
         ]),
@@ -189,7 +201,7 @@ style.class("player-progress-ellapsed", {
 });
 
 style.class("player-progress-text", {
-  textShadow: `0 0 4px rgb(0 0 0 / 50%)`,
+  textShadow: `0 0 4px rgb(0 0 0 / 40%)`,
   position: "absolute",
   top: -25,
   color: colors.mainTextColor,
@@ -231,13 +243,24 @@ style.parentHover("player-progress-container-padding", "player-progress-bulp", {
   transform: "scale(1)",
 });
 
-style.id(youtubeIframeId, {
+style.class("player-iframe", {
   position: "absolute",
   right: 20,
   bottom: spacings.playerFooterHeight + 20,
   width: 400,
   height: 150,
-  transition: css.transition({ right: timings.sidebarCollapse }),
+  transform: css.translate(0, 0),
+  transition: css.transition({
+    right: timings.sidebarCollapse,
+    opacity: 200,
+    transform: 200,
+  }),
+});
+
+style.class("player-iframeHidden", {
+  opacity: 0,
+  transform: css.translate(0, 15),
+  pointerEvents: "none",
 });
 
 style.class("footer-icon", {

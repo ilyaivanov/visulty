@@ -3,6 +3,7 @@ import { CommandsDispatcher } from "../dispatcher";
 import { traverseChildrenDFS } from "./itemQueries";
 
 export class PlayerState {
+  isVideoFrameShown = true;
   itemBeingPlayed?: MyItem;
   currentItemPlayed?: YoutubeVideo;
   queue?: YoutubeVideo[];
@@ -69,4 +70,9 @@ export class PlayerState {
       }
     }
   }
+
+  toggleVideoFrameVisibility = () => {
+    this.isVideoFrameShown = !this.isVideoFrameShown;
+    this.dispatcher.footer?.onVideoFrameVisibilityChanged();
+  };
 }

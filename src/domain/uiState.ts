@@ -96,11 +96,6 @@ export class UIState {
     this.dispatchCommand({ type: "theme-changed" });
   };
 
-  toggleVideoFrameVisibility = () => {
-    this.isVideoFrameShown = !this.isVideoFrameShown;
-    this.dispatchCommand({ type: "theme-changed" });
-  };
-
   select = (item: MyItem) => {
     const root = items.getRoot(item);
     const targetTabName: TabName = root.id === "SEARCH" ? "search" : "main";
