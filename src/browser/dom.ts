@@ -156,7 +156,7 @@ type ElementProps<T> = {
 } & ClassDefinitions &
   Events;
 
-export const elem = <T extends keyof HTMLElementTagNameMap>(
+const elem = <T extends keyof HTMLElementTagNameMap>(
   tag: T,
   props: ElementProps<HTMLElementTagNameMap[T]>,
   children?: ElementChild[]

@@ -64,7 +64,7 @@ export class Header {
         textContent: "search",
         onClick: () => uiState.toggleSearchVisibility(),
       }),
-      dom.elem("button", {
+      button({
         onClick: () => uiState.toggleTheme(),
         ref: this.themeButton,
       }),

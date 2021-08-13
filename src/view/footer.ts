@@ -13,7 +13,7 @@ export class Footer {
   targetText = dom.createRef("div");
   constructor() {
     this.el = div({ className: "player" }, [
-      dom.elem("div", {
+      div({
         id: youtubeIframeId,
         className: "player-iframe",
         ref: this.youtubePlayer,

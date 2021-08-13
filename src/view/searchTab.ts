@@ -15,7 +15,7 @@ export class SearchTab {
         value: "",
         onKeyDown,
       }),
-      dom.elem("div", { ref: this.searchContent }, [
+      div({ ref: this.searchContent }, [
         ItemView.viewChildrenFor(itemsStore.searchRoot),
       ]),
     ]);

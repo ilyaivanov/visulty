@@ -1,4 +1,4 @@
-import { dom, div, input, style } from "../browser";
+import { dom, div, input, span, button, style } from "../browser";
 import { colors, anim, levels, spacings } from "../designSystem";
 import { play } from "../api/youtubePlayer";
 import { itemsStore, dispatcher, dnd, uiState, playerState } from "../globals";
@@ -17,9 +17,8 @@ export class ItemView {
       onChevronClick: () => itemsStore.toggleItem(item),
       onIconMouseDown: (e) => dnd.onItemMouseDown(item, e),
     });
-    this.el = dom.elem("div", {}, [
-      dom.elem(
-        "div",
+    this.el = div({}, [
+      div(
         {
           classNames: ["item-row", levels.rowForLevel(level)],
           ref: this.rowElem,
@@ -28,7 +27,7 @@ export class ItemView {
         },
         [
           this.icon.el,
-          dom.elem("span", {
+          span({
             className: "item-row-title",
             classMap: {
               "item-container-row-title": itemsStore.isContainer(item),
@@ -37,19 +36,19 @@ export class ItemView {
             ref: this.titleElem,
           }),
           div({ classNames: ["hide", "item-row_showOnHoverOrSelected"] }, [
-            dom.elem("button", {
+            button({
               textContent: "▶",
               onClickStopPropagation: () => playerState.playItem(item),
             }),
-            dom.elem("button", {
+            button({
               textContent: "F",
               onClickStopPropagation: () => uiState.focusOnItem(item),
             }),
-            dom.elem("button", {
+            button({
               textContent: "X",
               onClickStopPropagation: () => itemsStore.removeItem(item),
             }),
-            dom.elem("button", {
+            button({
               textContent: "E",
               onClickStopPropagation: () => this.enterRenameMode(),
             }),
@@ -127,8 +126,7 @@ export class ItemView {
   };
 
   private viewChildren = () =>
-    dom.elem(
-      "div",
+    div(
       { className: "item-row-children", ref: this.childrenElem },
       this.item.isLoading
         ? showSkeletons(10, this.level + 1).concat(childrenBorder(this.level))
@@ -171,7 +169,7 @@ export class ItemView {
 }
 
 const childrenBorder = (level: number) =>
-  dom.elem("div", {
+  div({
     classNames: ["item-children-border", levels.childrenBorderForLevel(level)],
   });
 style.class("item-row", {

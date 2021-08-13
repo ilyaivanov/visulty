@@ -1,5 +1,5 @@
 // import { items } from "../domain";
-import { dom, style } from "../browser";
+import { dom, div, style } from "../browser";
 import { spacings } from "../designSystem";
 import { colors } from "../designSystem";
 import { itemsStore } from "../globals";
@@ -35,9 +35,7 @@ export class Dnd {
         console.log(dist);
         if (dist > 5) {
           const icon = ItemIcon.viewIcon(itemBeingDragged);
-          this.dragAvatar = dom.elem("div", { className: "item-dragAvatar" }, [
-            icon,
-          ]);
+          this.dragAvatar = div({ className: "item-dragAvatar" }, [icon]);
           dom.addClass(icon, "item-icon-video");
           this.appendItemTo?.appendChild(this.dragAvatar);
           this.updateDragAvatarPosition(this.dragAvatar, e);
@@ -59,11 +57,9 @@ export class Dnd {
         bulp.style.borderRadius =
           (type === "folder" || type === "YTchannel" ? 5 : 1) + "px";
 
-        this.dragDestination = dom.elem(
-          "div",
-          { className: "item-dragDestinationLine" },
-          [bulp]
-        );
+        this.dragDestination = div({ className: "item-dragDestinationLine" }, [
+          bulp,
+        ]);
         this.appendItemTo?.appendChild(this.dragDestination);
       }
       this.updateDragDestinationPosition(

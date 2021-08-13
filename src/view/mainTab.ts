@@ -1,4 +1,4 @@
-import { div, dom, style } from "../browser";
+import { div, button, dom, style } from "../browser";
 import { anim, levels, colors } from "../designSystem";
 import { dispatcher, itemsStore } from "../globals";
 import * as items from "../domain/itemQueries";
@@ -9,7 +9,7 @@ export class MainTab {
   el: HTMLElement;
   currentItemFocused?: MyItem;
   constructor() {
-    this.el = dom.elem("div", { className: "tab" }, []);
+    this.el = div({ className: "tab" }, []);
     dispatcher.mainTab = this;
   }
 
@@ -76,8 +76,8 @@ export class MainTab {
   };
 
   addButton() {
-    return dom.elem("div", { className: levels.rowForLevel(0) }, [
-      dom.elem("button", {
+    return div({ className: levels.rowForLevel(0) }, [
+      button({
         textContent: "add",
         onClick: () => itemsStore.addItemToTheEndOf(itemsStore.root),
       }),
