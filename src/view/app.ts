@@ -71,12 +71,14 @@ style.class("gallery", {
   height: `calc(100vh - ${spacings.playerFooterHeight}px - ${spacings.headerHeight}px)`,
   gridArea: "gallery",
   display: "flex",
+  overflow: "hidden",
 });
 
 style.class("tab", {
   paddingTop: 30,
   flex: 1,
   overflowY: "overlay",
+  overflowX: "hidden",
   paddingBottom: "20vh",
 });
 
