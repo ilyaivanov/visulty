@@ -1,9 +1,8 @@
-import { dom, div, style, button, css, img, span } from "../browser";
-import { icons, spacings, timings, zIndexes } from "../designSystem";
+import { dom, div, style, css, img, span } from "../browser";
+import { icons, spacings, colors, timings, zIndexes } from "../designSystem";
 import { youtubeIframeId } from "../api/youtubePlayer";
-import { colors } from "../designSystem";
-import { dispatcher, itemsStore, playerState, uiState } from "../globals";
 import { getItemPath } from "../domain/itemQueries";
+import { dispatcher, itemsStore, playerState, uiState } from "../globals";
 
 export class Footer {
   el: HTMLElement;

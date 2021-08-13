@@ -1,6 +1,6 @@
 import { play, addEventListener } from "../api/youtubePlayer";
 import { CommandsDispatcher } from "../dispatcher";
-import { traverseChildrenDFS } from "./itemQueries";
+import { traverseChildrenDFS } from "../domain/itemQueries";
 
 export class PlayerState {
   isVideoFrameShown = true;

@@ -1,6 +1,6 @@
 import { CommandsDispatcher } from "./dispatcher";
 import { ItemsStore as ItemsStore } from "./domain/itemsStore";
-import { PlayerState } from "./domain/player";
+import { PlayerState } from "./player/player";
 import { Shortcuts } from "./domain/shortcuts";
 import { UIState } from "./domain/uiState";
 import Dnd from "./view/dnd";

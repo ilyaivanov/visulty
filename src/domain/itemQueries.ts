@@ -111,3 +111,27 @@ export const traverseChildrenDFS = (
   traverseChildren(item);
   return results;
 };
+
+export const traverseChildrenBFS = <T>(
+  rootItem: MyItem,
+  filterMap: (item: MyItem) => T | undefined,
+  maxResults: number
+): T[] => {
+  const results: T[] = [];
+  const queue: MyItem[] = [];
+  const traverse = () => {
+    const item = queue.shift();
+
+    if (!item || results.length >= maxResults) return queue;
+
+    const resultingItem = filterMap(item);
+
+    if (resultingItem) results.push(resultingItem);
+    if (item.children) item.children.forEach((subitem) => queue.push(subitem));
+    traverse();
+  };
+
+  queue.push(rootItem);
+  traverse();
+  return results;
+};

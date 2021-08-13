@@ -1,3 +1,4 @@
+import { traverseChildrenBFS } from "../domain/itemQueries";
 export type LocalSearchResults = {
   items: LocalSearchEntry[];
   term: string;
@@ -12,33 +13,26 @@ export const findLocalItems = (
   rootItem: MyItem,
   term: string
 ): LocalSearchResults => {
-  const results: LocalSearchEntry[] = [];
   const MAX_ITEMS_TO_FIND = 12;
 
   const terms = term.split(" ").filter((x) => x);
 
-  const queue: MyItem[] = [];
-  const traverse = () => {
-    const item = queue.shift();
-
-    if (!item || results.length >= MAX_ITEMS_TO_FIND) return;
-
+  const isMatchingTerms = (item: MyItem): LocalSearchEntry | undefined => {
     const loweredTitle = item.title.toLocaleLowerCase();
     const indexes = terms.map((term) => loweredTitle.indexOf(term));
 
     if (all(indexes, (index) => index >= 0))
-      results.push({
+      return {
         item,
         highlights: createTermsFound(item.title, terms),
-      });
-    if (item.children) item.children.forEach((subitem) => queue.push(subitem));
-    traverse();
+      };
+    return undefined;
   };
 
-  queue.push(rootItem);
-  traverse();
-
-  return { items: results, term };
+  return {
+    items: traverseChildrenBFS(rootItem, isMatchingTerms, MAX_ITEMS_TO_FIND),
+    term,
+  };
 };
 
 //see unit tests for more details

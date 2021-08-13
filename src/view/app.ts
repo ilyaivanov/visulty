@@ -2,12 +2,12 @@ import { dom, div, style, css } from "../browser";
 import { spacings, colors } from "../designSystem";
 import { LocalSearchResults } from "../domain";
 import { dispatcher, shortcuts, uiState } from "../globals";
-import { Footer } from "./footer";
+import { Footer } from "../player/footer";
 import { Header } from "./header";
 import { LeftSidebar } from "./leftSidebar";
 import { MainTab } from "./mainTab";
 import { Modal } from "./modal";
-import { RightSidebar } from "./rightSidebar";
+import { RightSidebar } from "../player/rightSidebar";
 import { SearchTab } from "./searchTab";
 
 export class AppView {

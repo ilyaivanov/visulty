@@ -1,10 +1,10 @@
 import { AppView } from "./view/app";
-import { Footer } from "./view/footer";
+import { Footer } from "./player/footer";
 import { Header } from "./view/header";
 import { ItemView } from "./view/itemView";
 import { LeaftSidebarItem, LeftSidebar } from "./view/leftSidebar";
 import { MainTab } from "./view/mainTab";
-import { RightSidebar } from "./view/rightSidebar";
+import { RightSidebar } from "./player/rightSidebar";
 import { SearchTab } from "./view/searchTab";
 
 export class CommandsDispatcher {
