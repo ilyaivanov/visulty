@@ -187,6 +187,18 @@ style.class("item-icon-image_closed", {
   boxShadow: `0 0 4px 2px ${colors.itemImageShadow}`,
 });
 
+style.class2("item-icon-image_square", "item-icon-image_closed", {
+  boxShadow:
+    inset(2, colors.itemImageInsetShadow) +
+    `, 0 0 4px 2px ${colors.itemImageShadow}`,
+});
+
+style.class2("item-icon-image_circle", "item-icon-image_closed", {
+  boxShadow:
+    inset(2, colors.itemImageInsetShadow) +
+    `, 0 0 4px 2px ${colors.itemImageShadow}`,
+});
+
 //we need  this spacings because I'm not rendering chevron for videos
 //maybe in future I won't be rendering chevron at all to speedup rendering for lots of items
 style.class("item-icon-video", {

@@ -1,6 +1,6 @@
 const borderWidth = 2;
 const treeMaxWidth = 700;
-const outerRadius = 16;
+const outerRadius = 18;
 const innerRadius = 6;
 const chevronSize = 16;
 const borderSize = 2;
