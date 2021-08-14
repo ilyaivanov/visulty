@@ -77,14 +77,16 @@ export class ItemIcon {
       ];
     } else {
       return [
-        svg.circle({
-          cx: iconSize / 2,
-          cy: iconSize / 2,
-          r: spacings.outerRadius,
-          fill: colors.itemOuterCircle,
-          className: "item-icon-circle",
-          classMap: outerCircleClassMap(item),
-        }),
+        // svg.circle({
+        //   cx: iconSize / 2,
+        //   cy: iconSize / 2,
+        //   r: spacings.outerRadius - 1,
+        //   fill: "transparent",
+        //   strokeWidth: 2,
+        //   stroke: colors.itemChildrenLine,
+        //   className: "item-icon-circle",
+        //   classMap: outerCircleClassMap(item),
+        // }),
         svg.circle({
           cx: iconSize / 2,
           cy: iconSize / 2,
