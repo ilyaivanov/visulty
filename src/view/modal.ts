@@ -1,8 +1,7 @@
-import { play } from "../api/youtubePlayer";
 import { div, input, style, css, dom, span } from "../browser";
 import { colors, timings, zIndexes } from "../designSystem";
 import { Highlight, LocalSearchEntry, LocalSearchResults } from "../domain";
-import { itemsStore, uiState } from "../globals";
+import { itemsStore, playerState, uiState } from "../globals";
 import { ItemIcon } from "./itemIcon";
 
 export class Modal {
@@ -18,7 +17,6 @@ export class Modal {
           placeholder: "Jump to...",
           value: "",
           onInput: () => {
-            console.log("on change");
             this.input.elem.value &&
               itemsStore.searchForLocalItems(this.input.elem.value);
           },
@@ -50,13 +48,8 @@ export class Modal {
       this.dismissModal();
     }
     if (e.code === "Space") {
-      if (this.itemSelected && this.itemSelected.type === "YTvideo") {
-        e.preventDefault();
-        play(this.itemSelected.videoId);
-      } else if (this.itemSelected) {
-        //prevents scroll of the page when space is pressed
-        e.preventDefault();
-      }
+      e.preventDefault();
+      if (this.itemSelected) playerState.playItem(this.itemSelected);
     }
 
     if (e.key === "Enter") {
