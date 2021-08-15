@@ -1,3 +1,4 @@
+import { all } from "../domain/array";
 import { traverseChildrenBFS } from "../domain/itemQueries";
 export type LocalSearchResults = {
   items: LocalSearchEntry[];
@@ -15,7 +16,10 @@ export const findLocalItems = (
 ): LocalSearchResults => {
   const MAX_ITEMS_TO_FIND = 12;
 
-  const terms = term.split(" ").filter((x) => x);
+  const terms = term
+    .toLocaleLowerCase()
+    .split(" ")
+    .filter((x) => x);
 
   const isMatchingTerms = (item: MyItem): LocalSearchEntry | undefined => {
     const loweredTitle = item.title.toLocaleLowerCase();
@@ -65,21 +69,4 @@ export const createTitleHighlightsFromFoundTerms = (
     from: key,
     to: key + value.length,
   }));
-};
-
-const all = <T>(arr: T[], predicate: (a: T) => boolean): boolean => {
-  //not using reduce here because I want to have the ability not to traverse whole array
-  //and return result as long as I get predicate returning false
-  //same goes for any
-  for (var i = 0; i < arr.length; i++) {
-    if (!predicate(arr[i])) return false;
-  }
-  return true;
-};
-
-const any = <T>(arr: T[], predicate: (a: T) => boolean): boolean => {
-  for (var i = 0; i < arr.length; i++) {
-    if (predicate(arr[i])) return true;
-  }
-  return false;
 };

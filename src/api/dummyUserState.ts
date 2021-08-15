@@ -3,7 +3,10 @@ export const randomItems = (count: number): MyItem[] =>
     folder("Item " + Math.floor(Math.random() * 100))
   );
 
-const folder = (props: string | Partial<Folder>, children?: MyItem[]) => {
+export const folder = (
+  props: string | Partial<Folder>,
+  children?: MyItem[]
+) => {
   const title = typeof props === "object" ? props.title || "" : props;
   const item: MyItem = {
     title,

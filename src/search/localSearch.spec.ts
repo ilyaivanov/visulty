@@ -1,8 +1,8 @@
-import { expectEqual, folder } from "./testUtils";
+import { folder } from "../api/dummyUserState";
 import {
   createTitleHighlightsFromFoundTerms,
   findLocalItems,
-} from "../localSearch";
+} from "./localSearch";
 
 describe("having a bunch of nested items", () => {
   it("searching for the term yields results", () => {
@@ -13,18 +13,18 @@ describe("having a bunch of nested items", () => {
     ]);
     const searchResults = findLocalItems(root, "mus ther third");
 
-    expectEqual(searchResults.items.length, 2);
+    areEqual(searchResults.items.length, 2);
 
     //Expecting BFS to first give items which are closer to the root (compared to DFS)
-    expectEqual(searchResults.items[0].item.title, "Another Music (thirdTerm)");
-    expectEqual(
+    areEqual(searchResults.items[0].item.title, "Another Music (thirdTerm)");
+    areEqual(
       searchResults.items[1].item.title,
       "Another Music thirdTerm (this comes second)"
     );
 
     const fisrtResult = searchResults.items[0];
     //items are ordered by foundAt, thus simplifying UI
-    expectEqual(fisrtResult.highlights, [
+    areEqual(fisrtResult.highlights, [
       { from: 3, to: 7 },
       { from: 8, to: 11 },
       { from: 15, to: 20 },
@@ -34,10 +34,10 @@ describe("having a bunch of nested items", () => {
   it("terms found are generated properly from overlapping search terms", () => {
     const root = folder("ROOT", [folder("Miss Monique (Radio Intense)")]);
 
-    const searchResults = findLocalItems(root, "mis mi iss mon");
+    const searchResults = findLocalItems(root, "mis MI iss mon");
 
     const fisrtResult = searchResults.items[0];
-    expectEqual(fisrtResult.highlights, [
+    areEqual(fisrtResult.highlights, [
       { from: 0, to: 3 },
       { from: 1, to: 4 },
       { from: 5, to: 8 },
@@ -54,8 +54,6 @@ describe("having a bunch of nested items", () => {
       { foundAt: 1, term: "tart" },
     ];
 
-    expectEqual(createTitleHighlightsFromFoundTerms(terms), [
-      { from: 0, to: 5 },
-    ]);
+    areEqual(createTitleHighlightsFromFoundTerms(terms), [{ from: 0, to: 5 }]);
   });
 });

@@ -93,8 +93,6 @@ export class CommandsDispatcher {
     else if (command.type === "searching-start")
       this.searchTab?.startSearching();
     else if (command.type === "searching-end") this.searchTab?.stopSearching();
-    else if (command.type === "searching-local-end")
-      this.appView?.showLocalResults(command.results);
     else if (command.type === "theme-changed") {
       this.header?.assignThemeButtonText();
       this.appView?.assignTheme();

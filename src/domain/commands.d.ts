@@ -15,5 +15,4 @@ type DomainCommand =
   | { type: "show-quick-find-modal" }
   | { type: "searching-start" }
   | { type: "searching-end" }
-  | { type: "searching-local-end"; results: LocalSearchResults }
   | { type: "search-visibility-toggled" };

@@ -16,7 +16,8 @@
   "license": "ISC",
   "jest": {
     "preset": "ts-jest",
-    "testEnvironment": "jsdom"
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": ["./jest.setup.js"]
   },
   "homepage": "https://github.com/ilyaivanov/visulty",
   "devDependencies": {

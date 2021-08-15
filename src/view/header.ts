@@ -14,7 +14,6 @@ export class Header {
 
   focusOn = (item: MyItem) => {
     const path = itemsQueires.getItemPath(item);
-    console.log(path.map((i) => i.title));
     const pathElements = [
       this.separator(itemsStore.root, path[0]),
       ...path

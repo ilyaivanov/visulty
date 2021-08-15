@@ -1,18 +1,30 @@
 import { dom, div, style, css } from "../browser";
 import { spacings, colors } from "../designSystem";
-import { LocalSearchResults } from "../domain";
-import { dispatcher, shortcuts, uiState } from "../globals";
+import {
+  dispatcher,
+  itemsStore,
+  playerState,
+  shortcuts,
+  uiState,
+} from "../globals";
 import { Footer } from "../player/footer";
 import { Header } from "./header";
 import { LeftSidebar } from "./leftSidebar";
 import { MainTab } from "./mainTab";
-import { Modal } from "./modal";
 import { RightSidebar } from "../player/rightSidebar";
 import { SearchTab } from "./searchTab";
+import { SearchModalController } from "../search/modalController";
+import ModalViewImplementation from "../search/modalView";
 
 export class AppView {
   el: HTMLElement;
-  modal?: Modal;
+  modalControler = new SearchModalController(new ModalViewImplementation(), {
+    getRoot: () => itemsStore.root,
+    onFocus: (item) => uiState.focusOnItem(item),
+    onPlay: (item) => playerState.playItem(item),
+    onDismiss: () => shortcuts.startListeningToKeyboard(),
+  });
+
   constructor() {
     this.el = div({ className: "app" }, [
       new Header().el,
@@ -32,17 +44,8 @@ export class AppView {
     });
 
   showModal = () => {
-    this.modal = new Modal(() => {
-      shortcuts.startListeningToKeyboard();
-      this.modal = undefined;
-    });
     shortcuts.stopListeningToKeyboard();
-    this.el.appendChild(this.modal.el);
-    this.modal.focusOnInput();
-  };
-
-  showLocalResults = (results: LocalSearchResults) => {
-    if (this.modal) this.modal.renderItems(results);
+    this.modalControler.showModal(this.el);
   };
 }
 
