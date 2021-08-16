@@ -46,7 +46,6 @@ export class ItemsStore {
     if (!item.isLoading) {
       item.isLoading = true;
       this.loadItem(item, items.getNextPageToken(item)).then((nextChildren) => {
-        console.log("Loaded next page for " + item.title, nextChildren);
         items.appendChildrenTo(item, nextChildren);
 
         item.isLoading = false;
@@ -74,50 +73,24 @@ export class ItemsStore {
     });
   };
 
-  loadItem = (item: MyItem, pageToken?: string): Promise<MyItem[]> => {
+  private loadItem = (item: MyItem, pageToken?: string): Promise<MyItem[]> => {
+    let loadingPromise: Promise<youtubeApi.MappedResponse> | undefined =
+      undefined;
     if (items.isSearch(item)) {
-      return youtubeApi
-        .loadSearchResults(item.term, item.nextPageToken)
-        .then((response) => {
-          this.searchRoot.nextPageToken = response.nextPageToken;
-          return response.items.map(mapResponseItem);
-        });
+      loadingPromise = youtubeApi.loadSearchResults(item);
     }
     if (items.isPlaylist(item)) {
-      return youtubeApi
-        .loadPlaylistItems(item.playlistId, pageToken)
-        .then((response) => {
-          item.nextPageToken = response.nextPageToken;
-          return response.items.map(mapResponseItem);
-        });
+      loadingPromise = youtubeApi.loadPlaylistItems(item.playlistId, pageToken);
     }
     if (items.isChannel(item)) {
-      if (!pageToken) {
-        return Promise.all([
-          youtubeApi.getChannelUploadsPlaylistId(item.channelId),
-          youtubeApi.loadChannelItems(item.channelId),
-        ]).then(([uploadsChannelId, response]) => {
-          const uploadsPlaytlist: youtubeApi.ResponseItem = {
-            itemType: "playlist",
-            channelId: item.channelId,
-            channelTitle: item.title,
-            id: Math.random() + "",
-            image: item.image,
-            itemId: uploadsChannelId,
-            name: item.title + " Uploads",
-          } as youtubeApi.ResponseItem;
-          item.nextPageToken = response.nextPageToken;
-          return [uploadsPlaytlist].concat(response.items).map(mapResponseItem);
-        });
-      } else {
-        return youtubeApi
-          .loadChannelItems(item.channelId, pageToken)
-          .then((response) => {
-            item.nextPageToken = response.nextPageToken;
-            return response.items.map(mapResponseItem);
-          });
-      }
+      loadingPromise = youtubeApi.loadChannelItems(item);
     }
+
+    if (loadingPromise)
+      return loadingPromise.then((response) => {
+        item.nextPageToken = response.nextPageToken;
+        return response.items;
+      });
     throw new Error(`Can't load ${item.title} of type ${item.type}`);
   };
 
@@ -146,31 +119,3 @@ export class ItemsStore {
     );
   };
 }
-
-const mapResponseItem = (item: youtubeApi.ResponseItem): MyItem => {
-  if (item.itemType === "video")
-    return {
-      type: "YTvideo",
-      id: item.id,
-      title: item.name,
-      videoId: item.itemId,
-    };
-  else if (item.itemType === "channel")
-    return {
-      type: "YTchannel",
-      id: item.id,
-      title: item.name,
-      channelId: item.itemId,
-      image: item.image,
-      isOpen: false,
-    };
-  else
-    return {
-      type: "YTplaylist",
-      id: item.id,
-      title: item.name,
-      playlistId: item.itemId,
-      image: item.image,
-      isOpen: false,
-    };
-};

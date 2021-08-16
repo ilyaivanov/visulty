@@ -5,7 +5,7 @@ type ItemBase = {
   isOpenInSidebar?: boolean;
   isLoading?: boolean;
   children?: MyItem[];
-
+  nextPageToken?: string;
   parent?: MyItem;
 };
 
@@ -15,7 +15,6 @@ type Folder = ItemBase & {
 
 type SearchRoot = ItemBase & {
   type: "search";
-  nextPageToken?: string;
   term: string;
 };
 
@@ -27,14 +26,12 @@ type YoutubeVideo = ItemBase & {
 type YoutubePlaylist = ItemBase & {
   type: "YTplaylist";
   playlistId: string;
-  nextPageToken?: string;
   image: string;
 };
 
 type YoutubeChannel = ItemBase & {
   type: "YTchannel";
   channelId: string;
-  nextPageToken?: string;
   image: string;
 };
 

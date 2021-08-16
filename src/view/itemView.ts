@@ -122,9 +122,6 @@ export class ItemView {
       this.childrenElem.elem = undefined;
     }
     this.el.appendChild(this.viewChildren());
-    const nextPageToken = items.getNextPageToken(this.item);
-    if (nextPageToken)
-      this.titleElem.elem.textContent = this.item.title + ` (${nextPageToken})`;
 
     if (animate) anim.expand(this.childrenElem.elem);
   };
