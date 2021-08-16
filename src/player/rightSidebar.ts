@@ -1,6 +1,6 @@
 import { css, div, dom, img, style } from "../browser";
 import { colors, timings, zIndexes } from "../designSystem";
-import { getPreviewImage } from "../domain/itemQueries";
+import { getPreviewImage } from "../items";
 import { dispatcher, playerState, uiState } from "../globals";
 
 export class RightSidebar {

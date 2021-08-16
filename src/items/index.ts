@@ -20,6 +20,24 @@ export const getItemAbove = (item: MyItem): MyItem | undefined => {
   else if (item.parent && !isRoot(item.parent)) return item.parent;
 };
 
+export const removeItem = (item: MyItem): void => {
+  const parent = item.parent;
+  if (parent && parent.children) {
+    parent.children = parent.children.filter((sibling) => item != sibling);
+  }
+};
+
+export const createNewItemAsLastChild = (parent: MyItem): MyItem => {
+  const newFolder: Folder = {
+    title: "New Folder",
+    id: Math.random() + "",
+    type: "folder",
+    parent: parent,
+  };
+  parent.children = (parent.children || []).concat(newFolder);
+  return newFolder;
+};
+
 //this always returns following item without going down to children
 export const getFollowingItem = (item: MyItem): MyItem | undefined => {
   const parent = item.parent;
@@ -122,6 +140,28 @@ export const getNextPageToken = (item: MyItem): string | undefined => {
   return undefined;
 };
 
+export const hasItemImage = (item: MyItem) =>
+  "image" in item || "videoId" in item;
+
+export const isVideo = (item: MyItem): item is YoutubeVideo =>
+  item.type === "YTvideo";
+export const isPlaylist = (item: MyItem): item is YoutubePlaylist =>
+  item.type === "YTplaylist";
+export const isChannel = (item: MyItem): item is YoutubeChannel =>
+  item.type === "YTchannel";
+
+export const isSearch = (item: MyItem): item is SearchRoot =>
+  item.type === "search";
+
+export const isContainer = (
+  item: MyItem
+): item is YoutubePlaylist | YoutubeChannel | Folder => item.type != "YTvideo";
+
+export const isEmpty = (item: MyItem) =>
+  !item.children || item.children.length == 0;
+export const isNeededToBeFetched = (item: MyItem) =>
+  isEmpty(item) && !item.isLoading && (isPlaylist(item) || isChannel(item));
+
 export const forEachChild = (
   item: MyItem,
   action: (item: MyItem, parent: MyItem) => void
@@ -172,4 +212,45 @@ export const traverseChildrenBFS = <T>(
   queue.push(rootItem);
   traverse();
   return results;
+};
+
+export const moveItem = (
+  itemToMove: MyItem,
+  placement: DropPlacement,
+  itemRelativeWhichToMove: MyItem
+) => {
+  if (placement === "after") {
+    insertItemAfter(itemRelativeWhichToMove, itemToMove);
+  } else if (placement == "before") {
+    insertItemBefore(itemRelativeWhichToMove, itemToMove);
+  } else if (placement == "inside") {
+    insertItemInside(itemRelativeWhichToMove, itemToMove);
+  }
+};
+
+const insertItemAfter = (
+  itemRelativeToInsert: MyItem,
+  itemToInsert: MyItem
+) => {
+  const context = itemRelativeToInsert.parent!.children!;
+  const index = context.indexOf(itemRelativeToInsert);
+
+  context.splice(index + 1, 0, itemToInsert);
+  itemToInsert.parent = itemRelativeToInsert.parent;
+};
+
+const insertItemBefore = (
+  itemRelativeToInsert: MyItem,
+  itemToInsert: MyItem
+) => {
+  const context = itemRelativeToInsert.parent!.children!;
+  const index = context.indexOf(itemRelativeToInsert);
+
+  context.splice(index, 0, itemToInsert);
+  itemToInsert.parent = itemRelativeToInsert.parent;
+};
+
+const insertItemInside = (parentItem: MyItem, itemToInsert: MyItem) => {
+  parentItem.children = [itemToInsert].concat(parentItem.children || []);
+  itemToInsert.parent = parentItem;
 };

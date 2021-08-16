@@ -1,4 +1,4 @@
-import * as items from "./itemQueries";
+import * as items from "../items";
 import { ItemsStore } from "./itemsStore";
 
 type TabName = "main" | "search";

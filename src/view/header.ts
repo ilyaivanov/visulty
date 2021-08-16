@@ -1,7 +1,7 @@
 import { dom, div, button, style } from "../browser";
 import { spacings, colors, icons, zIndexes } from "../designSystem";
 import { dispatcher, itemsStore, uiState } from "../globals";
-import * as itemsQueires from "../domain/itemQueries";
+import * as items from "../items";
 
 export class Header {
   el: HTMLElement;
@@ -13,7 +13,7 @@ export class Header {
   }
 
   focusOn = (item: MyItem) => {
-    const path = itemsQueires.getItemPath(item);
+    const path = items.getItemPath(item);
     const pathElements = [
       this.separator(itemsStore.root, path[0]),
       ...path

@@ -1,7 +1,7 @@
 import { div, button, dom, style } from "../browser";
 import { anim, levels, colors } from "../designSystem";
 import { dispatcher, itemsStore } from "../globals";
-import * as items from "../domain/itemQueries";
+import * as items from "../items";
 
 import { ItemView } from "./itemView";
 

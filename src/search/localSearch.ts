@@ -1,5 +1,5 @@
 import { all } from "../domain/array";
-import { traverseChildrenBFS } from "../domain/itemQueries";
+import { traverseChildrenBFS } from "../items";
 export type LocalSearchResults = {
   items: LocalSearchEntry[];
   term: string;

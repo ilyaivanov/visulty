@@ -20,6 +20,7 @@ declare function haveLastBeenCalledWith<T extends (...args: any) => any>(
 declare function haveBeenCalled<T extends (...args: any) => any>(fn: T);
 
 declare function areEqual<T>(a: T, b: T);
+declare function areSame<T>(a: T, b: T);
 
 type KeyboardKey =
   | "ArrowDown"

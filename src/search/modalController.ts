@@ -1,11 +1,10 @@
 import { getNextItemBy, getPreviousItemBy } from "../domain/array";
 import * as localSearch from "./localSearch";
-import { LocalSearchResults } from "./localSearch";
 export { LocalSearchResults } from "./localSearch";
 
 export interface ModalView {
   //commands
-  setSearchResults(searchResults: LocalSearchResults): void;
+  setSearchResults(searchResults: localSearch.LocalSearchResults): void;
   selectItem(item: MyItem): void;
   unselectItem(item: MyItem): void;
   focusOnInput(): void;
@@ -26,7 +25,7 @@ type SearchProps = {
 
 export class SearchModalController {
   itemSelected?: MyItem;
-  results: LocalSearchResults = {
+  results: localSearch.LocalSearchResults = {
     items: [],
     term: "",
   };

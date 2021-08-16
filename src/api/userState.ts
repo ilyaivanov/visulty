@@ -1,4 +1,4 @@
-import { forEachChild } from "../domain/itemQueries";
+import { forEachChild } from "../items";
 import { firebaseConfig } from "./config";
 declare const firebase: any;
 

@@ -1,7 +1,7 @@
 import { dom, div, style, css, img, span } from "../browser";
 import { icons, spacings, colors, timings, zIndexes } from "../designSystem";
 import { youtubeIframeId } from "../api/youtubePlayer";
-import { getItemPath, getPreviewImage } from "../domain/itemQueries";
+import { getItemPath, getPreviewImage } from "../items";
 import { dispatcher, playerState, uiState } from "../globals";
 
 export class Footer {

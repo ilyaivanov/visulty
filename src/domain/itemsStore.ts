@@ -1,8 +1,7 @@
 import { sampleUserName } from "../api/config";
-import { assignParents, randomItems } from "../api/dummyUserState";
 import { saveUserSettings, serializeRootItem } from "../api/userState";
 import * as youtubeApi from "../api/youtubeApi";
-import * as itemsQueries from "./itemQueries";
+import * as items from "../items";
 
 export class ItemsStore {
   root: MyItem = {
@@ -18,54 +17,24 @@ export class ItemsStore {
     term: "",
   };
 
-  constructor(private dispatchCommand: Action<DomainCommand>) {
-    if (this.searchRoot.children)
-      assignParents(this.searchRoot, this.searchRoot.children);
-  }
-
-  //QUERIES
-
-  hasItemImage = (item: MyItem) => "image" in item || "videoId" in item;
-
-  isVideo = (item: MyItem): item is YoutubeVideo => item.type === "YTvideo";
-  isPlaylist = (item: MyItem): item is YoutubePlaylist =>
-    item.type === "YTplaylist";
-  isChannel = (item: MyItem): item is YoutubeChannel =>
-    item.type === "YTchannel";
-
-  isSearch = (item: MyItem): item is SearchRoot => item.type === "search";
-
-  isContainer = (
-    item: MyItem
-  ): item is YoutubePlaylist | YoutubeChannel | Folder =>
-    item.type != "YTvideo";
-
-  isEmpty = (item: MyItem) => !item.children || item.children.length == 0;
-  isNeededToBeFetched = (item: MyItem) =>
-    this.isEmpty(item) &&
-    !item.isLoading &&
-    (this.isPlaylist(item) || this.isChannel(item));
+  constructor(private dispatchCommand: Action<DomainCommand>) {}
 
   //ACTIONS
-
   removeItem = (item: MyItem, props?: { instant?: boolean }) => {
-    const parent = item.parent;
-    if (parent && parent.children) {
-      parent.children = parent.children.filter((sibling) => item != sibling);
-      this.dispatchCommand({
-        type: "item-removed",
-        itemId: item.id,
-        instant: props?.instant,
-      });
-    }
+    items.removeItem(item);
+    this.dispatchCommand({
+      type: "item-removed",
+      itemId: item.id,
+      instant: props?.instant,
+    });
   };
 
   toggleItem = (item: MyItem) => {
     item.isOpen = !item.isOpen;
-    if (this.isNeededToBeFetched(item)) {
+    if (items.isNeededToBeFetched(item)) {
       item.isLoading = true;
       this.loadItem(item).then((children) => {
-        itemsQueries.assignChildrenTo(item, children);
+        items.assignChildrenTo(item, children);
         item.isLoading = false;
         this.dispatchCommand({ type: "item-loaded", itemId: item.id });
       });
@@ -76,17 +45,15 @@ export class ItemsStore {
   loadNextPage = (item: MyItem) => {
     if (!item.isLoading) {
       item.isLoading = true;
-      this.loadItem(item, itemsQueries.getNextPageToken(item)).then(
-        (nextChildren) => {
-          console.log("Loaded next page for " + item.title, nextChildren);
-          itemsQueries.appendChildrenTo(item, nextChildren);
+      this.loadItem(item, items.getNextPageToken(item)).then((nextChildren) => {
+        console.log("Loaded next page for " + item.title, nextChildren);
+        items.appendChildrenTo(item, nextChildren);
 
-          item.isLoading = false;
-          if (this.isSearch(item))
-            this.dispatchCommand({ type: "searching-end" });
-          else this.dispatchCommand({ type: "item-loaded", itemId: item.id });
-        }
-      );
+        item.isLoading = false;
+        if (items.isSearch(item))
+          this.dispatchCommand({ type: "searching-end" });
+        else this.dispatchCommand({ type: "item-loaded", itemId: item.id });
+      });
     }
   };
 
@@ -100,15 +67,15 @@ export class ItemsStore {
 
     this.searchRoot.term = term;
     this.searchRoot.nextPageToken = "";
-    this.loadItem(this.searchRoot).then((items) => {
-      itemsQueries.assignChildrenTo(this.searchRoot, items);
+    this.loadItem(this.searchRoot).then((foundItems) => {
+      items.assignChildrenTo(this.searchRoot, foundItems);
 
       this.dispatchCommand({ type: "searching-end" });
     });
   };
 
   loadItem = (item: MyItem, pageToken?: string): Promise<MyItem[]> => {
-    if (this.isSearch(item)) {
+    if (items.isSearch(item)) {
       return youtubeApi
         .loadSearchResults(item.term, item.nextPageToken)
         .then((response) => {
@@ -116,7 +83,7 @@ export class ItemsStore {
           return response.items.map(mapResponseItem);
         });
     }
-    if (this.isPlaylist(item)) {
+    if (items.isPlaylist(item)) {
       return youtubeApi
         .loadPlaylistItems(item.playlistId, pageToken)
         .then((response) => {
@@ -124,7 +91,7 @@ export class ItemsStore {
           return response.items.map(mapResponseItem);
         });
     }
-    if (this.isChannel(item)) {
+    if (items.isChannel(item)) {
       if (!pageToken) {
         return Promise.all([
           youtubeApi.getChannelUploadsPlaylistId(item.channelId),
@@ -155,13 +122,7 @@ export class ItemsStore {
   };
 
   addItemToTheEndOf = (item: MyItem) => {
-    const newFolder: Folder = {
-      title: "New Folder",
-      id: Math.random() + "",
-      type: "folder",
-      parent: item,
-    };
-    item.children = item.children!.concat(newFolder);
+    const newFolder = items.createNewItemAsLastChild(item);
     this.dispatchCommand({ type: "item-added", item: newFolder });
   };
 
@@ -174,37 +135,8 @@ export class ItemsStore {
 
     this.removeItem(itemOver, { instant: true });
 
-    if (placement === "after") {
-      this.insertItemAfter(itemUnder, itemOver);
-      this.dispatchCommand({ type: "item-added", item: itemOver });
-    } else if (placement == "before") {
-      this.insertItemBefore(itemUnder, itemOver);
-      this.dispatchCommand({ type: "item-added", item: itemOver });
-    } else if (placement == "inside") {
-      this.insertItemInside(itemUnder, itemOver);
-      this.dispatchCommand({ type: "item-added", item: itemOver });
-    }
-  };
-
-  insertItemAfter = (itemRelativeToInsert: MyItem, itemToInsert: MyItem) => {
-    const context = itemRelativeToInsert.parent!.children!;
-    const index = context.indexOf(itemRelativeToInsert);
-
-    context.splice(index + 1, 0, itemToInsert);
-    itemToInsert.parent = itemRelativeToInsert.parent;
-  };
-
-  insertItemBefore = (itemRelativeToInsert: MyItem, itemToInsert: MyItem) => {
-    const context = itemRelativeToInsert.parent!.children!;
-    const index = context.indexOf(itemRelativeToInsert);
-
-    context.splice(index, 0, itemToInsert);
-    itemToInsert.parent = itemRelativeToInsert.parent;
-  };
-
-  insertItemInside = (parentItem: MyItem, itemToInsert: MyItem) => {
-    parentItem.children = [itemToInsert].concat(parentItem.children || []);
-    itemToInsert.parent = parentItem;
+    items.moveItem(itemOver, placement, itemUnder);
+    this.dispatchCommand({ type: "item-added", item: itemOver });
   };
 
   save = () => {

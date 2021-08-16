@@ -1,6 +1,6 @@
 import { css, style, dom, svg } from "../browser";
 import { icons, spacings, colors, timings } from "../designSystem";
-import { getPreviewImage } from "../domain/itemQueries";
+import * as items from "../items";
 import { itemsStore } from "../globals";
 
 const iconSize = spacings.outerRadius * 2;
@@ -15,7 +15,7 @@ export class ItemIcon {
   iconEl!: SVGSVGElement;
   el: Node;
   constructor(private item: MyItem, events: IconEvents) {
-    if (!itemsStore.isVideo(item))
+    if (!items.isVideo(item))
       this.chevron = icons.chevron({
         className: "item-icon-chevron",
         classMap: chevronMap(item),
@@ -38,7 +38,7 @@ export class ItemIcon {
   onVisibilityChange = () => {
     this.chevron && dom.assignClassMap(this.chevron, chevronMap(this.item));
 
-    if (!itemsStore.hasItemImage(this.item)) {
+    if (!items.hasItemImage(this.item)) {
       dom.setChildren(this.iconEl, ItemIcon.viewCircles(this.item));
     } else {
       ItemIcon.assignIconWithImageClasses(this.iconEl, this.item);
@@ -54,8 +54,8 @@ export class ItemIcon {
       viewBox: `0 0 ${iconSize} ${iconSize}`,
       onMouseDown: events?.onIconMouseDown,
     });
-    if (itemsStore.hasItemImage(item)) {
-      res.style.backgroundImage = `url(${getPreviewImage(item)})`;
+    if (items.hasItemImage(item)) {
+      res.style.backgroundImage = `url(${items.getPreviewImage(item)})`;
       ItemIcon.assignIconWithImageClasses(res, item);
     } else {
       dom.appendChildren(res, ItemIcon.viewCircles(item));
@@ -64,7 +64,7 @@ export class ItemIcon {
   };
 
   private static viewCircles = (item: MyItem): SVGElement[] => {
-    if (itemsStore.isEmpty(item)) {
+    if (items.isEmpty(item)) {
       return [
         svg.circle({
           cx: iconSize / 2,
@@ -103,11 +103,10 @@ export class ItemIcon {
   ) => {
     dom.assignClasses(el, {
       classMap: {
-        "item-icon-image_square":
-          itemsStore.isPlaylist(item) || itemsStore.isVideo(item),
-        "item-icon-image_circle": itemsStore.isChannel(item),
-        "item-icon-video": itemsStore.isVideo(item),
-        "item-icon-image_closed": !itemsStore.isVideo(item) && !item.isOpen,
+        "item-icon-image_square": items.isPlaylist(item) || items.isVideo(item),
+        "item-icon-image_circle": items.isChannel(item),
+        "item-icon-video": items.isVideo(item),
+        "item-icon-image_closed": !items.isVideo(item) && !item.isOpen,
       },
     });
   };
@@ -120,9 +119,7 @@ const outerCircleClassMap = (item: MyItem): dom.ClassMap => ({
 const chevronMap = (item: MyItem): dom.ClassMap => ({
   "item-icon-chevron_open": item.isOpen,
   "item-row_showOnHoverOrSelected":
-    item.isLoading ||
-    !itemsStore.isEmpty(item) ||
-    itemsStore.isNeededToBeFetched(item),
+    item.isLoading || !items.isEmpty(item) || items.isNeededToBeFetched(item),
 });
 
 style.class("item-icon-svg", {

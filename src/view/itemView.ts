@@ -1,7 +1,7 @@
 import { dom, div, input, span, button, style } from "../browser";
 import { colors, anim, levels, spacings, icons } from "../designSystem";
 import { itemsStore, dispatcher, dnd, uiState, playerState } from "../globals";
-import * as items from "../domain/itemQueries";
+import * as items from "../items";
 import { ItemIcon } from "./itemIcon";
 import { showSkeletons } from "./itemSkeleton";
 
@@ -30,7 +30,7 @@ export class ItemView {
           span({
             className: "item-row-title",
             classMap: {
-              "item-container-row-title": itemsStore.isContainer(item),
+              "item-container-row-title": items.isContainer(item),
             },
             textContent: item.title,
             ref: this.titleElem,
