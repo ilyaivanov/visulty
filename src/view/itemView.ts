@@ -1,7 +1,7 @@
 import { dom, div, input, span, button, style } from "../browser";
-import { colors, anim, levels, spacings } from "../designSystem";
-import { play } from "../api/youtubePlayer";
+import { colors, anim, levels, spacings, icons } from "../designSystem";
 import { itemsStore, dispatcher, dnd, uiState, playerState } from "../globals";
+import * as items from "../domain/itemQueries";
 import { ItemIcon } from "./itemIcon";
 import { showSkeletons } from "./itemSkeleton";
 
@@ -122,6 +122,10 @@ export class ItemView {
       this.childrenElem.elem = undefined;
     }
     this.el.appendChild(this.viewChildren());
+    const nextPageToken = items.getNextPageToken(this.item);
+    if (nextPageToken)
+      this.titleElem.elem.textContent = this.item.title + ` (${nextPageToken})`;
+
     if (animate) anim.expand(this.childrenElem.elem);
   };
 
@@ -134,6 +138,11 @@ export class ItemView {
             this.item.children
               .map((item) => ItemView.view(item, this.level + 1))
               .concat(childrenBorder(this.level))
+              .concat(
+                items.getNextPageToken(this.item)
+                  ? [ItemView.downloadNextPageButton(this.item, this.level + 1)]
+                  : []
+              )
     );
 
   private enterRenameMode = () => {
@@ -159,12 +168,45 @@ export class ItemView {
     }
   };
 
+  private static downloadNextPageButton = (item: MyItem, level: number) => {
+    const ref = dom.createRef("div");
+    return div({ classNames: ["item-row", levels.rowForLevel(level)] }, [
+      div(
+        {
+          classNames: ["footer-icon-container", "item-icon-download-container"],
+          ref,
+          onClickStopPropagation: () => {
+            if (!item.isLoading) {
+              itemsStore.loadNextPage(item);
+              dom.setChild(
+                ref.elem,
+                icons.spinnner({
+                  classNames: ["footer-icon", "item-icon-download-spinner"],
+                })
+              );
+            }
+          },
+        },
+        [icons.arrow({ classNames: ["footer-icon", "item-icon-download"] })]
+      ),
+      div({ textContent: "Load more items..." }),
+    ]);
+  };
+
   private static view = (item: MyItem, level: number) =>
     new ItemView(item, level).el;
 
   static viewChildrenFor = (item: MyItem) =>
     dom.fragment(
-      item.children ? item.children.map((item) => ItemView.view(item, 0)) : []
+      item.children
+        ? item.children
+            .map((item) => ItemView.view(item, 0))
+            .concat(
+              items.getNextPageToken(item)
+                ? [ItemView.downloadNextPageButton(item, 0)]
+                : []
+            )
+        : []
     );
 }
 
@@ -211,4 +253,19 @@ style.class("item-children-border", {
 
 style.class("item-titleInput", { width: "100%" });
 
-//SKELETON
+style.class("item-icon-download-container", {
+  marginRight: spacings.spaceBetweenCircleAndText,
+});
+
+style.class("item-icon-download", {
+  transform: "rotateZ(180deg)",
+});
+
+style.class("item-icon-download-spinner", {
+  animation: "spinner 800ms infinite linear",
+});
+
+style.keyframes("spinner", [
+  { at: "0%", transform: "rotateZ(-50deg)" },
+  { at: "100%", transform: "rotateZ(310deg)" },
+]);

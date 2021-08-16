@@ -101,14 +101,10 @@ export default class ModalViewImplementation implements ModalView {
 
   onKeyDown(cb: Action<KeyboardEvent>): void {
     this.onKeyDownCb = cb;
-    document.addEventListener("keydown", (e) => {
-      console.log("keyboard", e.key);
-      cb(e);
-    });
+    document.addEventListener("keydown", this.onKeyDownCb);
   }
 
   dismissModal() {
-    console.log("dismissModal");
     if (this.onKeyDownCb)
       document.removeEventListener("keydown", this.onKeyDownCb);
     this.el?.remove();

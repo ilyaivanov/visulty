@@ -75,6 +75,13 @@ export const assignChildrenTo = (item: MyItem, children: MyItem[]) => {
   });
   item.children = children;
 };
+export const appendChildrenTo = (item: MyItem, children: MyItem[]) => {
+  children.forEach((child) => {
+    child.parent = item;
+    if (child.children) assignChildrenTo(child, child.children);
+  });
+  item.children = (item.children || []).concat(children);
+};
 
 export const getRoot = (item: MyItem): MyItem => {
   let parent = item;
@@ -103,6 +110,16 @@ export const getPreviewImage = (item: MyItem): string => {
     return `https://i.ytimg.com/vi/${item.videoId}/mqdefault.jpg`;
   else if ("image" in item) return item.image;
   else return "";
+};
+
+export const getNextPageToken = (item: MyItem): string | undefined => {
+  if (
+    item.type === "YTchannel" ||
+    item.type === "YTplaylist" ||
+    item.type === "search"
+  )
+    return item.nextPageToken;
+  return undefined;
 };
 
 export const forEachChild = (

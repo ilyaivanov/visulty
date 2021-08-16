@@ -11,11 +11,11 @@ export class ItemsStore {
     title: "Home",
   };
 
-  searchRoot: MyItem = {
+  searchRoot: SearchRoot = {
     id: "SEARCH",
-    type: "folder",
+    type: "search",
     title: "Search",
-    children: randomItems(20),
+    term: "",
   };
 
   constructor(private dispatchCommand: Action<DomainCommand>) {
@@ -32,6 +32,8 @@ export class ItemsStore {
     item.type === "YTplaylist";
   isChannel = (item: MyItem): item is YoutubeChannel =>
     item.type === "YTchannel";
+
+  isSearch = (item: MyItem): item is SearchRoot => item.type === "search";
 
   isContainer = (
     item: MyItem
@@ -71,6 +73,23 @@ export class ItemsStore {
     this.dispatchCommand({ type: "item-toggled", itemId: item.id });
   };
 
+  loadNextPage = (item: MyItem) => {
+    if (!item.isLoading) {
+      item.isLoading = true;
+      this.loadItem(item, itemsQueries.getNextPageToken(item)).then(
+        (nextChildren) => {
+          console.log("Loaded next page for " + item.title, nextChildren);
+          itemsQueries.appendChildrenTo(item, nextChildren);
+
+          item.isLoading = false;
+          if (this.isSearch(item))
+            this.dispatchCommand({ type: "searching-end" });
+          else this.dispatchCommand({ type: "item-loaded", itemId: item.id });
+        }
+      );
+    }
+  };
+
   toggleItemOnSidebar = (item: MyItem) => {
     item.isOpenInSidebar = !item.isOpenInSidebar;
     this.dispatchCommand({ type: "item-toggled-in-sidebar", item });
@@ -79,40 +98,58 @@ export class ItemsStore {
   findVideos = (term: string) => {
     this.dispatchCommand({ type: "searching-start" });
 
-    this.searchVideos(term).then((items) => {
+    this.searchRoot.term = term;
+    this.searchRoot.nextPageToken = "";
+    this.loadItem(this.searchRoot).then((items) => {
       itemsQueries.assignChildrenTo(this.searchRoot, items);
+
       this.dispatchCommand({ type: "searching-end" });
     });
   };
 
-  searchVideos = (term: string): Promise<MyItem[]> => {
-    return youtubeApi
-      .loadSearchResults(term)
-      .then((response) => response.items.map(mapResponseItem));
-  };
-
-  loadItem = (item: MyItem): Promise<MyItem[]> => {
+  loadItem = (item: MyItem, pageToken?: string): Promise<MyItem[]> => {
+    if (this.isSearch(item)) {
+      return youtubeApi
+        .loadSearchResults(item.term, item.nextPageToken)
+        .then((response) => {
+          this.searchRoot.nextPageToken = response.nextPageToken;
+          return response.items.map(mapResponseItem);
+        });
+    }
     if (this.isPlaylist(item)) {
       return youtubeApi
-        .loadPlaylistItems(item.playlistId)
-        .then((response) => response.items.map(mapResponseItem));
+        .loadPlaylistItems(item.playlistId, pageToken)
+        .then((response) => {
+          item.nextPageToken = response.nextPageToken;
+          return response.items.map(mapResponseItem);
+        });
     }
     if (this.isChannel(item)) {
-      return Promise.all([
-        youtubeApi.getChannelUploadsPlaylistId(item.channelId),
-        youtubeApi.loadChannelItems(item.channelId),
-      ]).then(([uploadsChannelId, response]) => {
-        const uploadsPlaytlist: youtubeApi.ResponseItem = {
-          itemType: "playlist",
-          channelId: item.channelId,
-          channelTitle: item.title,
-          id: Math.random() + "",
-          image: item.image,
-          itemId: uploadsChannelId,
-          name: item.title + " Uploads",
-        } as youtubeApi.ResponseItem;
-        return [uploadsPlaytlist].concat(response.items).map(mapResponseItem);
-      });
+      if (!pageToken) {
+        return Promise.all([
+          youtubeApi.getChannelUploadsPlaylistId(item.channelId),
+          youtubeApi.loadChannelItems(item.channelId),
+        ]).then(([uploadsChannelId, response]) => {
+          const uploadsPlaytlist: youtubeApi.ResponseItem = {
+            itemType: "playlist",
+            channelId: item.channelId,
+            channelTitle: item.title,
+            id: Math.random() + "",
+            image: item.image,
+            itemId: uploadsChannelId,
+            name: item.title + " Uploads",
+          } as youtubeApi.ResponseItem;
+          item.nextPageToken = response.nextPageToken;
+          return [uploadsPlaytlist].concat(response.items).map(mapResponseItem);
+        });
+      } else {
+        return youtubeApi
+          .loadChannelItems(item.channelId, pageToken)
+          .then((response) => {
+            item.nextPageToken = response.nextPageToken;
+            return response.items.map(mapResponseItem);
+          });
+      }
     }
     throw new Error(`Can't load ${item.title} of type ${item.type}`);
   };
