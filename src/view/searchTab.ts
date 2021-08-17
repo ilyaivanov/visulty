@@ -1,7 +1,7 @@
 import { dom, div, input, style, css } from "../browser";
 import { dispatcher, itemsStore, uiState } from "../globals";
-import { showSkeletons } from "./itemSkeleton";
-import { ItemView } from "./itemView";
+import { showSkeletons } from "../tree";
+import { viewChildrenFor } from "../tree";
 
 export class SearchTab {
   el: HTMLElement;
@@ -16,7 +16,7 @@ export class SearchTab {
         onKeyDown,
       }),
       div({ ref: this.searchContent }, [
-        ItemView.viewChildrenFor(itemsStore.searchRoot),
+        viewChildrenFor(itemsStore.searchRoot),
       ]),
     ]);
 
@@ -39,7 +39,7 @@ export class SearchTab {
   stopSearching = () => {
     dom.setChild(
       this.searchContent.elem,
-      ItemView.viewChildrenFor(itemsStore.searchRoot)
+      viewChildrenFor(itemsStore.searchRoot)
     );
   };
 }

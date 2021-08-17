@@ -1,7 +1,7 @@
 import { AppView } from "./view/app";
 import { Footer } from "./player/footer";
 import { Header } from "./view/header";
-import { ItemView } from "./view/itemView";
+import { ItemView } from "./tree";
 import { LeaftSidebarItem, LeftSidebar } from "./view/leftSidebar";
 import { MainTab } from "./view/mainTab";
 import { RightSidebar } from "./player/rightSidebar";

@@ -3,7 +3,7 @@ import { dom, div, style } from "../browser";
 import { spacings } from "../designSystem";
 import { colors } from "../designSystem";
 import { itemsStore } from "../globals";
-import { ItemIcon } from "./itemIcon";
+import { viewIconFor } from "../tree";
 // import FolderIcon from "./FolderIcon";
 
 export class Dnd {
@@ -34,7 +34,7 @@ export class Dnd {
         const dist = distance(initialMousePosition, getScreenPosition(e));
         console.log(dist);
         if (dist > 5) {
-          const icon = ItemIcon.viewIcon(itemBeingDragged);
+          const icon = viewIconFor(itemBeingDragged);
           this.dragAvatar = div({ className: "item-dragAvatar" }, [icon]);
           dom.addClass(icon, "item-icon-video");
           this.appendItemTo?.appendChild(this.dragAvatar);

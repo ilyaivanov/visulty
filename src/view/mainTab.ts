@@ -2,8 +2,7 @@ import { div, button, dom, style } from "../browser";
 import { anim, levels, colors } from "../designSystem";
 import { dispatcher, itemsStore } from "../globals";
 import * as items from "../items";
-
-import { ItemView } from "./itemView";
+import { viewChildrenFor } from "../tree";
 
 export class MainTab {
   el: HTMLElement;
@@ -61,7 +60,7 @@ export class MainTab {
     this.currentItemFocused = item;
     dom.setChildren(this.el, [
       this.tabHeader(item),
-      ItemView.viewChildrenFor(item),
+      viewChildrenFor(item),
       this.addButton(),
     ]);
   };

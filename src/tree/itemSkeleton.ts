@@ -1,10 +1,7 @@
 import { div, style } from "../browser";
 import { colors, levels, spacings } from "../designSystem";
 
-export const showSkeletons = (count: number, level = 0) =>
-  Array.from(new Array(count)).map((_, index) => itemSkeleton(index, level));
-
-const itemSkeleton = (index: number, level: number) => {
+export const itemSkeleton = (index: number, level: number) => {
   const elem = div(
     { classNames: ["avatar-row" as any, levels.rowForLevel(level)] },
     [

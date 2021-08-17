@@ -1,6 +1,6 @@
 import { div, input, style, css, dom, span } from "../browser";
 import { colors, timings, zIndexes } from "../designSystem";
-import { ItemIcon } from "../view/itemIcon";
+import { viewIconFor } from "../tree";
 import { Highlight, LocalSearchEntry } from "./localSearch";
 import { ModalView, LocalSearchResults } from "./modalController";
 
@@ -46,7 +46,7 @@ export default class ModalViewImplementation implements ModalView {
   }
 
   row = ({ item, highlights }: LocalSearchEntry) => {
-    const icon = ItemIcon.viewIcon(item);
+    const icon = viewIconFor(item);
     dom.removeClass(icon, "item-icon-video");
     return div(
       {

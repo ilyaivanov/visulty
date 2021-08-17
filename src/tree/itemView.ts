@@ -3,7 +3,7 @@ import { colors, anim, levels, spacings, icons } from "../designSystem";
 import { itemsStore, dispatcher, dnd, uiState, playerState } from "../globals";
 import * as items from "../items";
 import { ItemIcon } from "./itemIcon";
-import { showSkeletons } from "./itemSkeleton";
+import { showSkeletons } from "./index";
 
 export class ItemView {
   icon: ItemIcon;

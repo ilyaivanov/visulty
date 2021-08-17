@@ -1,7 +1,6 @@
 import { css, style, dom, svg } from "../browser";
 import { icons, spacings, colors, timings } from "../designSystem";
 import * as items from "../items";
-import { itemsStore } from "../globals";
 
 const iconSize = spacings.outerRadius * 2;
 
