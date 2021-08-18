@@ -53,6 +53,7 @@ type ClassName =
 
   //HEADER
   | "header"
+  | "header-path"
   | "header-icon"
   | "header-icon-disabled"
   | "header-icon-separator"

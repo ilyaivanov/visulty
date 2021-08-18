@@ -15,6 +15,8 @@ export class MainTab {
     this.currentItemFocused = item;
     this.el = div({ className: "tab" });
     this.renderTab(item);
+
+    events.on("focusItem", this.focusOn);
   }
   focusOn = (item: Item) => {
     if (!this.currentItemFocused) this.renderTab(item);

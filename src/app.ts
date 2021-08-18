@@ -27,7 +27,7 @@ export const viewApp = (container: HTMLElement, events: AppEvents) => {
         theme: initialTheme,
       }),
       viewGallery(root, events),
-      viewLeftSidebar(events),
+      viewLeftSidebar(root, events),
       rightSidebar,
       footer,
     ]);

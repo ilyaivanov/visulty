@@ -49,7 +49,9 @@ export class ItemView {
             }),
             button({
               textContent: "F",
-              // onClickStopPropagation: () => uiState.focusOnItem(item),
+
+              onClickStopPropagation: () =>
+                this.events.trigger("focusItem", item),
             }),
             button({
               textContent: "X",

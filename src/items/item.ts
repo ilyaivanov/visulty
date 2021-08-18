@@ -24,6 +24,14 @@ export class Item {
   get isOpen() {
     return this.props.isOpen;
   }
+  get isOpenInSidebar() {
+    return this.props.isOpenInSidebar;
+  }
+
+  toggleRightSidebarVisibility() {
+    this.props.isOpenInSidebar = !this.props.isOpenInSidebar;
+    this.events.trigger("item.rightSidebarVisibilityChanged", this);
+  }
 
   isVideo = () => this.props.type === "YTvideo";
   isRoot = () => !this.parent;
@@ -74,6 +82,14 @@ export class Item {
       });
     }
   }
+
+  getRoot = (): Item => {
+    let parent: Item = this;
+    while (parent.parent) {
+      parent = parent.parent;
+    }
+    return parent;
+  };
 
   toggleVisibility() {
     //sending message from here

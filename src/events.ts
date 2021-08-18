@@ -16,6 +16,12 @@ type ItemEventDefinitions = {
 
   toggleRightSidebar: void;
   rightSidebarToggled: void;
+
+  focusItem: Item;
+
+  "search.toggleVisibilty": void;
+
+  "item.rightSidebarVisibilityChanged": Item;
 };
 
 export class AppEvents {

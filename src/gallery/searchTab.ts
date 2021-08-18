@@ -1,6 +1,5 @@
 import { dom, div, input, style, css } from "../browser";
 import { AppEvents } from "../events";
-import { dispatcher, itemsStore, uiState } from "../globals";
 import { showSkeletons } from "../tree";
 
 export class SearchTab {
@@ -19,14 +18,11 @@ export class SearchTab {
         // viewChildrenFor(itemsStore.searchRoot),
       ]),
     ]);
-
-    this.onSearchVisibilityChange();
-    dispatcher.searchTab = this;
   }
 
-  onSearchVisibilityChange = () => {
+  onSearchVisibilityChange = (isVisible: boolean) => {
     dom.assignClassMap(this.el, {
-      "search-tab_hidden": !uiState.isSearchVisible,
+      "search-tab_hidden": !isVisible,
     });
   };
 
@@ -47,7 +43,7 @@ const onKeyDown = (e: KeyboardEvent) => {
   if (e.code === "Enter") {
     e.preventDefault();
     const term = (e.currentTarget as HTMLInputElement).value;
-    itemsStore.findVideos(term);
+    // itemsStore.findVideos(term);
   }
 };
 

@@ -1,15 +1,18 @@
 import { dom, div, button, style } from "../browser";
 import { spacings, colors, icons, zIndexes } from "../designSystem";
 import { AppEvents } from "../events";
-import { dispatcher, itemsStore, uiState } from "../globals";
-import * as items from "../items";
 import { Item } from "../items";
 
 type HeaderProps = {
   theme: AppTheme;
   events: AppEvents;
 };
+
 export const viewHeader = ({ theme, events }: HeaderProps) => {
+  const actions = {
+    toggleSidebar: () => events.trigger("toggleSidebar"),
+    focus: (item: Item) => events.trigger("focusItem", item),
+  };
   const themeButton = dom.createRef("button");
   const pathElemenet = dom.createRef("div");
 
@@ -21,7 +24,7 @@ export const viewHeader = ({ theme, events }: HeaderProps) => {
     div(
       {
         className: "header-icon",
-        onClick: () => events.trigger("toggleSidebar"),
+        onClick: actions.toggleSidebar,
       },
       [icons.bars({ className: "header-icon-svg" })]
     ),
@@ -46,19 +49,19 @@ export const viewHeader = ({ theme, events }: HeaderProps) => {
     div(
       {
         className: "header-icon",
-        onClick: () => uiState.focusOnItem(itemsStore.root),
+        onClick: () => 42, //uiState.focusOnItem(itemsStore.root),
       },
       [icons.home({ className: "header-icon-svg" })]
     ),
-    div({ ref: pathElemenet }),
+    div({ className: "header-path", ref: pathElemenet }),
     button({
       style: { marginLeft: "auto" },
       textContent: "save",
-      onClick: () => itemsStore.save(),
+      onClick: () => 42, //itemsStore.save(),
     }),
     button({
       textContent: "search",
-      onClick: () => uiState.toggleSearchVisibility(),
+      onClick: () => events.trigger("search.toggleVisibilty"),
     }),
     button({
       onClick: () => events.trigger("toggleTheme"),
@@ -69,132 +72,69 @@ export const viewHeader = ({ theme, events }: HeaderProps) => {
   assignthemeButtonText(theme);
 
   events.on("themeToggled", assignthemeButtonText);
+  events.on("focusItem", (item) =>
+    dom.setChildren(pathElemenet.elem, createPathForElemet(item, actions.focus))
+  );
 
   return result;
 };
 
-export class Header {
-  el: HTMLElement;
-  themeButton = dom.createRef("button");
+const createPathForElemet = (item: Item, focus: Action<Item>) => {
+  const root = item.getRoot();
+  const path = item.getItemPath();
+  return [
+    separator(root, path[0], focus),
+    ...path
+      .map((item, index, items) => [
+        pathItemElement(item, focus),
+        separator(item, items[index + 1], focus),
+      ])
+      .flat(),
+  ];
+};
 
-  constructor() {
-    this.el = div({ className: "header" });
-    dispatcher.header = this;
-  }
+const separator = (
+  parentItem: Item,
+  nextChildInPath: Item | undefined,
+  focus: Action<Item>
+) => {
+  const menu = contextMenu(parentItem, nextChildInPath, focus);
+  return div(
+    {
+      className: "header-icon-separator",
+      onMouseEnter: () => dom.addClass(menu, "header-context-menu-visible"),
+      onMouseLeave: () => dom.removeClass(menu, "header-context-menu-visible"),
+    },
+    [icons.lightChevron({ className: "header-icon-separator-svg" }), menu]
+  );
+};
 
-  focusOn = (item: MyItem) => {
-    const path = items.getItemPath(item);
-    const pathElements = [
-      this.separator(itemsStore.root, path[0]),
-      ...path
-        .map((item, index, items) => [
-          this.pathItemElement(item),
-          this.separator(item, items[index + 1]),
-        ])
-        .flat(),
-    ];
-    dom.setChildren(this.el, [
-      div(
-        {
-          className: "header-icon",
-          onClick: () => uiState.toggleLeftSidebarVisibility(),
-        },
-        [icons.bars({ className: "header-icon-svg" })]
-      ),
+const pathItemElement = (item: Item, focus: Action<Item>) =>
+  div({
+    className: "header-icon-text",
+    textContent: item.title,
+    onClick: () => focus(item),
+  });
 
-      div(
-        {
-          className: "header-icon",
-          classMap: { "header-icon-disabled": true },
-        },
-        [
-          icons.chevron({
-            classNames: ["header-icon-svg", "header-icon-svg-rotated"],
-          }),
-        ]
-      ),
-      div(
-        {
-          className: "header-icon",
-          classMap: { "header-icon-disabled": true },
-        },
-        [icons.chevron({ className: "header-icon-svg" })]
-      ),
-      div(
-        {
-          className: "header-icon",
-          onClick: () => uiState.focusOnItem(itemsStore.root),
-        },
-        [icons.home({ className: "header-icon-svg" })]
-      ),
-      ...pathElements,
-      button({
-        style: { marginLeft: "auto" },
-        textContent: "save",
-        onClick: () => itemsStore.save(),
-      }),
-      button({
-        textContent: "search",
-        onClick: () => uiState.toggleSearchVisibility(),
-      }),
-      button({
-        onClick: () => uiState.toggleTheme(),
-        ref: this.themeButton,
-      }),
-    ]);
-    this.assignThemeButtonText();
-  };
+const contextMenu = (
+  parentItem: Item,
+  nextChildInPath: Item | undefined,
+  focus: Action<Item>
+) =>
+  div(
+    { className: "header-context-menu" },
+    parentItem.children!.map((item) =>
+      contextMenuItem(item, item === nextChildInPath, focus)
+    )
+  );
 
-  assignThemeButtonText = () => {
-    this.themeButton.elem.textContent =
-      uiState.theme == "dark" ? "Switch to light" : "Switch to dark";
-  };
-
-  separator = (parentItem: MyItem, nextChildInPath: MyItem | undefined) => {
-    const menu = this.contextMenu(parentItem, nextChildInPath);
-    return div(
-      {
-        className: "header-icon-separator",
-        onMouseEnter: () => dom.addClass(menu, "header-context-menu-visible"),
-        onMouseLeave: () =>
-          dom.removeClass(menu, "header-context-menu-visible"),
-      },
-      [icons.lightChevron({ className: "header-icon-separator-svg" }), menu]
-    );
-  };
-
-  pathItemElement = (item: MyItem) =>
-    div({
-      className: "header-icon-text",
-      textContent: item.title,
-      onClick: () => uiState.focusOnItem(item),
-    });
-
-  contextMenu = (parentItem: MyItem, nextChildInPath: MyItem | undefined) =>
-    div(
-      { className: "header-context-menu" },
-      parentItem.children!.map((item) =>
-        this.contextMenuItem(item, item === nextChildInPath)
-      )
-    );
-
-  contextMenuItem = (item: MyItem, isActive: boolean) =>
-    div({
-      className: "header-context-menu-item",
-      classMap: { "header-context-menu-item-active": isActive },
-      textContent: item.title,
-      onClick: () => uiState.focusOnItem(item),
-    });
-}
-
-// const createPathForElemet = (item: Item) =>     [
-//     this.separator(itemsStore.root, path[0]),
-//     ...path
-//       .map((item, index, items) => [
-//         this.pathItemElement(item),
-//         this.separator(item, items[index + 1]),
-//       ])
-//       .flat(),
+const contextMenuItem = (item: Item, isActive: boolean, focus: Action<Item>) =>
+  div({
+    className: "header-context-menu-item",
+    classMap: { "header-context-menu-item-active": isActive },
+    textContent: item.title,
+    onClick: () => focus(item),
+  });
 
 style.class("header", {
   //relative positioning for youtube iframe player
@@ -206,6 +146,13 @@ style.class("header", {
   display: "flex",
   alignItems: "center",
   zIndex: zIndexes.header,
+});
+
+style.class("header-path", {
+  height: "100%",
+  flex: 1,
+  display: "flex",
+  alignItems: "center",
 });
 
 style.class("header-icon", {
