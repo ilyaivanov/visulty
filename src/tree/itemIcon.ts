@@ -1,6 +1,6 @@
 import { css, style, dom, svg } from "../browser";
 import { icons, spacings, colors, timings } from "../designSystem";
-import * as items from "../items";
+import { Item } from "../items";
 
 const iconSize = spacings.outerRadius * 2;
 
@@ -13,8 +13,8 @@ export class ItemIcon {
   chevron?: SVGElement;
   iconEl!: SVGSVGElement;
   el: Node;
-  constructor(private item: MyItem, events: IconEvents) {
-    if (!items.isVideo(item))
+  constructor(private item: Item, events: IconEvents) {
+    if (!item.isVideo())
       this.chevron = icons.chevron({
         className: "item-icon-chevron",
         classMap: chevronMap(item),
@@ -31,13 +31,13 @@ export class ItemIcon {
     });
     this.el = dom.fragment([this.chevron, this.iconEl]);
   }
-  public static view = (item: MyItem, events: IconEvents) =>
+  public static view = (item: Item, events: IconEvents) =>
     new ItemIcon(item, events).el;
 
   onVisibilityChange = () => {
     this.chevron && dom.assignClassMap(this.chevron, chevronMap(this.item));
 
-    if (!items.hasItemImage(this.item)) {
+    if (!this.item.hasItemImage()) {
       dom.setChildren(this.iconEl, ItemIcon.viewCircles(this.item));
     } else {
       ItemIcon.assignIconWithImageClasses(this.iconEl, this.item);
@@ -45,7 +45,7 @@ export class ItemIcon {
   };
 
   public static viewIcon = (
-    item: MyItem,
+    item: Item,
     events?: { onIconMouseDown: Action<unknown> }
   ) => {
     const res = svg.svg({
@@ -53,8 +53,8 @@ export class ItemIcon {
       viewBox: `0 0 ${iconSize} ${iconSize}`,
       onMouseDown: events?.onIconMouseDown,
     });
-    if (items.hasItemImage(item)) {
-      res.style.backgroundImage = `url(${items.getPreviewImage(item)})`;
+    if (item.hasItemImage()) {
+      res.style.backgroundImage = `url(${item.getPreviewImage()})`;
       ItemIcon.assignIconWithImageClasses(res, item);
     } else {
       dom.appendChildren(res, ItemIcon.viewCircles(item));
@@ -62,8 +62,8 @@ export class ItemIcon {
     return res;
   };
 
-  private static viewCircles = (item: MyItem): SVGElement[] => {
-    if (items.isEmpty(item)) {
+  private static viewCircles = (item: Item): SVGElement[] => {
+    if (item.isEmpty()) {
       return [
         svg.circle({
           cx: iconSize / 2,
@@ -96,16 +96,13 @@ export class ItemIcon {
     }
   };
 
-  private static assignIconWithImageClasses = (
-    el: SVGElement,
-    item: MyItem
-  ) => {
+  private static assignIconWithImageClasses = (el: SVGElement, item: Item) => {
     dom.assignClasses(el, {
       classMap: {
-        "item-icon-image_square": items.isPlaylist(item) || items.isVideo(item),
-        "item-icon-image_circle": items.isChannel(item),
-        "item-icon-video": items.isVideo(item),
-        "item-icon-image_closed": !items.isVideo(item) && !item.isOpen,
+        "item-icon-image_square": item.isPlaylist() || item.isVideo(),
+        "item-icon-image_circle": item.isChannel(),
+        "item-icon-video": item.isVideo(),
+        "item-icon-image_closed": !item.isVideo() && !item.isOpen,
       },
     });
   };
@@ -115,10 +112,10 @@ const outerCircleClassMap = (item: MyItem): dom.ClassMap => ({
   "item-icon-circle_hidden": item.isOpen || !item.children,
 });
 
-const chevronMap = (item: MyItem): dom.ClassMap => ({
+const chevronMap = (item: Item): dom.ClassMap => ({
   "item-icon-chevron_open": item.isOpen,
   "item-row_showOnHoverOrSelected":
-    item.isLoading || !items.isEmpty(item) || items.isNeededToBeFetched(item),
+    item.isLoading || !item.isEmpty() || item.isNeededToBeFetched(),
 });
 
 style.class("item-icon-svg", {

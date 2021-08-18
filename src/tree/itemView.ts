@@ -4,6 +4,7 @@ import { itemsStore, dispatcher, dnd, uiState, playerState } from "../globals";
 import * as items from "../items";
 import { ItemIcon } from "./itemIcon";
 import { showSkeletons } from "./index";
+import { Item } from "../items/item";
 
 export class ItemView {
   icon: ItemIcon;
@@ -12,25 +13,30 @@ export class ItemView {
   childrenElem = dom.createRef("div");
   titleElem = dom.createRef("span");
 
-  constructor(public item: MyItem, public level: number) {
+  constructor(
+    public item: Item,
+    public level: number,
+    private onShown: Action<ItemView>
+  ) {
     this.icon = new ItemIcon(item, {
-      onChevronClick: () => itemsStore.toggleItem(item),
-      onIconMouseDown: (e) => dnd.onItemMouseDown(item, e),
+      onChevronClick: () => item.toggleVisibility(),
+      onIconMouseDown: (e) => 42,
+      // onIconMouseDown: (e) => dnd.onItemMouseDown(item, e),
     });
     this.el = div({}, [
       div(
         {
           classNames: ["item-row", levels.rowForLevel(level)],
           ref: this.rowElem,
-          onClick: () => uiState.select(item),
-          onMouseMove: (e) => dnd.onItemMouseMoveOver(item, e),
+          // onClick: () => uiState.select(item),
+          // onMouseMove: (e) => dnd.onItemMouseMoveOver(item, e),
         },
         [
           this.icon.el,
           span({
             className: "item-row-title",
             classMap: {
-              "item-container-row-title": items.isContainer(item),
+              "item-container-row-title": item.isContainer(),
             },
             textContent: item.title,
             ref: this.titleElem,
@@ -38,19 +44,19 @@ export class ItemView {
           div({ classNames: ["hide", "item-row_showOnHoverOrSelected"] }, [
             button({
               textContent: "▶",
-              onClickStopPropagation: () => playerState.playItem(item),
+              // onClickStopPropagation: () => playerState.playItem(item),
             }),
             button({
               textContent: "F",
-              onClickStopPropagation: () => uiState.focusOnItem(item),
+              // onClickStopPropagation: () => uiState.focusOnItem(item),
             }),
             button({
               textContent: "X",
-              onClickStopPropagation: () => itemsStore.removeItem(item),
+              // onClickStopPropagation: () => itemsStore.removeItem(item),
             }),
             button({
               textContent: "E",
-              onClickStopPropagation: () => this.enterRenameMode(),
+              // onClickStopPropagation: () => this.enterRenameMode(),
             }),
           ]),
         ]
@@ -58,10 +64,11 @@ export class ItemView {
     ]);
     if (this.item.isOpen) this.open(false);
     else this.close(false);
-    dispatcher.itemViewed(this);
+    onShown(this);
   }
 
   updateItemChildrenVisibility = (animate?: boolean) => {
+    console.log("update ", this.item);
     if (this.item.isOpen) this.open(animate);
     else this.close(animate);
     this.updateIcons();
@@ -78,20 +85,23 @@ export class ItemView {
           .flyAwayAndCollapse(this.el)
           .addEventListener("finish", () => this.el.remove());
 
-  public insertItemAfter = (item: MyItem) =>
-    this.el.insertAdjacentElement("afterend", ItemView.view(item, this.level));
-
-  public insertItemBefore = (item: MyItem) =>
+  public insertItemAfter = (item: Item) =>
     this.el.insertAdjacentElement(
-      "beforebegin",
-      ItemView.view(item, this.level)
+      "afterend",
+      ItemView.view(item, this.level, this.onShown)
     );
 
-  public insertItemAsFirstChild = (item: MyItem) => {
+  public insertItemBefore = (item: Item) =>
+    this.el.insertAdjacentElement(
+      "beforebegin",
+      ItemView.view(item, this.level, this.onShown)
+    );
+
+  public insertItemAsFirstChild = (item: Item) => {
     if (this.childrenElem.elem)
       this.childrenElem.elem.insertAdjacentElement(
         "afterbegin",
-        ItemView.view(item, this.level + 1)
+        ItemView.view(item, this.level + 1, this.onShown)
       );
   };
 
@@ -133,10 +143,10 @@ export class ItemView {
         ? showSkeletons(10, this.level + 1).concat(childrenBorder(this.level))
         : this.item.children &&
             this.item.children
-              .map((item) => ItemView.view(item, this.level + 1))
+              .map((item) => ItemView.view(item, this.level + 1, this.onShown))
               .concat(childrenBorder(this.level))
               .concat(
-                items.getNextPageToken(this.item)
+                this.item.getNextPageToken()
                   ? [ItemView.downloadNextPageButton(this.item, this.level + 1)]
                   : []
               )
@@ -157,7 +167,7 @@ export class ItemView {
 
     const { item, titleElem } = this;
     function stopRenaming() {
-      item.title = inputElem.value;
+      item.setTitle(inputElem.value);
       titleElem.elem.textContent = item.title;
       inputElem.insertAdjacentElement("beforebegin", titleElem.elem);
       inputElem.removeEventListener("blur", stopRenaming);
@@ -165,7 +175,7 @@ export class ItemView {
     }
   };
 
-  private static downloadNextPageButton = (item: MyItem, level: number) => {
+  private static downloadNextPageButton = (item: Item, level: number) => {
     const ref = dom.createRef("div");
     return div({ classNames: ["item-row", levels.rowForLevel(level)] }, [
       div(
@@ -174,7 +184,7 @@ export class ItemView {
           ref,
           onClickStopPropagation: () => {
             if (!item.isLoading) {
-              itemsStore.loadNextPage(item);
+              // itemsStore.loadNextPage(item);
               dom.setChild(
                 ref.elem,
                 icons.spinnner({
@@ -190,16 +200,19 @@ export class ItemView {
     ]);
   };
 
-  private static view = (item: MyItem, level: number) =>
-    new ItemView(item, level).el;
+  private static view = (
+    item: Item,
+    level: number,
+    onShown: Action<ItemView>
+  ) => new ItemView(item, level, onShown).el;
 
-  static viewChildrenFor = (item: MyItem) =>
+  static viewChildrenFor = (item: Item, onShown: Action<ItemView>) =>
     dom.fragment(
       item.children
         ? item.children
-            .map((item) => ItemView.view(item, 0))
+            .map((item) => ItemView.view(item, 0, onShown))
             .concat(
-              items.getNextPageToken(item)
+              item.getNextPageToken()
                 ? [ItemView.downloadNextPageButton(item, 0)]
                 : []
             )

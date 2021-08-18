@@ -254,3 +254,5 @@ const insertItemInside = (parentItem: MyItem, itemToInsert: MyItem) => {
   parentItem.children = [itemToInsert].concat(parentItem.children || []);
   itemToInsert.parent = parentItem;
 };
+
+export { Item } from "./item";
