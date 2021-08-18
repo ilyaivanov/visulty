@@ -1,10 +1,9 @@
 import { dom, div, input, span, button, style } from "../browser";
 import { colors, anim, levels, spacings, icons } from "../designSystem";
-import { itemsStore, dispatcher, dnd, uiState, playerState } from "../globals";
-import * as items from "../items";
 import { ItemIcon } from "./itemIcon";
 import { showSkeletons } from "./index";
 import { Item } from "../items/item";
+import { AppEvents } from "../events";
 
 export class ItemView {
   icon: ItemIcon;
@@ -16,7 +15,8 @@ export class ItemView {
   constructor(
     public item: Item,
     public level: number,
-    private onShown: Action<ItemView>
+    private onShown: Action<ItemView>,
+    private events: AppEvents
   ) {
     this.icon = new ItemIcon(item, {
       onChevronClick: () => item.toggleVisibility(),
@@ -44,7 +44,8 @@ export class ItemView {
           div({ classNames: ["hide", "item-row_showOnHoverOrSelected"] }, [
             button({
               textContent: "▶",
-              // onClickStopPropagation: () => playerState.playItem(item),
+              onClickStopPropagation: () =>
+                this.events.trigger("itemPlay", item),
             }),
             button({
               textContent: "F",
@@ -87,20 +88,20 @@ export class ItemView {
   public insertItemAfter = (item: Item) =>
     this.el.insertAdjacentElement(
       "afterend",
-      ItemView.view(item, this.level, this.onShown)
+      ItemView.view(item, this.level, this.onShown, this.events)
     );
 
   public insertItemBefore = (item: Item) =>
     this.el.insertAdjacentElement(
       "beforebegin",
-      ItemView.view(item, this.level, this.onShown)
+      ItemView.view(item, this.level, this.onShown, this.events)
     );
 
   public insertItemAsFirstChild = (item: Item) => {
     if (this.childrenElem.elem)
       this.childrenElem.elem.insertAdjacentElement(
         "afterbegin",
-        ItemView.view(item, this.level + 1, this.onShown)
+        ItemView.view(item, this.level + 1, this.onShown, this.events)
       );
   };
 
@@ -142,7 +143,9 @@ export class ItemView {
         ? showSkeletons(10, this.level + 1).concat(childrenBorder(this.level))
         : this.item.children &&
             this.item.children
-              .map((item) => ItemView.view(item, this.level + 1, this.onShown))
+              .map((item) =>
+                ItemView.view(item, this.level + 1, this.onShown, this.events)
+              )
               .concat(childrenBorder(this.level))
               .concat(
                 this.item.getNextPageToken()
@@ -202,14 +205,19 @@ export class ItemView {
   private static view = (
     item: Item,
     level: number,
-    onShown: Action<ItemView>
-  ) => new ItemView(item, level, onShown).el;
+    onShown: Action<ItemView>,
+    events: AppEvents
+  ) => new ItemView(item, level, onShown, events).el;
 
-  static viewChildrenFor = (item: Item, onShown: Action<ItemView>) =>
+  static viewChildrenFor = (
+    item: Item,
+    onShown: Action<ItemView>,
+    events: AppEvents
+  ) =>
     dom.fragment(
       item.children
         ? item.children
-            .map((item) => ItemView.view(item, 0, onShown))
+            .map((item) => ItemView.view(item, 0, onShown, events))
             .concat(
               item.getNextPageToken()
                 ? [ItemView.downloadNextPageButton(item, 0)]

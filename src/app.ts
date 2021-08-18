@@ -5,36 +5,33 @@ import { AppEvents } from "./events";
 import { Item } from "./items/item";
 import { ItemsTree } from "./tree";
 import { Footer } from "./player/footer";
-import { Header } from "./view/header";
-import { LeftSidebar } from "./view/leftSidebar";
-import { MainTab } from "./view/mainTab";
-import { RightSidebar } from "./player/rightSidebar";
 import { SearchTab } from "./view/searchTab";
-import { viewHeader } from "./view/header2";
-import { viewLeftSidebar } from "./view/leftSidebar2";
+import { viewHeader } from "./focus/header";
+import { viewLeftSidebar } from "./focus/leftSidebar";
 import { createThemeController } from "./designSystem/colorVars";
+import { PlayerState, viewPlayer } from "./player/player";
+import { viewGallery } from "./gallery";
 // import { SearchModalController } from "../search/modalController";
 // import ModalViewImplementation from "../search/modalView";
 
 export const viewApp = (container: HTMLElement, events: AppEvents) => {
   const renderInto = (root: Item) => {
-    const mainTree = new ItemsTree(events);
-    const tree = mainTree.viewChildrenFor(root);
+    const appElement = div({ classNames: ["app"] });
 
-    const appElement = div({ classNames: ["app"] }, [
+    let initialTheme = createThemeController(appElement, events);
+
+    const { rightSidebar, footer } = viewPlayer(events);
+    dom.appendChildren(appElement, [
       viewHeader({
         events,
-        theme: "dark",
+        theme: initialTheme,
       }),
-      div({ className: "gallery" }, [
-        div({ className: "tab" }, tree),
-        SearchTab.view(),
-      ]),
+      viewGallery(root, events),
       viewLeftSidebar(events),
-      new RightSidebar().el,
-      new Footer().el,
+      rightSidebar,
+      footer,
     ]);
-    createThemeController({ container: appElement, events });
+
     hideLoading();
     dom.appendChild(container, appElement);
   };
@@ -48,47 +45,9 @@ export const viewApp = (container: HTMLElement, events: AppEvents) => {
   events.on("stateLoaded", renderInto);
 };
 
-// export class App {
-//   root?: Item;
-
-//   appEvents = new AppEvents();
-//   mainTree = new ItemsTree(this.appEvents);
-
-//   constructor(private parent: HTMLElement) {
-//     // this.assignTheme();
-//   }
-
-//   renderInto(container: Element, root: MyItem) {
-//     this.root = new Item(root, this.appEvents);
-//     const tree = this.mainTree.viewChildrenFor(this.root);
-
-//     const appElement = div({ classNames: ["app", "app-light"] }, [
-//       viewHeader(this.appEvents),
-//       div({ className: "gallery" }, [
-//         div({ className: "tab" }, tree),
-//         SearchTab.view(),
-//       ]),
-//       viewLeftSidebar(this.appEvents),
-//       new RightSidebar().el,
-//       new Footer().el,
-//     ]);
-
-//     dom.setChild(container, appElement);
-//   }
-
-//   rootItemLoaded = (item: Item) => {
-//     this.root = item;
-//   };
-
-//   // assignTheme = () =>
-//   //   dom.assignClassMap(this.el, {
-//   //     "app-light": uiState.theme === "light",
-//   //     "app-dark": uiState.theme === "dark",
-//   //   });
-// }
-
 style.class("app", {
   backgroundColor: colors.appBackground,
+  color: colors.mainTextColor,
   height: "100vh",
   width: "100vw",
   overflow: "hidden",

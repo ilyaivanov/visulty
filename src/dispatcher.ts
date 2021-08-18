@@ -41,67 +41,67 @@ export class CommandsDispatcher {
   };
 
   dispatchCommand = (command: DomainCommand) => {
-    if (command.type === "item-toggled")
-      this.viewAction(command.itemId, (view) =>
-        view.updateItemChildrenVisibility(true)
-      );
-    else if (command.type === "item-toggled-in-sidebar") {
-      this.sidebarViewAction(command.item.id, (view) =>
-        view.updateItemChildrenVisibility()
-      );
-    } else if (command.type === "item-removed")
-      this.viewAction(command.itemId, (view) => view.remove(command.instant));
-    else if (command.type === "item-selected")
-      this.viewAction(command.item.id, (view) => view.select());
-    else if (command.type === "item-focused") {
-      this.header?.focusOn(command.item);
-      this.mainTab?.focusOn(command.item);
-    } else if (command.type === "item-unselected")
-      this.viewAction(command.item.id, (view) => view.unselect());
-    else if (command.type === "item-loaded")
-      this.viewAction(command.itemId, (view) =>
-        view.updateItemChildrenVisibility()
-      );
-    else if (command.type === "item-added") {
-      const parent = command.item.parent!;
-      const context = parent.children!;
-      const index = context.indexOf(command.item);
-      // if (!parent.parent && index === 0) {
-      //   this.viewAction(context[index + 1]!.id, (view) =>
-      //     view.insertItemBefore(command.item)
-      //   );
-      // } else if (index == 0) {
-      //   this.viewAction(parent.id, (view) =>
-      //     view.insertItemAsFirstChild(command.item)
-      //   );
-      // } else {
-      //   const prevItem = context[index - 1];
-      //   this.viewAction(prevItem.id, (view) =>
-      //     view.insertItemAfter(command.item)
-      //   );
-      // }
-      this.viewAction(parent.id, (view) => view.updateIcons());
-    } else if (command.type === "search-visibility-toggled")
-      this.searchTab?.onSearchVisibilityChange();
-    else if (command.type === "left-sidebar-visibility-changed")
-      this.leftSidebar?.assignVisibility();
-    else if (command.type === "right-sidebar-visibility-changed") {
-      this.rightSidebar?.assignVisibility();
-      this.footer?.onRightSidebarVisibilityChanged();
-    } else if (command.type === "show-quick-find-modal")
-      this.appView?.showModal();
-    else if (command.type === "searching-start")
-      this.searchTab?.startSearching();
-    else if (command.type === "searching-end") this.searchTab?.stopSearching();
-    else if (command.type === "theme-changed") {
-      this.header?.assignThemeButtonText();
-      this.appView?.assignTheme();
-    } else if (command.type === "search-input-focus")
-      this.searchTab?.searchInput.elem.focus({ preventScroll: true });
-    else if (command.type === "search-input-blur") {
-      if (document.activeElement == this.searchTab?.searchInput.elem)
-        this.searchTab?.searchInput.elem.blur();
-    } else assertDispatcherHandlesAllCommands(command);
+    // if (command.type === "item-toggled")
+    //   this.viewAction(command.itemId, (view) =>
+    //     view.updateItemChildrenVisibility(true)
+    //   );
+    // else if (command.type === "item-toggled-in-sidebar") {
+    //   this.sidebarViewAction(command.item.id, (view) =>
+    //     view.updateItemChildrenVisibility()
+    //   );
+    // } else if (command.type === "item-removed")
+    //   this.viewAction(command.itemId, (view) => view.remove(command.instant));
+    // else if (command.type === "item-selected")
+    //   this.viewAction(command.item.id, (view) => view.select());
+    // else if (command.type === "item-focused") {
+    //   this.header?.focusOn(command.item);
+    //   this.mainTab?.focusOn(command.item);
+    // } else if (command.type === "item-unselected")
+    //   this.viewAction(command.item.id, (view) => view.unselect());
+    // else if (command.type === "item-loaded")
+    //   this.viewAction(command.itemId, (view) =>
+    //     view.updateItemChildrenVisibility()
+    //   );
+    // else if (command.type === "item-added") {
+    //   const parent = command.item.parent!;
+    //   const context = parent.children!;
+    //   const index = context.indexOf(command.item);
+    //   // if (!parent.parent && index === 0) {
+    //   //   this.viewAction(context[index + 1]!.id, (view) =>
+    //   //     view.insertItemBefore(command.item)
+    //   //   );
+    //   // } else if (index == 0) {
+    //   //   this.viewAction(parent.id, (view) =>
+    //   //     view.insertItemAsFirstChild(command.item)
+    //   //   );
+    //   // } else {
+    //   //   const prevItem = context[index - 1];
+    //   //   this.viewAction(prevItem.id, (view) =>
+    //   //     view.insertItemAfter(command.item)
+    //   //   );
+    //   // }
+    //   this.viewAction(parent.id, (view) => view.updateIcons());
+    // } else if (command.type === "search-visibility-toggled")
+    //   this.searchTab?.onSearchVisibilityChange();
+    // else if (command.type === "left-sidebar-visibility-changed")
+    //   this.leftSidebar?.assignVisibility();
+    // else if (command.type === "right-sidebar-visibility-changed") {
+    //   this.rightSidebar?.assignVisibility();
+    //   this.footer?.onRightSidebarVisibilityChanged();
+    // } else if (command.type === "show-quick-find-modal")
+    //   this.appView?.showModal();
+    // else if (command.type === "searching-start")
+    //   this.searchTab?.startSearching();
+    // else if (command.type === "searching-end") this.searchTab?.stopSearching();
+    // else if (command.type === "theme-changed") {
+    //   this.header?.assignThemeButtonText();
+    //   this.appView?.assignTheme();
+    // } else if (command.type === "search-input-focus")
+    //   this.searchTab?.searchInput.elem.focus({ preventScroll: true });
+    // else if (command.type === "search-input-blur") {
+    //   if (document.activeElement == this.searchTab?.searchInput.elem)
+    //     this.searchTab?.searchInput.elem.blur();
+    // } else assertDispatcherHandlesAllCommands(command);
   };
 
   viewAction = (itemId: string, action: Action<ItemView>) => {

@@ -1,8 +1,15 @@
 import { dom, div, style, css, img, span } from "../browser";
 import { icons, spacings, colors, timings, zIndexes } from "../designSystem";
 import { youtubeIframeId } from "../api/youtubePlayer";
-import { getItemPath, getPreviewImage } from "../items";
-import { dispatcher, playerState, uiState } from "../globals";
+import { Item } from "../items";
+
+type FooterProps = {
+  playlistIconClicked: Action<MouseEvent>;
+  playPrevious: Action<MouseEvent>;
+  playNext: Action<MouseEvent>;
+  toggleVideoVisibility: Action<MouseEvent>;
+  focusOn: Action<Item>;
+};
 
 export class Footer {
   el: HTMLElement;
@@ -10,7 +17,8 @@ export class Footer {
   textArea = dom.createRef("div");
   youtubePlayer = dom.createRef("div");
   targetText = dom.createRef("div");
-  constructor() {
+
+  constructor(private props: FooterProps) {
     this.el = div({ className: "player" }, [
       div({
         id: youtubeIframeId,
@@ -18,27 +26,23 @@ export class Footer {
         ref: this.youtubePlayer,
       }),
 
-      this.icon(icons.playNext, () => playerState.playPreviousItemInQueue(), [
+      this.icon(icons.playNext, props.playPrevious, [
         "footer-icon-play-previous",
       ]),
       this.icon(icons.play, () => 42),
-      this.icon(icons.playNext, () => playerState.playNextItemInQueue()),
+      this.icon(icons.playNext, props.playNext),
       div({ className: "text-area", ref: this.textArea }),
-      this.icon(icons.videoHide, () =>
-        playerState.toggleVideoFrameVisibility()
-      ),
-      this.icon(icons.playlist, () => uiState.toggleRightSidebarVisibility()),
+      this.icon(icons.videoHide, props.toggleVideoVisibility),
+      this.icon(icons.playlist, this.props.playlistIconClicked),
       this.viewProgress(),
     ]);
-    this.onRightSidebarVisibilityChanged();
-    dispatcher.footer = this;
   }
 
-  itemPlayed = (item: MyItem) => {
+  itemPlayed = (item: Item) => {
     dom.setChildren(this.textArea.elem, [
       img({
         className: "footer-video-image",
-        src: getPreviewImage(item),
+        src: item.getPreviewImage(),
       }),
 
       div({ className: "text-area-titles-container" }, [
@@ -48,14 +52,14 @@ export class Footer {
     ]);
   };
 
-  viewPath = (item: MyItem) => {
-    const pathElement = (pathItem: MyItem, index: number, paths: MyItem[]) => {
+  viewPath = (item: Item) => {
+    const pathElement = (pathItem: Item, index: number, paths: Item[]) => {
       const isLast = index == paths.length - 1;
       const res = [
         span({
           textContent: pathItem.title,
           className: "text-area-item-path-element",
-          onClick: () => uiState.focusOnItem(pathItem),
+          onClick: () => this.props.focusOn(pathItem),
         }),
       ];
       if (!isLast) res.push(span({ textContent: " > " }));
@@ -63,29 +67,27 @@ export class Footer {
     };
     return div(
       { className: "text-area-item-path" },
-      getItemPath(item)
+      item
+        .getItemPath()
         .filter((i) => i != item)
         .map(pathElement)
         .flat()
     );
   };
 
-  onVideoFrameVisibilityChanged = () =>
+  onVideoFrameVisibilityChanged = (isVisible: boolean) =>
     dom.toggleClass(
       document.getElementById(youtubeIframeId)!,
       "player-iframeHidden",
-      !playerState.isVideoFrameShown
+      !isVisible
     );
 
-  onRightSidebarVisibilityChanged = () => {
+  onRightSidebarVisibilityChanged = (isVisible: boolean) => {
     //using in case player has not yet been initialized
     const playerEl =
       document.getElementById(youtubeIframeId) || this.youtubePlayer.elem;
     if (playerEl) {
-      const right =
-        (uiState.isRightSidebarVisible
-          ? spacings.rightSidebarDefaultWidth
-          : 0) + 20;
+      const right = (isVisible ? spacings.rightSidebarDefaultWidth : 0) + 20;
       playerEl.style.right = right + "px";
     }
   };

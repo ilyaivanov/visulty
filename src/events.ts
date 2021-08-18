@@ -4,11 +4,18 @@ type ItemEventDefinitions = {
   itemRemoved: { item: Item; isInstant: boolean };
   stateLoaded: Item;
 
+  itemAdded: Item;
+
+  itemPlay: Item;
+
   itemToggled: Item;
   toggleSidebar: void;
 
   themeToggled: AppTheme;
   toggleTheme: void;
+
+  toggleRightSidebar: void;
+  rightSidebarToggled: void;
 };
 
 export class AppEvents {

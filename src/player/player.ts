@@ -1,41 +1,74 @@
-import { play, addEventListener } from "../api/youtubePlayer";
-import { CommandsDispatcher } from "../dispatcher";
-import { traverseChildrenDFS } from "../items";
+import * as youtubePlayer from "../api/youtubePlayer";
+import { AppEvents } from "../events";
+import { Item } from "../items";
+import { Footer } from "./footer";
+import { RightSidebar } from "./rightSidebar";
+
+type PlayerResults = {
+  footer: HTMLElement;
+  rightSidebar: HTMLElement;
+};
+
+export const viewPlayer = (events: AppEvents): PlayerResults => {
+  const state = new PlayerState(events);
+  return {
+    footer: state.footer.el,
+    rightSidebar: state.rightSidebar.el,
+  };
+};
 
 export class PlayerState {
+  isRightSidebarVisible = false;
   isVideoFrameShown = true;
-  itemBeingPlayed?: MyItem;
-  currentItemPlayed?: YoutubeVideo;
-  queue?: YoutubeVideo[];
+  itemBeingPlayed?: Item;
+  currentItemPlayed?: Item;
+  queue?: Item[];
 
-  constructor(private dispatcher: CommandsDispatcher) {
-    addEventListener("videoEnd", () => this.playNextItemInQueue());
+  footer: Footer;
+  rightSidebar: RightSidebar;
+
+  constructor(private events: AppEvents) {
+    this.footer = new Footer({
+      playlistIconClicked: this.toggleRightSidebar,
+      focusOn: () => 42,
+      playNext: this.playNextItemInQueue,
+      playPrevious: this.playPreviousItemInQueue,
+      toggleVideoVisibility: this.toggleVideoFrameVisibility,
+    });
+    this.rightSidebar = new RightSidebar({
+      onItemClicked: this.playItemInQueue,
+    });
+
+    this.rightSidebar.toggleVisibility(this.isRightSidebarVisible);
+
+    events.on("itemPlay", this.playItem);
+    youtubePlayer.addEventListener("videoEnd", () =>
+      this.playNextItemInQueue()
+    );
   }
 
-  playItem = (item: MyItem) => {
+  playItem = (item: Item) => {
     this.itemBeingPlayed = item;
-    if (item.type == "YTvideo") this.setQueue([item]);
+    if (item.isVideo()) this.setQueue([item]);
     else {
-      const queue = traverseChildrenDFS(
-        item,
-        (item) => item.type === "YTvideo"
-      ) as YoutubeVideo[];
+      const queue = item.traverseChildrenDFS((item) => item.isVideo());
       this.setQueue(queue);
     }
   };
 
-  setQueue = (items: YoutubeVideo[]) => {
+  setQueue = (items: Item[]) => {
     this.queue = items;
-    this.dispatcher.rightSidebar?.viewQueue(this.itemBeingPlayed!, this.queue);
+    this.rightSidebar.viewQueue(this.itemBeingPlayed!, this.queue);
     this.playItemInQueue(items[0]);
   };
 
-  playItemInQueue(item: YoutubeVideo) {
+  playItemInQueue = (item: Item) => {
     this.currentItemPlayed = item;
-    play(item.videoId);
-    this.dispatcher.footer?.itemPlayed(item);
-    this.dispatcher.rightSidebar?.playItemInQueue(item);
-  }
+    const videoId = item.getVideoId();
+    videoId && youtubePlayer.play(videoId);
+    this.footer.itemPlayed(item);
+    this.rightSidebar.playItemInQueue(item);
+  };
 
   canPlayNextItem(): boolean {
     if (this.queue && this.currentItemPlayed) {
@@ -45,14 +78,14 @@ export class PlayerState {
     return false;
   }
 
-  playNextItemInQueue() {
+  playNextItemInQueue = () => {
     if (this.canPlayNextItem()) {
       if (this.queue && this.currentItemPlayed) {
         const index = this.queue.indexOf(this.currentItemPlayed);
         this.playItemInQueue(this.queue[index + 1]);
       }
     }
-  }
+  };
 
   canPlayPreviousItem(): boolean {
     if (this.queue && this.currentItemPlayed) {
@@ -62,17 +95,22 @@ export class PlayerState {
     return false;
   }
 
-  playPreviousItemInQueue() {
+  playPreviousItemInQueue = () => {
     if (this.canPlayPreviousItem()) {
       if (this.queue && this.currentItemPlayed) {
         const index = this.queue.indexOf(this.currentItemPlayed);
         this.playItemInQueue(this.queue[index - 1]);
       }
     }
-  }
+  };
 
   toggleVideoFrameVisibility = () => {
     this.isVideoFrameShown = !this.isVideoFrameShown;
-    this.dispatcher.footer?.onVideoFrameVisibilityChanged();
+    this.footer.onVideoFrameVisibilityChanged(this.isVideoFrameShown);
+  };
+
+  toggleRightSidebar = () => {
+    this.isRightSidebarVisible = !this.isRightSidebarVisible;
+    this.rightSidebar.toggleVisibility(this.isRightSidebarVisible);
   };
 }

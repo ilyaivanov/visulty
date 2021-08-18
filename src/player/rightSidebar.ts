@@ -1,26 +1,23 @@
 import { css, div, dom, img, style } from "../browser";
 import { colors, timings, zIndexes } from "../designSystem";
-import { getPreviewImage } from "../items";
-import { dispatcher, playerState, uiState } from "../globals";
+import { getPreviewImage, Item } from "../items";
+// import { dispatcher, playerState, uiState } from "../globals";
 
+type RightSidebarProps = {
+  onItemClicked: Action<Item>;
+};
 export class RightSidebar {
   el: HTMLElement;
 
   currentQueueItemBeingPlayed?: HTMLElement;
-  constructor() {
+  constructor(private props: RightSidebarProps) {
     this.el = div({ className: "right-sidebar" }, [this.queueLabel()]);
-    this.assignVisibility();
-    dispatcher.rightSidebar = this;
   }
 
-  assignVisibility = () =>
-    dom.toggleClass(
-      this.el,
-      "right-sidebar-hidden",
-      !uiState.isRightSidebarVisible
-    );
+  toggleVisibility = (isVisible: boolean) =>
+    dom.toggleClass(this.el, "right-sidebar-hidden", !isVisible);
 
-  viewQueue = (parentItem: MyItem, queueItems: YoutubeVideo[]) => {
+  viewQueue = (parentItem: Item, queueItems: Item[]) => {
     dom.setChildren(
       this.el,
       [
@@ -36,17 +33,17 @@ export class RightSidebar {
   private queueLabel = () =>
     div({ className: "right-sidebar-label", textContent: "Current Queue" });
 
-  private viewItem = (item: YoutubeVideo) =>
+  private viewItem = (item: Item) =>
     div(
       {
         id: "queue-item-" + item.id,
         className: "right-sidebar-item",
-        onClick: () => playerState.playItemInQueue(item),
+        onClick: () => this.props.onItemClicked(item),
       },
       [
         img({
           className: "right-sidebar-item-image",
-          src: getPreviewImage(item),
+          src: item.getPreviewImage(),
         }),
         div({
           className: "right-sidebar-item-title",
@@ -55,7 +52,7 @@ export class RightSidebar {
       ]
     );
 
-  playItemInQueue = (item: YoutubeVideo) => {
+  playItemInQueue = (item: Item) => {
     const elem = document.getElementById("queue-item-" + item.id);
     if (elem) {
       if (this.currentQueueItemBeingPlayed)

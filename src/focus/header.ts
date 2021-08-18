@@ -3,6 +3,7 @@ import { spacings, colors, icons, zIndexes } from "../designSystem";
 import { AppEvents } from "../events";
 import { dispatcher, itemsStore, uiState } from "../globals";
 import * as items from "../items";
+import { Item } from "../items";
 
 type HeaderProps = {
   theme: AppTheme;
@@ -10,17 +11,55 @@ type HeaderProps = {
 };
 export const viewHeader = ({ theme, events }: HeaderProps) => {
   const themeButton = dom.createRef("button");
+  const pathElemenet = dom.createRef("div");
 
   const assignthemeButtonText = (theme: AppTheme) =>
     (themeButton.elem.textContent =
       theme == "dark" ? "Switch to light" : "Switch to dark");
 
   const result = div({ className: "header" }, [
+    div(
+      {
+        className: "header-icon",
+        onClick: () => events.trigger("toggleSidebar"),
+      },
+      [icons.bars({ className: "header-icon-svg" })]
+    ),
+    div(
+      {
+        className: "header-icon",
+        classMap: { "header-icon-disabled": true },
+      },
+      [
+        icons.chevron({
+          classNames: ["header-icon-svg", "header-icon-svg-rotated"],
+        }),
+      ]
+    ),
+    div(
+      {
+        className: "header-icon",
+        classMap: { "header-icon-disabled": true },
+      },
+      [icons.chevron({ className: "header-icon-svg" })]
+    ),
+    div(
+      {
+        className: "header-icon",
+        onClick: () => uiState.focusOnItem(itemsStore.root),
+      },
+      [icons.home({ className: "header-icon-svg" })]
+    ),
+    div({ ref: pathElemenet }),
+    button({
+      style: { marginLeft: "auto" },
+      textContent: "save",
+      onClick: () => itemsStore.save(),
+    }),
     button({
       textContent: "search",
-      onClick: () => events.trigger("toggleSidebar"),
+      onClick: () => uiState.toggleSearchVisibility(),
     }),
-
     button({
       onClick: () => events.trigger("toggleTheme"),
       ref: themeButton,
@@ -28,6 +67,7 @@ export const viewHeader = ({ theme, events }: HeaderProps) => {
   ]);
 
   assignthemeButtonText(theme);
+
   events.on("themeToggled", assignthemeButtonText);
 
   return result;
@@ -146,6 +186,15 @@ export class Header {
       onClick: () => uiState.focusOnItem(item),
     });
 }
+
+// const createPathForElemet = (item: Item) =>     [
+//     this.separator(itemsStore.root, path[0]),
+//     ...path
+//       .map((item, index, items) => [
+//         this.pathItemElement(item),
+//         this.separator(item, items[index + 1]),
+//       ])
+//       .flat(),
 
 style.class("header", {
   //relative positioning for youtube iframe player

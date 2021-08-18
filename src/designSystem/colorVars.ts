@@ -35,13 +35,17 @@ type StringKeys<Type> = {
   [Property in keyof Type]: string;
 };
 
-type Props = {
-  container: HTMLElement;
-  events: AppEvents;
-};
-
-export const createThemeController = ({ container, events }: Props) => {
+export const createThemeController = (
+  container: HTMLElement,
+  events: AppEvents
+): AppTheme => {
   let theme: AppTheme = "light";
+  if (
+    window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+  ) {
+    theme = "dark";
+  }
   const assignTheme = (newTheme: AppTheme) => {
     theme = newTheme;
     dom.assignClassMap(container, {
@@ -53,8 +57,8 @@ export const createThemeController = ({ container, events }: Props) => {
   assignTheme(theme);
 
   events.on("toggleTheme", () => {
-    console.log(theme);
     assignTheme(theme == "dark" ? "light" : "dark");
     events.trigger("themeToggled", theme);
   });
+  return theme;
 };

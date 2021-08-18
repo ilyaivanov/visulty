@@ -1,12 +1,6 @@
 import { dom, div, style, css } from "../browser";
 import { spacings, colors } from "../designSystem";
-import {
-  dispatcher,
-  itemsStore,
-  playerState,
-  shortcuts,
-  uiState,
-} from "../globals";
+import { dispatcher, itemsStore, shortcuts, uiState } from "../globals";
 import { Footer } from "../player/footer";
 import { Header } from "./header";
 import { LeftSidebar } from "./leftSidebar";
@@ -21,7 +15,7 @@ export class AppView {
   modalControler = new SearchModalController(new ModalViewImplementation(), {
     getRoot: () => itemsStore.root,
     onFocus: (item) => uiState.focusOnItem(item),
-    onPlay: (item) => playerState.playItem(item),
+    onPlay: (item) => 42,
     onDismiss: () => shortcuts.startListeningToKeyboard(),
   });
 
@@ -30,8 +24,8 @@ export class AppView {
       new Header().el,
       div({ className: "gallery" }, [MainTab.view(), SearchTab.view()]),
       new LeftSidebar().el,
-      new RightSidebar().el,
-      new Footer().el,
+      new RightSidebar(42 as any).el,
+      new Footer(42 as any).el,
     ]);
     this.assignTheme();
     dispatcher.appView = this;

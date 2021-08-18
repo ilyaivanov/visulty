@@ -30,7 +30,9 @@ export class ItemsTree {
 
   viewChildrenFor = (item: Item): Node[] | undefined =>
     item.children &&
-    item.children.map((item) => new ItemView(item, 0, this.rowShown).el);
+    item.children.map(
+      (item) => new ItemView(item, 0, this.rowShown, this.events).el
+    );
 
   private actionOnItem = (item: Item, action: Action<ItemView>) => {
     const view = this.rowsShown.get(item);
