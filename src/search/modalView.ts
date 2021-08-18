@@ -46,7 +46,7 @@ export default class ModalViewImplementation implements ModalView {
   }
 
   row = ({ item, highlights }: LocalSearchEntry) => {
-    const icon = viewIconFor(item);
+    const icon = div({}); // viewIconFor(item);
     dom.removeClass(icon, "item-icon-video");
     return div(
       {

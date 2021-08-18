@@ -5,8 +5,8 @@ import { dummyRoot } from "./dummyUserState";
 
 export interface Gateway {
   initFirebare(): Promise<void>;
-  loadUserSettings(userId: string): Promise<PersistedState>;
-  saveUserSettings(state: PersistedState, userId: string): void;
+  loadUserSettings(userId: string): Promise<MappedPersistedState>;
+  saveUserSettings(state: MappedPersistedState, userId: string): void;
 
   loadSearchResults(searchRoot: SearchRoot): Promise<MappedResponse>;
   loadPlaylistItems(
@@ -40,13 +40,12 @@ export class FakeAPIGateweay implements Gateway {
       setTimeout(resolve, 200);
     });
   }
-  loadUserSettings(): Promise<PersistedState> {
-    console.log(dummyRoot);
+  loadUserSettings(): Promise<MappedPersistedState> {
     return Promise.resolve({
-      itemsSerialized: JSON.stringify(dummyRoot),
+      root: dummyRoot,
     });
   }
-  saveUserSettings(state: PersistedState): void {
+  saveUserSettings(state: MappedPersistedState): void {
     throw new Error("Method not implemented.");
   }
   loadSearchResults(searchRoot: SearchRoot): Promise<MappedResponse> {

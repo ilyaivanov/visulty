@@ -3,7 +3,9 @@ import { sampleUserName } from "./src/api/config";
 import { style } from "./src/browser";
 import { createThemeStyles } from "./src/designSystem";
 import { APIGateway, FakeAPIGateweay } from "./src/api";
-import { App } from "./src/app";
+import { viewApp } from "./src/app";
+import { AppEvents } from "./src/events";
+import { Item } from "./src/items";
 
 // app.renderInto(document.body);
 createThemeStyles();
@@ -11,20 +13,14 @@ createThemeStyles();
 const USE_REAL_API = false;
 const api = USE_REAL_API ? new APIGateway() : new FakeAPIGateweay();
 
+const events = new AppEvents();
+viewApp(document.body, events);
+
 api
   .initFirebare()
   .then(() => api.loadUserSettings(sampleUserName))
-  .then((data: PersistedState) => {
-    const container = document.getElementById("loader-container");
-
-    if (container)
-      container
-        .animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200 })
-        .addEventListener("finish", () => {
-          container.remove();
-        });
-    const app = new App(document.body);
-    app.renderInto(document.body, deserializeRootItem(data.itemsSerialized));
+  .then((data: MappedPersistedState) => {
+    events.trigger("stateLoaded", new Item(data.root, events));
   });
 
 style.tag("body", {

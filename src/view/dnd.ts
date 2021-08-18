@@ -32,9 +32,8 @@ export class Dnd {
     if (e.buttons == 1 && itemBeingDragged) {
       if (!dragAvatar) {
         const dist = distance(initialMousePosition, getScreenPosition(e));
-        console.log(dist);
         if (dist > 5) {
-          const icon = viewIconFor(itemBeingDragged);
+          const icon = div({}); // viewIconFor(itemBeingDragged);
           this.dragAvatar = div({ className: "item-dragAvatar" }, [icon]);
           dom.addClass(icon, "item-icon-video");
           this.appendItemTo?.appendChild(this.dragAvatar);

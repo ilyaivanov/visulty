@@ -68,7 +68,6 @@ export class ItemView {
   }
 
   updateItemChildrenVisibility = (animate?: boolean) => {
-    console.log("update ", this.item);
     if (this.item.isOpen) this.open(animate);
     else this.close(animate);
     this.updateIcons();

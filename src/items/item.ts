@@ -72,7 +72,6 @@ export class Item {
 
   toggleVisibility() {
     //sending message from here
-    console.log("toggle");
     this.props.isOpen = !this.props.isOpen;
     this.events.trigger("itemToggled", this);
   }

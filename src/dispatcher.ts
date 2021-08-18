@@ -66,20 +66,20 @@ export class CommandsDispatcher {
       const parent = command.item.parent!;
       const context = parent.children!;
       const index = context.indexOf(command.item);
-      if (!parent.parent && index === 0) {
-        this.viewAction(context[index + 1]!.id, (view) =>
-          view.insertItemBefore(command.item)
-        );
-      } else if (index == 0) {
-        this.viewAction(parent.id, (view) =>
-          view.insertItemAsFirstChild(command.item)
-        );
-      } else {
-        const prevItem = context[index - 1];
-        this.viewAction(prevItem.id, (view) =>
-          view.insertItemAfter(command.item)
-        );
-      }
+      // if (!parent.parent && index === 0) {
+      //   this.viewAction(context[index + 1]!.id, (view) =>
+      //     view.insertItemBefore(command.item)
+      //   );
+      // } else if (index == 0) {
+      //   this.viewAction(parent.id, (view) =>
+      //     view.insertItemAsFirstChild(command.item)
+      //   );
+      // } else {
+      //   const prevItem = context[index - 1];
+      //   this.viewAction(prevItem.id, (view) =>
+      //     view.insertItemAfter(command.item)
+      //   );
+      // }
       this.viewAction(parent.id, (view) => view.updateIcons());
     } else if (command.type === "search-visibility-toggled")
       this.searchTab?.onSearchVisibilityChange();

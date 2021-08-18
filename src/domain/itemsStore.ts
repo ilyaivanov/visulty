@@ -113,9 +113,6 @@ export class ItemsStore {
   };
 
   save = () => {
-    saveUserSettings(
-      { itemsSerialized: serializeRootItem(this.root) },
-      sampleUserName
-    );
+    saveUserSettings({ root: this.root }, sampleUserName);
   };
 }
