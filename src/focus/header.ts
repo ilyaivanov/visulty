@@ -6,9 +6,10 @@ import { Item } from "../items";
 type HeaderProps = {
   theme: AppTheme;
   events: AppEvents;
+  root: Item;
 };
 
-export const viewHeader = ({ theme, events }: HeaderProps) => {
+export const viewHeader = ({ theme, events, root }: HeaderProps) => {
   const actions = {
     toggleSidebar: () => events.trigger("toggleSidebar"),
     focus: (item: Item) => events.trigger("focusItem", item),
@@ -49,7 +50,7 @@ export const viewHeader = ({ theme, events }: HeaderProps) => {
     div(
       {
         className: "header-icon",
-        onClick: () => 42, //uiState.focusOnItem(itemsStore.root),
+        onClick: () => actions.focus(root),
       },
       [icons.home({ className: "header-icon-svg" })]
     ),

@@ -22,10 +22,7 @@ export const viewApp = (container: HTMLElement, events: AppEvents) => {
 
     const { rightSidebar, footer } = viewPlayer(events);
     dom.appendChildren(appElement, [
-      viewHeader({
-        events,
-        theme: initialTheme,
-      }),
+      viewHeader({ events, theme: initialTheme, root }),
       viewGallery(root, events),
       viewLeftSidebar(root, events),
       rightSidebar,
