@@ -5,8 +5,44 @@
     <title>Visulty</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+      #loader-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: white;
+      }
+      #app-loader {
+        border: 6px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 6px solid #3498db;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s ease-in-out infinite;
+        position: fixed;
+        top: calc(50vh - 60px);
+        left: calc(50vw - 60px);
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        50% {
+          transform: rotate(540deg);
+        }
+        100% {
+          transform: rotate(1080deg);
+        }
+      }
+    </style>
   </head>
-  <body></body>
+  <body>
+    <div id="loader-container">
+      <div id="app-loader"></div>
+    </div>
+  </body>
   <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
 
   <!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->

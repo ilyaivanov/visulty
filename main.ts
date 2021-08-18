@@ -1,34 +1,31 @@
-import {
-  deserializeRootItem,
-  initFirebase,
-  loadUserSettings,
-} from "./src/api/userState";
+import { deserializeRootItem } from "./src/api/userState";
 import { sampleUserName } from "./src/api/config";
 import { style } from "./src/browser";
-import { viewApp } from "./src/view/app";
-import { itemsStore, uiState } from "./src/globals";
 import { createThemeStyles } from "./src/designSystem";
-import { dummyRoot } from "./src/api/dummyUserState";
-import * as items from "./src/items";
+import { APIGateway, FakeAPIGateweay } from "./src/api";
+import { App } from "./src/app";
 
+// app.renderInto(document.body);
 createThemeStyles();
 
-const USE_REAL_API = true;
+const USE_REAL_API = false;
+const api = USE_REAL_API ? new APIGateway() : new FakeAPIGateweay();
 
-initFirebase(() => {
-  if (USE_REAL_API) {
-    loadUserSettings(sampleUserName).then((data) => {
-      itemsStore.root = deserializeRootItem(data.itemsSerialized);
-      const firstChild = items.getFirstChild(itemsStore.root);
-      document.body.appendChild(viewApp());
-      uiState.focusOnItem(itemsStore.root);
-      firstChild && uiState.select(firstChild);
-    });
-  } else {
-    itemsStore.root = dummyRoot;
-    document.body.appendChild(viewApp());
-  }
-});
+api
+  .initFirebare()
+  .then(() => api.loadUserSettings(sampleUserName))
+  .then((data: PersistedState) => {
+    const container = document.getElementById("loader-container");
+
+    if (container)
+      container
+        .animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200 })
+        .addEventListener("finish", () => {
+          container.remove();
+        });
+    const app = new App(document.body);
+    app.renderInto(document.body, deserializeRootItem(data.itemsSerialized));
+  });
 
 style.tag("body", {
   margin: 0,

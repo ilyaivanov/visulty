@@ -81,12 +81,3 @@ export const dummyRoot = folder("HOME", [
   folder("Six", randomItems(6)),
   folder("Seven"),
 ]);
-
-export const assignParents = (parent: MyItem, children: MyItem[]) => {
-  children.forEach((child) => {
-    child.parent = parent;
-    if (child.children) assignParents(child, child.children);
-  });
-};
-
-assignParents(dummyRoot, dummyRoot.children!);

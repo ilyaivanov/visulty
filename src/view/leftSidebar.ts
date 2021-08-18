@@ -24,7 +24,9 @@ export class LeftSidebar {
     );
 
   viewChildren = () =>
-    itemsStore.root.children!.map((item) => LeaftSidebarItem.view(item, 0));
+    (itemsStore.root.children || []).map((item) =>
+      LeaftSidebarItem.view(item, 0)
+    );
 }
 
 export class LeaftSidebarItem {

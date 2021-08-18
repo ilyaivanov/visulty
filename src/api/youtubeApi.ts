@@ -112,11 +112,11 @@ export type MappedResponse = {
   nextPageToken?: string;
 };
 
-export type YoutubeChannelUploadPlaylistResponse = {
+type YoutubeChannelUploadPlaylistResponse = {
   playlistId: string;
 };
 
-export type ResponseItem =
+type ResponseItem =
   | VideoResponseItem
   | ChannelResponseItem
   | PlaylistResponseItem;
