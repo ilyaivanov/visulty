@@ -9,10 +9,7 @@ export interface Gateway {
   saveUserSettings(state: MappedPersistedState, userId: string): void;
 
   loadSearchResults(searchRoot: SearchRoot): Promise<MappedResponse>;
-  loadPlaylistItems(
-    playlistId: string,
-    pageToken?: string
-  ): Promise<MappedResponse>;
+  loadPlaylistItems(playlist: YoutubePlaylist): Promise<MappedResponse>;
   loadChannelItems(channel: YoutubeChannel): Promise<MappedResponse>;
 }
 
@@ -51,10 +48,7 @@ export class FakeAPIGateweay implements Gateway {
   loadSearchResults(searchRoot: SearchRoot): Promise<MappedResponse> {
     throw new Error("Method not implemented.");
   }
-  loadPlaylistItems(
-    playlistId: string,
-    pageToken?: string
-  ): Promise<MappedResponse> {
+  loadPlaylistItems(playlist: YoutubePlaylist): Promise<MappedResponse> {
     throw new Error("Method not implemented.");
   }
   loadChannelItems(channel: YoutubeChannel): Promise<MappedResponse> {

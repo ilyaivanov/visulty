@@ -3,6 +3,7 @@ import { AppEvents } from "../events";
 export class Item {
   parent?: Item;
   children?: Item[];
+  isLoading = false;
   constructor(public props: MyItem, private events: AppEvents) {
     if (props.children)
       this.children = props.children.map((child) => new Item(child, events));
@@ -18,9 +19,6 @@ export class Item {
   get id() {
     return this.props.id;
   }
-  get isLoading() {
-    return this.props.isLoading;
-  }
   get isOpen() {
     return this.props.isOpen;
   }
@@ -33,11 +31,12 @@ export class Item {
     this.events.trigger("item.rightSidebarVisibilityChanged", this);
   }
 
-  isVideo = () => this.props.type === "YTvideo";
   isRoot = () => !this.parent;
 
+  isVideo = () => this.props.type === "YTvideo";
   isPlaylist = () => this.props.type === "YTplaylist";
   isChannel = () => this.props.type === "YTchannel";
+  isSearch = () => this.props.type === "search";
 
   isEmpty = () => !this.children || this.children.length == 0;
 
@@ -71,6 +70,15 @@ export class Item {
     return undefined;
   };
 
+  setNextPageToken = (token: string | undefined) => {
+    if (
+      this.props.type === "YTchannel" ||
+      this.props.type === "YTplaylist" ||
+      this.props.type === "search"
+    )
+      this.props.nextPageToken = token;
+  };
+
   remove() {
     const { parent } = this;
     if (parent) {
@@ -94,7 +102,34 @@ export class Item {
   toggleVisibility() {
     //sending message from here
     this.props.isOpen = !this.props.isOpen;
+    if (this.isNeededToBeFetched()) {
+      this.isLoading = true;
+      this.events.trigger("item.loadChildren", this);
+    }
     this.events.trigger("itemToggled", this);
+  }
+
+  loadNextPage() {
+    this.events.trigger("item.loadChildrenNextPage", this);
+  }
+
+  pageLoaded(children: MyItem[], nextPageToken: string | undefined) {
+    const page = children.map((child) => new Item(child, this.events));
+    this.children = (this.children || []).concat(page);
+
+    this.isLoading = false;
+    this.children.forEach((child) => (child.parent = this));
+    this.setNextPageToken(nextPageToken);
+    this.events.trigger("item.childrenNextPageLoaded", { item: this, page });
+  }
+
+  childrenLoaded(children: MyItem[], nextPageToken: string | undefined) {
+    this.children = children.map((child) => new Item(child, this.events));
+
+    this.isLoading = false;
+    this.children.forEach((child) => (child.parent = this));
+    this.setNextPageToken(nextPageToken);
+    this.events.trigger("item.childrenLoaded", this);
   }
 
   getItemDistanceFromRoot() {

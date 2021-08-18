@@ -188,7 +188,7 @@ export class ItemView {
           ref,
           onClickStopPropagation: () => {
             if (!item.isLoading) {
-              // itemsStore.loadNextPage(item);
+              item.loadNextPage();
               dom.setChild(
                 ref.elem,
                 icons.spinnner({

@@ -3,8 +3,6 @@ import { anim, levels, colors } from "../designSystem";
 import { AppEvents } from "../events";
 import { Item } from "../items";
 import { ItemsTree } from "../tree";
-// import { itemsStore } from "../globals";
-// import * as items from "../items";
 
 export class MainTab {
   el: HTMLElement;
@@ -64,7 +62,7 @@ export class MainTab {
     this.currentItemFocused = item;
     dom.setChildren(this.el, [
       this.tabHeader(item),
-      ...(this.mainTree.viewChildrenFor(item) || []),
+      this.mainTree.viewChildrenFor(item),
       this.addButton(),
     ]);
   };

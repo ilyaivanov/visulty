@@ -22,17 +22,27 @@ export class ItemsTree {
     events.on("itemToggled", (item) =>
       this.actionOnItem(item, (view) => view.updateItemChildrenVisibility(true))
     );
+
+    events.on("item.childrenLoaded", (item) =>
+      this.actionOnItem(item, (view) =>
+        view.updateItemChildrenVisibility(false)
+      )
+    );
+
+    //TODO: all children are being rerendered now. Improve this by appending items
+    events.on("item.childrenNextPageLoaded", ({ item, page }) =>
+      this.actionOnItem(item, (view) =>
+        view.updateItemChildrenVisibility(false)
+      )
+    );
   }
 
   public rowShown = (row: ItemView) => {
     this.rowsShown.set(row.item, row);
   };
 
-  viewChildrenFor = (item: Item): Node[] | undefined =>
-    item.children &&
-    item.children.map(
-      (item) => new ItemView(item, 0, this.rowShown, this.events).el
-    );
+  viewChildrenFor = (item: Item): Node =>
+    ItemView.viewChildrenFor(item, this.rowShown, this.events);
 
   private actionOnItem = (item: Item, action: Action<ItemView>) => {
     const view = this.rowsShown.get(item);

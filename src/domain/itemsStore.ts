@@ -80,7 +80,7 @@ export class ItemsStore {
       loadingPromise = youtubeApi.loadSearchResults(item);
     }
     if (items.isPlaylist(item)) {
-      loadingPromise = youtubeApi.loadPlaylistItems(item.playlistId, pageToken);
+      loadingPromise = youtubeApi.loadPlaylistItems(item);
     }
     if (items.isChannel(item)) {
       loadingPromise = youtubeApi.loadChannelItems(item);

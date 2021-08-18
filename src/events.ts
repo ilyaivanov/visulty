@@ -21,6 +21,12 @@ type ItemEventDefinitions = {
 
   "search.toggleVisibilty": void;
 
+  "item.loadChildren": Item;
+  "item.childrenLoaded": Item;
+
+  "item.loadChildrenNextPage": Item;
+  "item.childrenNextPageLoaded": { item: Item; page: Item[] };
+
   "item.rightSidebarVisibilityChanged": Item;
 };
 

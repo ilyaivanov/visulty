@@ -5,15 +5,17 @@ import { APIGateway, FakeAPIGateweay, Gateway } from "./src/api";
 import { viewApp } from "./src/app";
 import { AppEvents } from "./src/events";
 import { Item } from "./src/items";
+import { listenToLoadEvents } from "./src/api/itemsLoader";
 
 createThemeStyles();
 
-const USE_REAL_API = false;
+const USE_REAL_API = true;
 const api: Gateway = USE_REAL_API ? new APIGateway() : new FakeAPIGateweay();
 
 const events = new AppEvents();
 viewApp(document.body, events);
 
+listenToLoadEvents(events, api);
 api
   .initFirebare()
   .then(() => api.loadUserSettings(sampleUserName))

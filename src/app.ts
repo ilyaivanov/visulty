@@ -3,16 +3,11 @@ import { spacings, colors, anim } from "./designSystem";
 
 import { AppEvents } from "./events";
 import { Item } from "./items/item";
-import { ItemsTree } from "./tree";
-import { Footer } from "./player/footer";
-import { SearchTab } from "./view/searchTab";
 import { viewHeader } from "./focus/header";
 import { viewLeftSidebar } from "./focus/leftSidebar";
 import { createThemeController } from "./designSystem/colorVars";
-import { PlayerState, viewPlayer } from "./player/player";
+import { viewPlayer } from "./player/player";
 import { viewGallery } from "./gallery";
-// import { SearchModalController } from "../search/modalController";
-// import ModalViewImplementation from "../search/modalView";
 
 export const viewApp = (container: HTMLElement, events: AppEvents) => {
   const renderInto = (root: Item) => {
