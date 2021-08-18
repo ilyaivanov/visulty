@@ -33,7 +33,12 @@ export const viewGallery = (item: Item, events: AppEvents) => {
   });
   events.on("item.childrenLoaded", (item) => {
     if (item.isSearch()) {
-      console.log(searchPRops);
+      searchTab.viewSearchResults(item);
+    }
+  });
+
+  events.on("item.childrenNextPageLoaded", ({ page, item }) => {
+    if (item.isSearch()) {
       searchTab.viewSearchResults(item);
     }
   });
