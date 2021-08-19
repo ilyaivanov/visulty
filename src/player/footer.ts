@@ -286,11 +286,11 @@ style.class("footer-icon-container", {
 });
 
 style.classHover("footer-icon-container", {
-  backgroundColor: "#F5F5F5",
+  backgroundColor: colors.headerMenuHover,
   boxShadow: "rgba(0,0,0,0.5) 1px 2px 2px 0px",
 });
 style.classActive("footer-icon-container", {
-  backgroundColor: "#E0E0E0",
+  backgroundColor: colors.headerMenuClick,
   boxShadow: "rgba(0,0,0,0.5) 1px 1px 1px 0px",
 });
 

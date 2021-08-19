@@ -60,23 +60,11 @@ export class Item {
     !this.isLoading &&
     (this.isPlaylist() || this.isChannel());
 
-  getNextPageToken = (): string | undefined => {
-    if (
-      this.props.type === "YTchannel" ||
-      this.props.type === "YTplaylist" ||
-      this.props.type === "search"
-    )
-      return this.props.nextPageToken;
-    return undefined;
-  };
+  getNextPageToken = (): string | undefined =>
+    "nextPageToken" in this.props ? this.props.nextPageToken : undefined;
 
   setNextPageToken = (token: string | undefined) => {
-    if (
-      this.props.type === "YTchannel" ||
-      this.props.type === "YTplaylist" ||
-      this.props.type === "search"
-    )
-      this.props.nextPageToken = token;
+    if ("nextPageToken" in this.props) this.props.nextPageToken = token;
   };
 
   remove() {
@@ -84,9 +72,9 @@ export class Item {
     if (parent) {
       parent.children =
         parent.children && parent.children.filter((child) => child != this);
-      this.events.trigger("itemRemoved", {
+      this.events.trigger("item.removed", {
         item: this,
-        isInstant: false,
+        playAnimation: true,
       });
     }
   }

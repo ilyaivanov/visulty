@@ -55,7 +55,7 @@ export class ItemView {
             }),
             button({
               textContent: "X",
-              // onClickStopPropagation: () => itemsStore.removeItem(item),
+              onClickStopPropagation: () => item.remove(),
             }),
             button({
               textContent: "E",
@@ -80,12 +80,12 @@ export class ItemView {
     this.icon.onVisibilityChange();
   };
 
-  public remove = (instant?: boolean) =>
-    instant
-      ? this.el.remove()
-      : anim
+  public remove = (options?: { playAnimation: boolean }) =>
+    options && options.playAnimation
+      ? anim
           .flyAwayAndCollapse(this.el)
-          .addEventListener("finish", () => this.el.remove());
+          .addEventListener("finish", () => this.el.remove())
+      : this.el.remove();
 
   public insertItemAfter = (item: Item) =>
     this.el.insertAdjacentElement(

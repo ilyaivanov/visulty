@@ -1,7 +1,6 @@
 import { Item } from "./items/item";
 
 type ItemEventDefinitions = {
-  itemRemoved: { item: Item; isInstant: boolean };
   stateLoaded: Item;
 
   itemAdded: Item;
@@ -20,6 +19,8 @@ type ItemEventDefinitions = {
   focusItem: Item;
 
   "search.toggleVisibilty": void;
+
+  "item.removed": { item: Item; playAnimation: boolean };
 
   "item.loadChildren": Item;
   "item.childrenLoaded": Item;

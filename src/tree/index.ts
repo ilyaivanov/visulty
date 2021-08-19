@@ -16,8 +16,8 @@ export class ItemsTree {
   private rowsShown: WeakMap<Item, ItemView> = new WeakMap();
 
   constructor(private events: AppEvents) {
-    events.on("itemRemoved", ({ item, isInstant }) =>
-      this.actionOnItem(item, (view) => view.remove(isInstant))
+    events.on("item.removed", ({ item, playAnimation }) =>
+      this.actionOnItem(item, (view) => view.remove({ playAnimation }))
     );
     events.on("itemToggled", (item) =>
       this.actionOnItem(item, (view) => view.updateItemChildrenVisibility(true))
