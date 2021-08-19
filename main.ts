@@ -3,7 +3,7 @@ import { style } from "./src/browser";
 import { createThemeStyles } from "./src/designSystem";
 import { APIGateway, FakeAPIGateweay, Gateway } from "./src/api";
 import { viewApp } from "./src/app";
-import { AppEvents } from "./src/events";
+import { createAppEvents } from "./src/events";
 import { Item } from "./src/items";
 import { listenToLoadEvents } from "./src/api/itemsLoader";
 
@@ -12,7 +12,7 @@ createThemeStyles();
 const USE_REAL_API = true;
 const api: Gateway = USE_REAL_API ? new APIGateway() : new FakeAPIGateweay();
 
-const events = new AppEvents();
+const events = createAppEvents();
 viewApp(document.body, events, api);
 
 listenToLoadEvents(events, api);

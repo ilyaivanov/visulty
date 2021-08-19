@@ -1,12 +1,9 @@
-// import { items } from "../domain";
 import { dom, div, style } from "../browser";
 import { spacings } from "../designSystem";
 import { colors } from "../designSystem";
 import { AppEvents } from "../events";
-import { itemsStore } from "../globals";
 import { Item } from "../items";
 import { viewIconFor } from "../gallery/tree";
-// import FolderIcon from "./FolderIcon";
 
 export class Dnd {
   itemBeingDragged?: Item;

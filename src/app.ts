@@ -1,7 +1,6 @@
 import { dom, div, style, css, button } from "./browser";
 import { spacings, colors, anim } from "./designSystem";
 
-import { AppEvents } from "./events";
 import { Item } from "./items/item";
 import { viewHeader } from "./focus/header";
 import { viewLeftSidebar } from "./focus/leftSidebar";
@@ -11,6 +10,7 @@ import { viewGallery } from "./gallery";
 import Dnd from "./dragAndDrop";
 import { Gateway } from "./api";
 import { sampleUserName } from "./api/config";
+import { AppEvents } from "./events";
 
 export const viewApp = (
   container: HTMLElement,
