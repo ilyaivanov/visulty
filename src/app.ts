@@ -8,6 +8,7 @@ import { viewLeftSidebar } from "./focus/leftSidebar";
 import { createThemeController } from "./designSystem/colorVars";
 import { viewPlayer } from "./player/player";
 import { viewGallery } from "./gallery";
+import Dnd from "./dnd";
 
 export const viewApp = (container: HTMLElement, events: AppEvents) => {
   const renderInto = (root: Item) => {
@@ -15,6 +16,7 @@ export const viewApp = (container: HTMLElement, events: AppEvents) => {
 
     let initialTheme = createThemeController(appElement, events);
 
+    let dndController = new Dnd(events);
     const { rightSidebar, footer } = viewPlayer(events);
     dom.appendChildren(appElement, [
       viewHeader({ events, theme: initialTheme, root }),

@@ -16,6 +16,22 @@ export class ItemsTree {
   private rowsShown: WeakMap<Item, ItemView> = new WeakMap();
 
   constructor(private events: AppEvents) {
+    events.on("item.added", ({ item, playAnimation }) => {
+      const parent = item.parent!;
+      const context = parent.children!;
+      const index = context.indexOf(item);
+      if (!parent.parent && index === 0) {
+        this.actionOnItem(context[index + 1], (view) =>
+          view.insertItemBefore(item)
+        );
+      } else if (index == 0) {
+        this.actionOnItem(parent, (view) => view.insertItemAsFirstChild(item));
+      } else {
+        const prevItem = context[index - 1];
+        this.actionOnItem(prevItem, (view) => view.insertItemAfter(item));
+      }
+    });
+
     events.on("item.removed", ({ item, playAnimation }) =>
       this.actionOnItem(item, (view) => view.remove({ playAnimation }))
     );

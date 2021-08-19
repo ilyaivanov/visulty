@@ -1,3 +1,5 @@
+import { Item } from "./item";
+
 //this goes down into children
 export const getItemBelow = (item: MyItem): MyItem | undefined => {
   if (item.isOpen && item.children) return item.children![0];
@@ -215,9 +217,9 @@ export const traverseChildrenBFS = <T>(
 };
 
 export const moveItem = (
-  itemToMove: MyItem,
+  itemToMove: Item,
   placement: DropPlacement,
-  itemRelativeWhichToMove: MyItem
+  itemRelativeWhichToMove: Item
 ) => {
   if (placement === "after") {
     insertItemAfter(itemRelativeWhichToMove, itemToMove);
@@ -228,10 +230,7 @@ export const moveItem = (
   }
 };
 
-const insertItemAfter = (
-  itemRelativeToInsert: MyItem,
-  itemToInsert: MyItem
-) => {
+const insertItemAfter = (itemRelativeToInsert: Item, itemToInsert: Item) => {
   const context = itemRelativeToInsert.parent!.children!;
   const index = context.indexOf(itemRelativeToInsert);
 
@@ -239,10 +238,7 @@ const insertItemAfter = (
   itemToInsert.parent = itemRelativeToInsert.parent;
 };
 
-const insertItemBefore = (
-  itemRelativeToInsert: MyItem,
-  itemToInsert: MyItem
-) => {
+const insertItemBefore = (itemRelativeToInsert: Item, itemToInsert: Item) => {
   const context = itemRelativeToInsert.parent!.children!;
   const index = context.indexOf(itemRelativeToInsert);
 
@@ -250,7 +246,7 @@ const insertItemBefore = (
   itemToInsert.parent = itemRelativeToInsert.parent;
 };
 
-const insertItemInside = (parentItem: MyItem, itemToInsert: MyItem) => {
+const insertItemInside = (parentItem: Item, itemToInsert: Item) => {
   parentItem.children = [itemToInsert].concat(parentItem.children || []);
   itemToInsert.parent = parentItem;
 };

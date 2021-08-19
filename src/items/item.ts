@@ -1,3 +1,4 @@
+import { moveItem } from ".";
 import { AppEvents } from "../events";
 
 export class Item {
@@ -34,6 +35,7 @@ export class Item {
   isRoot = () => !this.parent;
 
   isVideo = () => this.props.type === "YTvideo";
+  isFolder = () => this.props.type === "folder";
   isPlaylist = () => this.props.type === "YTplaylist";
   isChannel = () => this.props.type === "YTchannel";
   isSearch = () => this.props.type === "search";
@@ -67,14 +69,14 @@ export class Item {
     if ("nextPageToken" in this.props) this.props.nextPageToken = token;
   };
 
-  remove() {
+  remove(options?: { playAnimation: boolean }) {
     const { parent } = this;
     if (parent) {
       parent.children =
         parent.children && parent.children.filter((child) => child != this);
       this.events.trigger("item.removed", {
         item: this,
-        playAnimation: true,
+        playAnimation: options ? options.playAnimation : false,
       });
     }
   }
@@ -146,7 +148,16 @@ export class Item {
     );
     newFolder.parent = this;
     this.children = (this.children || []).concat(newFolder);
-    this.events.trigger("itemAdded", newFolder);
+    this.events.trigger("item.added", { item: newFolder, playAnimation: true });
+  };
+
+  moveItem = (props: { placement: DropPlacement; itemUnder: Item }) => {
+    const { placement, itemUnder } = props;
+
+    this.remove({ playAnimation: false });
+
+    moveItem(this, placement, itemUnder);
+    this.events.trigger("item.added", { item: this, playAnimation: false });
   };
 
   traverseChildrenDFS = (filter?: (item: Item) => boolean): Item[] => {

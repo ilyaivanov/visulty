@@ -108,7 +108,7 @@ export class ItemsStore {
 
     this.removeItem(itemOver, { instant: true });
 
-    items.moveItem(itemOver, placement, itemUnder);
+    // items.moveItem(itemOver, placement, itemUnder);
     this.dispatchCommand({ type: "item-added", item: itemOver });
   };
 

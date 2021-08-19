@@ -3,8 +3,6 @@ import { Item } from "./items/item";
 type ItemEventDefinitions = {
   stateLoaded: Item;
 
-  itemAdded: Item;
-
   itemPlay: Item;
 
   itemToggled: Item;
@@ -20,7 +18,12 @@ type ItemEventDefinitions = {
 
   "search.toggleVisibilty": void;
 
+  "item.added": { item: Item; playAnimation: boolean };
   "item.removed": { item: Item; playAnimation: boolean };
+
+  //dnd
+  "item.mouseDownOnIcon": { item: Item; event: MouseEvent };
+  "item.mouseMoveOverItem": { item: Item; event: MouseEvent };
 
   "item.loadChildren": Item;
   "item.childrenLoaded": Item;

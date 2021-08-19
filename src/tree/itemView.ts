@@ -20,8 +20,8 @@ export class ItemView {
   ) {
     this.icon = new ItemIcon(item, {
       onChevronClick: () => item.toggleVisibility(),
-      onIconMouseDown: (e) => 42,
-      // onIconMouseDown: (e) => dnd.onItemMouseDown(item, e),
+      onIconMouseDown: (event) =>
+        events.trigger("item.mouseDownOnIcon", { item, event }),
     });
     this.el = div({}, [
       div(
@@ -29,7 +29,8 @@ export class ItemView {
           classNames: ["item-row", levels.rowForLevel(level)],
           ref: this.rowElem,
           // onClick: () => uiState.select(item),
-          // onMouseMove: (e) => dnd.onItemMouseMoveOver(item, e),
+          onMouseMove: (event) =>
+            events.trigger("item.mouseMoveOverItem", { item, event }),
         },
         [
           this.icon.el,
@@ -55,7 +56,8 @@ export class ItemView {
             }),
             button({
               textContent: "X",
-              onClickStopPropagation: () => item.remove(),
+              onClickStopPropagation: () =>
+                item.remove({ playAnimation: true }),
             }),
             button({
               textContent: "E",
