@@ -41,7 +41,7 @@ export class PlayerState {
 
     this.rightSidebar.toggleVisibility(this.isRightSidebarVisible);
 
-    events.on("itemPlay", this.playItem);
+    events.on("item.play", this.playItem);
     youtubePlayer.addEventListener("videoEnd", () =>
       this.playNextItemInQueue()
     );

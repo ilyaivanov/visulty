@@ -46,7 +46,7 @@ export class ItemView {
             button({
               textContent: "▶",
               onClickStopPropagation: () =>
-                this.events.trigger("itemPlay", item),
+                this.events.trigger("item.play", item),
             }),
             button({
               textContent: "F",

@@ -35,7 +35,7 @@ export class ItemsTree {
     events.on("item.removed", ({ item, playAnimation }) =>
       this.actionOnItem(item, (view) => view.remove({ playAnimation }))
     );
-    events.on("itemToggled", (item) =>
+    events.on("item.isOpenInGalleryChanged", (item) =>
       this.actionOnItem(item, (view) => view.updateItemChildrenVisibility(true))
     );
 

@@ -96,7 +96,7 @@ export class Item {
       this.isLoading = true;
       this.events.trigger("item.loadChildren", this);
     }
-    this.events.trigger("itemToggled", this);
+    this.events.trigger("item.isOpenInGalleryChanged", this);
   }
 
   loadNextPage() {

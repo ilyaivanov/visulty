@@ -4,9 +4,6 @@ import { MyEventSource } from "./lodash";
 export type ItemEventDefinitions = {
   stateLoaded: Item;
 
-  itemPlay: Item;
-
-  itemToggled: Item;
   toggleSidebar: void;
 
   themeToggled: AppTheme;
@@ -21,6 +18,11 @@ export type ItemEventDefinitions = {
 
   "search.toggleVisibilty": void;
 
+  "item.play": Item;
+
+  "item.isOpenInGalleryChanged": Item;
+  "item.rightSidebarVisibilityChanged": Item;
+
   "item.added": { item: Item; playAnimation: boolean };
   "item.removed": { item: Item; playAnimation: boolean };
 
@@ -33,8 +35,6 @@ export type ItemEventDefinitions = {
 
   "item.loadChildrenNextPage": Item;
   "item.childrenNextPageLoaded": { item: Item; page: Item[] };
-
-  "item.rightSidebarVisibilityChanged": Item;
 };
 
 export type AppEvents = MyEventSource<ItemEventDefinitions>;
