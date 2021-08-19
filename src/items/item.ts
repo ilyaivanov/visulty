@@ -194,4 +194,11 @@ export class Item {
     traverse();
     return results;
   };
+
+  viewStateForSave(): MyItem {
+    return {
+      ...this.props,
+      children: (this.children || []).map((item) => item.viewStateForSave()),
+    };
+  }
 }

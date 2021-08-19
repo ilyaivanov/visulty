@@ -13,7 +13,7 @@ const USE_REAL_API = true;
 const api: Gateway = USE_REAL_API ? new APIGateway() : new FakeAPIGateweay();
 
 const events = new AppEvents();
-viewApp(document.body, events);
+viewApp(document.body, events, api);
 
 listenToLoadEvents(events, api);
 api

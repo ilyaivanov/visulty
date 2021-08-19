@@ -61,7 +61,7 @@ export class ItemView {
             }),
             button({
               textContent: "E",
-              // onClickStopPropagation: () => this.enterRenameMode(),
+              onClickStopPropagation: () => this.enterRenameMode(),
             }),
           ]),
         ]

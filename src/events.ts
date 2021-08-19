@@ -16,6 +16,8 @@ type ItemEventDefinitions = {
 
   focusItem: Item;
 
+  saveState: void;
+
   "search.toggleVisibilty": void;
 
   "item.added": { item: Item; playAnimation: boolean };

@@ -58,7 +58,7 @@ export const viewHeader = ({ theme, events, root }: HeaderProps) => {
     button({
       style: { marginLeft: "auto" },
       textContent: "save",
-      onClick: () => 42, //itemsStore.save(),
+      onClick: () => events.trigger("saveState"),
     }),
     button({
       textContent: "search",

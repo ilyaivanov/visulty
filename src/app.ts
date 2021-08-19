@@ -9,8 +9,14 @@ import { createThemeController } from "./designSystem/colorVars";
 import { viewPlayer } from "./player/player";
 import { viewGallery } from "./gallery";
 import Dnd from "./dnd";
+import { Gateway } from "./api";
+import { sampleUserName } from "./api/config";
 
-export const viewApp = (container: HTMLElement, events: AppEvents) => {
+export const viewApp = (
+  container: HTMLElement,
+  events: AppEvents,
+  api: Gateway
+) => {
   const renderInto = (root: Item) => {
     const appElement = div({ classNames: ["app"] });
 
@@ -28,6 +34,10 @@ export const viewApp = (container: HTMLElement, events: AppEvents) => {
 
     hideLoading();
     dom.appendChild(container, appElement);
+
+    events.on("saveState", () => {
+      api.saveUserSettings({ root: root.viewStateForSave() }, sampleUserName);
+    });
   };
 
   const hideLoading = () => {
