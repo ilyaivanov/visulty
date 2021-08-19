@@ -8,7 +8,7 @@ import { viewLeftSidebar } from "./focus/leftSidebar";
 import { createThemeController } from "./designSystem/colorVars";
 import { viewPlayer } from "./player/player";
 import { viewGallery } from "./gallery";
-import Dnd from "./dnd";
+import Dnd from "./dragAndDrop";
 import { Gateway } from "./api";
 import { sampleUserName } from "./api/config";
 

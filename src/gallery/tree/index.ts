@@ -1,5 +1,5 @@
-import { AppEvents } from "../events";
-import { Item } from "../items";
+import { AppEvents } from "../../events";
+import { Item } from "../../items";
 import { ItemIcon } from "./itemIcon";
 import { itemSkeleton } from "./itemSkeleton";
 import { ItemView } from "./itemView";

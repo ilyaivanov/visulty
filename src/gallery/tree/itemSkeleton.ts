@@ -1,5 +1,5 @@
-import { div, style } from "../browser";
-import { colors, levels, spacings } from "../designSystem";
+import { div, style } from "../../browser";
+import { colors, levels, spacings } from "../../designSystem";
 
 export const itemSkeleton = (index: number, level: number) => {
   const elem = div(

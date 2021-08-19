@@ -1,6 +1,6 @@
 import { div, input, style, css, dom, span } from "../browser";
 import { colors, timings, zIndexes } from "../designSystem";
-import { viewIconFor } from "../tree";
+import { viewIconFor } from "../gallery/tree";
 import { Highlight, LocalSearchEntry } from "./localSearch";
 import { ModalView, LocalSearchResults } from "./modalController";
 

@@ -1,7 +1,7 @@
 import { dom, div, input, style, css } from "../browser";
 import { AppEvents } from "../events";
 import { Item } from "../items";
-import { ItemsTree, showSkeletons } from "../tree";
+import { ItemsTree, showSkeletons } from "./tree";
 
 type SearchTabProps = {
   events: AppEvents;

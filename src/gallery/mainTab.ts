@@ -2,7 +2,7 @@ import { div, button, dom, style } from "../browser";
 import { anim, levels, colors } from "../designSystem";
 import { AppEvents } from "../events";
 import { Item } from "../items";
-import { ItemsTree } from "../tree";
+import { ItemsTree } from "./tree";
 
 export class MainTab {
   el: HTMLElement;

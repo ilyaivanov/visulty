@@ -1,4 +1,4 @@
-import { all } from "../domain/array";
+import { array } from "../lodash";
 import { traverseChildrenBFS } from "../items";
 export type LocalSearchResults = {
   items: LocalSearchEntry[];
@@ -25,7 +25,7 @@ export const findLocalItems = (
     const loweredTitle = item.title.toLocaleLowerCase();
     const indexes = terms.map((term) => loweredTitle.indexOf(term));
 
-    if (all(indexes, (index) => index >= 0))
+    if (array.all(indexes, (index) => index >= 0))
       return {
         item,
         highlights: createTermsFound(item.title, terms),
@@ -34,7 +34,7 @@ export const findLocalItems = (
   };
 
   return {
-    items: traverseChildrenBFS(rootItem, isMatchingTerms, MAX_ITEMS_TO_FIND),
+    items: [], //traverseChildrenBFS(rootItem, isMatchingTerms, MAX_ITEMS_TO_FIND),
     term,
   };
 };

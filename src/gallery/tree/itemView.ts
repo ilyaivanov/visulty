@@ -1,9 +1,9 @@
-import { dom, div, input, span, button, style } from "../browser";
-import { colors, anim, levels, spacings, icons } from "../designSystem";
+import { dom, div, input, span, button, style } from "../../browser";
+import { colors, anim, levels, spacings, icons } from "../../designSystem";
 import { ItemIcon } from "./itemIcon";
 import { showSkeletons } from "./index";
-import { Item } from "../items/item";
-import { AppEvents } from "../events";
+import { Item } from "../../items/item";
+import { AppEvents } from "../../events";
 
 export class ItemView {
   icon: ItemIcon;

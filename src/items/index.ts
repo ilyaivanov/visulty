@@ -179,11 +179,11 @@ export const forEachChild = (
 };
 
 export const traverseChildrenDFS = (
-  item: MyItem,
-  filter?: (item: MyItem) => boolean
-): MyItem[] => {
-  const results: MyItem[] = [];
-  const traverseChildren = (item: MyItem) => {
+  item: Item,
+  filter?: (item: Item) => boolean
+): Item[] => {
+  const results: Item[] = [];
+  const traverseChildren = (item: Item) => {
     if (!filter || filter(item)) results.push(item);
 
     if (item.children) item.children.forEach(traverseChildren);
@@ -193,12 +193,12 @@ export const traverseChildrenDFS = (
 };
 
 export const traverseChildrenBFS = <T>(
-  rootItem: MyItem,
-  filterMap: (item: MyItem) => T | undefined,
+  item: Item,
+  filterMap: (item: Item) => T | undefined,
   maxResults: number
 ): T[] => {
   const results: T[] = [];
-  const queue: MyItem[] = [];
+  const queue: Item[] = [];
   const traverse = () => {
     const item = queue.shift();
 
@@ -211,7 +211,7 @@ export const traverseChildrenBFS = <T>(
     traverse();
   };
 
-  queue.push(rootItem);
+  queue.push(item);
   traverse();
   return results;
 };

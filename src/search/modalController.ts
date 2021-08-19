@@ -1,4 +1,4 @@
-import { getNextItemBy, getPreviousItemBy } from "../domain/array";
+import { array } from "../lodash";
 import * as localSearch from "./localSearch";
 export { LocalSearchResults } from "./localSearch";
 
@@ -55,14 +55,14 @@ export class SearchModalController {
   onKeyDown = (ev: KeyboardEvent) => {
     if (ev.key === "ArrowDown") {
       ev.preventDefault();
-      const nextItem = getNextItemBy(
+      const nextItem = array.getNextItemBy(
         this.results.items,
         ({ item }) => item === this.itemSelected
       );
       nextItem && this.selectItem(nextItem.item);
     } else if (ev.key === "ArrowUp") {
       ev.preventDefault();
-      const previousItem = getPreviousItemBy(
+      const previousItem = array.getPreviousItemBy(
         this.results.items,
         ({ item }) => item === this.itemSelected
       );

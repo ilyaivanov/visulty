@@ -1,4 +1,4 @@
-import { moveItem } from ".";
+import { moveItem, traverseChildrenBFS, traverseChildrenDFS } from ".";
 import { AppEvents } from "../events";
 
 export class Item {
@@ -160,40 +160,13 @@ export class Item {
     this.events.trigger("item.added", { item: this, playAnimation: false });
   };
 
-  traverseChildrenDFS = (filter?: (item: Item) => boolean): Item[] => {
-    const results: Item[] = [];
-    const traverseChildren = (item: Item) => {
-      if (!filter || filter(item)) results.push(item);
-
-      if (item.children) item.children.forEach(traverseChildren);
-    };
-    traverseChildren(this);
-    return results;
-  };
+  traverseChildrenDFS = (filter?: (item: Item) => boolean): Item[] =>
+    traverseChildrenDFS(this, filter);
 
   traverseChildrenBFS = <T>(
     filterMap: (item: Item) => T | undefined,
     maxResults: number
-  ): T[] => {
-    const results: T[] = [];
-    const queue: Item[] = [];
-    const traverse = () => {
-      const item = queue.shift();
-
-      if (!item || results.length >= maxResults) return queue;
-
-      const resultingItem = filterMap(item);
-
-      if (resultingItem) results.push(resultingItem);
-      if (item.children)
-        item.children.forEach((subitem) => queue.push(subitem));
-      traverse();
-    };
-
-    queue.push(this);
-    traverse();
-    return results;
-  };
+  ): T[] => traverseChildrenBFS(this, filterMap, maxResults);
 
   viewStateForSave(): MyItem {
     return {
