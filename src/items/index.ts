@@ -103,7 +103,7 @@ export const appendChildrenTo = (item: MyItem, children: MyItem[]) => {
   item.children = (item.children || []).concat(children);
 };
 
-export const getRoot = (item: MyItem): MyItem => {
+export const getRootForItem = (item: MyItem): MyItem => {
   let parent = item;
   while (parent.parent) {
     parent = parent.parent;
@@ -252,3 +252,4 @@ const insertItemInside = (parentItem: Item, itemToInsert: Item) => {
 };
 
 export { Item } from "./item";
+export { getMainRoot, setMainRoot } from "./roots";

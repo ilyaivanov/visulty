@@ -1,17 +1,17 @@
 import { array } from "../lodash";
-import { traverseChildrenBFS } from "../items";
+import { Item } from "../items";
 export type LocalSearchResults = {
   items: LocalSearchEntry[];
   term: string;
 };
-export type LocalSearchEntry = { item: MyItem; highlights: Highlight[] };
+export type LocalSearchEntry = { item: Item; highlights: Highlight[] };
 
 type TermsFound = { term: string; foundAt: number };
 export type Highlight = { from: number; to: number };
 
 //BFS on items tree finding items with case-insensitive term
 export const findLocalItems = (
-  rootItem: MyItem,
+  rootItem: Item,
   term: string
 ): LocalSearchResults => {
   const MAX_ITEMS_TO_FIND = 12;
@@ -21,7 +21,7 @@ export const findLocalItems = (
     .split(" ")
     .filter((x) => x);
 
-  const isMatchingTerms = (item: MyItem): LocalSearchEntry | undefined => {
+  const isMatchingTerms = (item: Item): LocalSearchEntry | undefined => {
     const loweredTitle = item.title.toLocaleLowerCase();
     const indexes = terms.map((term) => loweredTitle.indexOf(term));
 
@@ -34,7 +34,7 @@ export const findLocalItems = (
   };
 
   return {
-    items: [], //traverseChildrenBFS(rootItem, isMatchingTerms, MAX_ITEMS_TO_FIND),
+    items: rootItem.traverseChildrenBFS(isMatchingTerms, MAX_ITEMS_TO_FIND),
     term,
   };
 };

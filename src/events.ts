@@ -35,6 +35,11 @@ export type ItemEventDefinitions = {
 
   "item.loadChildrenNextPage": Item;
   "item.childrenNextPageLoaded": { item: Item; page: Item[] };
+
+  "shortcuts.listenToKeyboard": void;
+  "shortcuts.stopListeningToKeyboard": void;
+
+  "localSearch.showModal": void;
 };
 
 export type AppEvents = MyEventSource<ItemEventDefinitions>;

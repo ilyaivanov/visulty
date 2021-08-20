@@ -1,7 +1,7 @@
 import { dom, div, style, css, button } from "./browser";
 import { spacings, colors, anim } from "./designSystem";
 
-import { Item } from "./items/item";
+import { Item, setMainRoot } from "./items";
 import { viewHeader } from "./focus/header";
 import { viewLeftSidebar } from "./focus/leftSidebar";
 import { createThemeController } from "./designSystem/colorVars";
@@ -18,6 +18,7 @@ export const viewApp = (
   api: Gateway
 ) => {
   const renderInto = (root: Item) => {
+    setMainRoot(root);
     const appElement = div({ classNames: ["app"] });
 
     let initialTheme = createThemeController(appElement, events);
@@ -34,6 +35,8 @@ export const viewApp = (
 
     hideLoading();
     dom.appendChild(container, appElement);
+
+    events.trigger("shortcuts.listenToKeyboard");
 
     events.on("saveState", () => {
       api.saveUserSettings({ root: root.viewStateForSave() }, sampleUserName);

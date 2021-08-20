@@ -6,6 +6,8 @@ import { viewApp } from "./src/app";
 import { createAppEvents } from "./src/events";
 import { Item } from "./src/items";
 import { listenToLoadEvents } from "./src/api/itemsLoader";
+import { initShortcuts } from "./src/shortcuts";
+import { initSearch } from "./src/search";
 
 createThemeStyles();
 
@@ -16,6 +18,8 @@ const events = createAppEvents();
 viewApp(document.body, events, api);
 
 listenToLoadEvents(events, api);
+initShortcuts(events);
+initSearch(events);
 api
   .initFirebare()
   .then(() => api.loadUserSettings(sampleUserName))
