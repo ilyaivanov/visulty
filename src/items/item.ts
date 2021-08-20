@@ -62,11 +62,10 @@ export class Item {
     !this.isLoading &&
     (this.isPlaylist() || this.isChannel());
 
-  getNextPageToken = (): string | undefined =>
-    "nextPageToken" in this.props ? this.props.nextPageToken : undefined;
+  getNextPageToken = (): string | undefined => this.props["nextPageToken"];
 
   setNextPageToken = (token: string | undefined) => {
-    if ("nextPageToken" in this.props) this.props.nextPageToken = token;
+    this.props["nextPageToken"] = token;
   };
 
   remove(options?: { playAnimation: boolean }) {

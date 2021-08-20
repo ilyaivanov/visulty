@@ -57,8 +57,10 @@ export class ItemsTree {
     this.rowsShown.set(row.item, row);
   };
 
-  viewChildrenFor = (item: Item): Node =>
-    ItemView.viewChildrenFor(item, this.rowShown, this.events);
+  viewChildrenFor = (item: Item): Node => {
+    console.log(item.title, item);
+    return ItemView.viewChildrenFor(item, this.rowShown, this.events);
+  };
 
   private actionOnItem = (item: Item, action: Action<ItemView>) => {
     const view = this.rowsShown.get(item);

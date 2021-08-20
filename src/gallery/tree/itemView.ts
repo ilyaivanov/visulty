@@ -140,8 +140,9 @@ export class ItemView {
     if (animate) anim.expand(this.childrenElem.elem);
   };
 
-  private viewChildren = () =>
-    div(
+  private viewChildren = () => {
+    console.log(this.item.title, this.item);
+    return div(
       { className: "item-row-children", ref: this.childrenElem },
       this.item.isLoading
         ? showSkeletons(10, this.level + 1).concat(childrenBorder(this.level))
@@ -157,6 +158,7 @@ export class ItemView {
                   : []
               )
     );
+  };
 
   private enterRenameMode = () => {
     const inputElem = input({
