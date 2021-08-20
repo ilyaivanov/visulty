@@ -1,4 +1,6 @@
 import { folder } from "../api/dummyUserState";
+import { createAppEvents } from "../events";
+import { Item } from "../items";
 import {
   createTitleHighlightsFromFoundTerms,
   findLocalItems,
@@ -6,11 +8,17 @@ import {
 
 describe("having a bunch of nested items", () => {
   it("searching for the term yields results", () => {
-    const root = folder("ROOT", [
-      folder("Music", [folder("Another Music thirdTerm (this comes second)")]),
-      folder("Another Music (thirdTerm)"),
-      folder("Other Item"),
-    ]);
+    const events = createAppEvents();
+    const root = new Item(
+      folder("ROOT", [
+        folder("Music", [
+          folder("Another Music thirdTerm (this comes second)"),
+        ]),
+        folder("Another Music (thirdTerm)"),
+        folder("Other Item"),
+      ]),
+      events
+    );
     const searchResults = findLocalItems(root, "mus ther third");
 
     areEqual(searchResults.items.length, 2);
@@ -32,7 +40,11 @@ describe("having a bunch of nested items", () => {
   });
 
   it("terms found are generated properly from overlapping search terms", () => {
-    const root = folder("ROOT", [folder("Miss Monique (Radio Intense)")]);
+    const events = createAppEvents();
+    const root = new Item(
+      folder("ROOT", [folder("Miss Monique (Radio Intense)")]),
+      events
+    );
 
     const searchResults = findLocalItems(root, "mis MI iss mon");
 
