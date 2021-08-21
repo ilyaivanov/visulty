@@ -1,12 +1,12 @@
-import { css, style, dom, svg } from "../browser";
-import { icons, spacings, colors, timings } from "../designSystem";
-import * as items from "../items";
-import { itemsStore } from "../globals";
+import { css, style, dom, svg, div } from "../../browser";
+import { icons, spacings, colors, timings } from "../../designSystem";
+import { Item } from "../../items";
 
 const iconSize = spacings.outerRadius * 2;
 
 export type IconEvents = {
-  onChevronClick: Action<void>;
+  onChevronClick: EmptyAction;
+  onMenuClick: Action<HTMLElement>;
   onIconMouseDown: Action<MouseEvent>;
 };
 
@@ -14,8 +14,8 @@ export class ItemIcon {
   chevron?: SVGElement;
   iconEl!: SVGSVGElement;
   el: Node;
-  constructor(private item: MyItem, events: IconEvents) {
-    if (!items.isVideo(item))
+  constructor(private item: Item, events: IconEvents) {
+    if (!item.isVideo())
       this.chevron = icons.chevron({
         className: "item-icon-chevron",
         classMap: chevronMap(item),
@@ -30,15 +30,26 @@ export class ItemIcon {
       e.stopPropagation();
       events.onIconMouseDown(e);
     });
-    this.el = dom.fragment([this.chevron, this.iconEl]);
+    this.el = dom.fragment([
+      icons.menu({
+        classNames: ["item-icon-menu"],
+        onClick: (e) => {
+          e.stopPropagation();
+          const icon = e.currentTarget as HTMLElement;
+          events.onMenuClick(icon);
+        },
+      }),
+      this.chevron,
+      this.iconEl,
+    ]);
   }
-  public static view = (item: MyItem, events: IconEvents) =>
+  public static view = (item: Item, events: IconEvents) =>
     new ItemIcon(item, events).el;
 
   onVisibilityChange = () => {
     this.chevron && dom.assignClassMap(this.chevron, chevronMap(this.item));
 
-    if (!items.hasItemImage(this.item)) {
+    if (!this.item.hasItemImage()) {
       dom.setChildren(this.iconEl, ItemIcon.viewCircles(this.item));
     } else {
       ItemIcon.assignIconWithImageClasses(this.iconEl, this.item);
@@ -46,7 +57,7 @@ export class ItemIcon {
   };
 
   public static viewIcon = (
-    item: MyItem,
+    item: Item,
     events?: { onIconMouseDown: Action<unknown> }
   ) => {
     const res = svg.svg({
@@ -54,8 +65,8 @@ export class ItemIcon {
       viewBox: `0 0 ${iconSize} ${iconSize}`,
       onMouseDown: events?.onIconMouseDown,
     });
-    if (items.hasItemImage(item)) {
-      res.style.backgroundImage = `url(${items.getPreviewImage(item)})`;
+    if (item.hasItemImage()) {
+      res.style.backgroundImage = `url(${item.getPreviewImage()})`;
       ItemIcon.assignIconWithImageClasses(res, item);
     } else {
       dom.appendChildren(res, ItemIcon.viewCircles(item));
@@ -63,8 +74,8 @@ export class ItemIcon {
     return res;
   };
 
-  private static viewCircles = (item: MyItem): SVGElement[] => {
-    if (items.isEmpty(item)) {
+  private static viewCircles = (item: Item): SVGElement[] => {
+    if (item.isEmpty()) {
       return [
         svg.circle({
           cx: iconSize / 2,
@@ -97,16 +108,13 @@ export class ItemIcon {
     }
   };
 
-  private static assignIconWithImageClasses = (
-    el: SVGElement,
-    item: MyItem
-  ) => {
+  private static assignIconWithImageClasses = (el: SVGElement, item: Item) => {
     dom.assignClasses(el, {
       classMap: {
-        "item-icon-image_square": items.isPlaylist(item) || items.isVideo(item),
-        "item-icon-image_circle": items.isChannel(item),
-        "item-icon-video": items.isVideo(item),
-        "item-icon-image_closed": !items.isVideo(item) && !item.isOpen,
+        "item-icon-image_square": item.isPlaylist() || item.isVideo(),
+        "item-icon-image_circle": item.isChannel(),
+        "item-icon-video": item.isVideo(),
+        "item-icon-image_closed": !item.isVideo() && !item.isOpen,
       },
     });
   };
@@ -116,10 +124,10 @@ const outerCircleClassMap = (item: MyItem): dom.ClassMap => ({
   "item-icon-circle_hidden": item.isOpen || !item.children,
 });
 
-const chevronMap = (item: MyItem): dom.ClassMap => ({
+const chevronMap = (item: Item): dom.ClassMap => ({
   "item-icon-chevron_open": item.isOpen,
   "item-row_showOnHoverOrSelected":
-    item.isLoading || !items.isEmpty(item) || items.isNeededToBeFetched(item),
+    item.isLoading || !item.isEmpty() || item.isNeededToBeFetched(),
 });
 
 style.class("item-icon-svg", {
@@ -140,21 +148,48 @@ style.class("item-icon-circle_hidden", { opacity: 0 });
 style.class("item-icon-chevron", {
   height: spacings.chevronSize,
   width: spacings.chevronSize,
-  borderRadius: spacings.chevronSize,
-  //   marginTop: spacings.imageSize / 2 - spacings.chevronSize / 2,
   minWidth: spacings.chevronSize,
   color: colors.itemChevron,
   opacity: 0,
-  userSelect: "none",
-  onHover: { color: "currentColor" },
+  onHover: { color: colors.itemChevronHover },
+  active: { color: colors.itemChevronActive },
   transition: css.transition({
     transform: timings.itemCollapse,
-    // opacity: timings.itemCollapse,
   }),
+  transform: "translate3d(-2px, 0, 0)",
+});
+
+style.class("item-icon-menu", {
+  height: spacings.iconMenuHeight,
+  width: spacings.iconMenuWidth,
+  minWidth: spacings.iconMenuWidth,
+  marginRight: spacings.distanceBetweenMenuAndChevron,
+  color: colors.itemChevron,
+  borderRadius: "50%",
+  onHover: { color: colors.itemChevronHover },
+  active: { color: colors.itemChevronActive },
+  opacity: 0,
+});
+
+style.parentChild("item-row-highlightedContextMenu", "item-icon-menu", {
+  color: "white",
+  opacity: 1,
+});
+
+style.parentHover("item-row", "item-icon-menu", {
+  opacity: 1,
+});
+
+style.parentChild("item-row-folder", "item-icon-chevron", {
+  transform: "translate3d(5px, 0, 0)",
+});
+
+style.parentChild("item-row-folder", "item-icon-chevron_open", {
+  transform: "translate3d(5px, 0, 0) rotateZ(90deg) ",
 });
 
 style.class("item-icon-chevron_open", {
-  transform: "rotateZ(90deg)",
+  transform: "translate3d(-2px, 0, 0) rotateZ(90deg) ",
 });
 
 style.class("item-icon-chevron_visible", {

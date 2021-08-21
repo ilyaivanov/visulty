@@ -1,30 +1,31 @@
-import { getNextItemBy, getPreviousItemBy } from "../domain/array";
+import { Item } from "../items";
+import { array } from "../lodash";
 import * as localSearch from "./localSearch";
 export { LocalSearchResults } from "./localSearch";
 
 export interface ModalView {
   //commands
   setSearchResults(searchResults: localSearch.LocalSearchResults): void;
-  selectItem(item: MyItem): void;
-  unselectItem(item: MyItem): void;
+  selectItem(item: Item): void;
+  unselectItem(item: Item): void;
   focusOnInput(): void;
   dismissModal(): void;
   render(): HTMLElement;
   //events
   onInput(cb: Action<string>): void;
   onKeyDown(cb: Action<KeyboardEvent>): void;
-  onItemClick(cb: Action<MyItem>): void;
+  onItemClick(cb: Action<Item>): void;
 }
 
 type SearchProps = {
-  onPlay: Action<MyItem>;
-  onFocus: Action<MyItem>;
-  getRoot: Func0<MyItem>;
-  onDismiss: Action<void>;
+  onPlay: Action<Item>;
+  onFocus: Action<Item>;
+  getRoot: Func0<Item>;
+  onDismiss: EmptyAction;
 };
 
 export class SearchModalController {
-  itemSelected?: MyItem;
+  itemSelected?: Item;
   results: localSearch.LocalSearchResults = {
     items: [],
     term: "",
@@ -47,7 +48,7 @@ export class SearchModalController {
     view.onKeyDown(this.onKeyDown);
   }
 
-  showModal(parentElement: HTMLElement) {
+  showModal(parentElement: Element) {
     parentElement.appendChild(this.view.render());
     this.view.focusOnInput();
   }
@@ -55,14 +56,14 @@ export class SearchModalController {
   onKeyDown = (ev: KeyboardEvent) => {
     if (ev.key === "ArrowDown") {
       ev.preventDefault();
-      const nextItem = getNextItemBy(
+      const nextItem = array.getNextItemBy(
         this.results.items,
         ({ item }) => item === this.itemSelected
       );
       nextItem && this.selectItem(nextItem.item);
     } else if (ev.key === "ArrowUp") {
       ev.preventDefault();
-      const previousItem = getPreviousItemBy(
+      const previousItem = array.getPreviousItemBy(
         this.results.items,
         ({ item }) => item === this.itemSelected
       );
@@ -81,7 +82,7 @@ export class SearchModalController {
     this.props.onDismiss();
   };
 
-  private selectItem = (item: MyItem) => {
+  private selectItem = (item: Item) => {
     if (this.itemSelected) this.view.unselectItem(this.itemSelected);
     this.itemSelected = item;
     this.view.selectItem(this.itemSelected);

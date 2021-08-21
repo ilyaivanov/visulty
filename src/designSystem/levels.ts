@@ -26,6 +26,8 @@ for (let level = 0; level < numberOfLevelsToGenerate; level++) {
     left: `calc(${base} + ${
       level * spacings.spacePerLevel +
       spacings.chevronSize +
+      spacings.iconMenuWidth +
+      spacings.distanceBetweenMenuAndChevron +
       spacings.outerRadius -
       borderWidth / 2
     }px)`,

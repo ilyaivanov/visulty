@@ -1,9 +1,10 @@
-import { dom, div, input, span, button, style } from "../browser";
-import { colors, anim, levels, spacings, icons } from "../designSystem";
-import { itemsStore, dispatcher, dnd, uiState, playerState } from "../globals";
-import * as items from "../items";
+import { dom, div, input, span, button, style, css } from "../../browser";
+import { colors, anim, levels, spacings, icons } from "../../designSystem";
 import { ItemIcon } from "./itemIcon";
-import { showSkeletons } from "./itemSkeleton";
+import { showSkeletons } from "./index";
+import { Item } from "../../items/item";
+import { AppEvents } from "../../events";
+import { viewItemContextMenu } from "./contextMenu";
 
 export class ItemView {
   icon: ItemIcon;
@@ -12,53 +13,44 @@ export class ItemView {
   childrenElem = dom.createRef("div");
   titleElem = dom.createRef("span");
 
-  constructor(public item: MyItem, public level: number) {
+  constructor(
+    public item: Item,
+    public level: number,
+    private onShown: Action<ItemView>,
+    private events: AppEvents
+  ) {
     this.icon = new ItemIcon(item, {
-      onChevronClick: () => itemsStore.toggleItem(item),
-      onIconMouseDown: (e) => dnd.onItemMouseDown(item, e),
+      onChevronClick: () => item.toggleVisibility(),
+      onIconMouseDown: (event) =>
+        events.trigger("item.mouseDownOnIcon", { item, event }),
+      onMenuClick: (elem) => viewItemContextMenu(elem, events, this),
     });
     this.el = div({}, [
       div(
         {
           classNames: ["item-row", levels.rowForLevel(level)],
+          classMap: { "item-row-folder": item.isFolder() },
           ref: this.rowElem,
-          onClick: () => uiState.select(item),
-          onMouseMove: (e) => dnd.onItemMouseMoveOver(item, e),
+          // onClick: () => uiState.select(item),
+          onMouseMove: (event) =>
+            events.trigger("item.mouseMoveOverItem", { item, event }),
         },
         [
           this.icon.el,
           span({
             className: "item-row-title",
             classMap: {
-              "item-container-row-title": items.isContainer(item),
+              "item-container-row-title": item.isContainer(),
             },
             textContent: item.title,
             ref: this.titleElem,
           }),
-          div({ classNames: ["hide", "item-row_showOnHoverOrSelected"] }, [
-            button({
-              textContent: "▶",
-              onClickStopPropagation: () => playerState.playItem(item),
-            }),
-            button({
-              textContent: "F",
-              onClickStopPropagation: () => uiState.focusOnItem(item),
-            }),
-            button({
-              textContent: "X",
-              onClickStopPropagation: () => itemsStore.removeItem(item),
-            }),
-            button({
-              textContent: "E",
-              onClickStopPropagation: () => this.enterRenameMode(),
-            }),
-          ]),
         ]
       ),
     ]);
     if (this.item.isOpen) this.open(false);
     else this.close(false);
-    dispatcher.itemViewed(this);
+    onShown(this);
   }
 
   updateItemChildrenVisibility = (animate?: boolean) => {
@@ -71,27 +63,30 @@ export class ItemView {
     this.icon.onVisibilityChange();
   };
 
-  public remove = (instant?: boolean) =>
-    instant
-      ? this.el.remove()
-      : anim
+  public remove = (options?: { playAnimation: boolean }) =>
+    options && options.playAnimation
+      ? anim
           .flyAwayAndCollapse(this.el)
-          .addEventListener("finish", () => this.el.remove());
+          .addEventListener("finish", () => this.el.remove())
+      : this.el.remove();
 
-  public insertItemAfter = (item: MyItem) =>
-    this.el.insertAdjacentElement("afterend", ItemView.view(item, this.level));
-
-  public insertItemBefore = (item: MyItem) =>
+  public insertItemAfter = (item: Item) =>
     this.el.insertAdjacentElement(
-      "beforebegin",
-      ItemView.view(item, this.level)
+      "afterend",
+      ItemView.view(item, this.level, this.onShown, this.events)
     );
 
-  public insertItemAsFirstChild = (item: MyItem) => {
+  public insertItemBefore = (item: Item) =>
+    this.el.insertAdjacentElement(
+      "beforebegin",
+      ItemView.view(item, this.level, this.onShown, this.events)
+    );
+
+  public insertItemAsFirstChild = (item: Item) => {
     if (this.childrenElem.elem)
       this.childrenElem.elem.insertAdjacentElement(
         "afterbegin",
-        ItemView.view(item, this.level + 1)
+        ItemView.view(item, this.level + 1, this.onShown, this.events)
       );
   };
 
@@ -126,23 +121,53 @@ export class ItemView {
     if (animate) anim.expand(this.childrenElem.elem);
   };
 
-  private viewChildren = () =>
-    div(
+  private viewChildren = () => {
+    return div(
       { className: "item-row-children", ref: this.childrenElem },
       this.item.isLoading
         ? showSkeletons(10, this.level + 1).concat(childrenBorder(this.level))
         : this.item.children &&
             this.item.children
-              .map((item) => ItemView.view(item, this.level + 1))
+              .map((item) =>
+                ItemView.view(item, this.level + 1, this.onShown, this.events)
+              )
               .concat(childrenBorder(this.level))
               .concat(
-                items.getNextPageToken(this.item)
+                this.item.getNextPageToken()
                   ? [ItemView.downloadNextPageButton(this.item, this.level + 1)]
                   : []
               )
     );
+  };
 
-  private enterRenameMode = () => {
+  highlightContextMenu = () => {
+    this.rowElem.elem
+      .animate(
+        [
+          { backgroundColor: colors.itemHover },
+          { backgroundColor: colors.header },
+        ],
+        { duration: 200 }
+      )
+      .addEventListener("finish", () =>
+        dom.addClass(this.rowElem.elem, "item-row-highlightedContextMenu")
+      );
+  };
+  unhighlightContextMenu = () => {
+    this.rowElem.elem
+      .animate(
+        [
+          { backgroundColor: colors.header },
+          { backgroundColor: colors.itemHover },
+        ],
+        { duration: 200 }
+      )
+      .addEventListener("finish", () =>
+        dom.removeClass(this.rowElem.elem, "item-row-highlightedContextMenu")
+      );
+  };
+
+  enterRenameMode = () => {
     const inputElem = input({
       className: "item-titleInput",
       value: this.item.title,
@@ -157,7 +182,7 @@ export class ItemView {
 
     const { item, titleElem } = this;
     function stopRenaming() {
-      item.title = inputElem.value;
+      item.setTitle(inputElem.value);
       titleElem.elem.textContent = item.title;
       inputElem.insertAdjacentElement("beforebegin", titleElem.elem);
       inputElem.removeEventListener("blur", stopRenaming);
@@ -165,7 +190,7 @@ export class ItemView {
     }
   };
 
-  private static downloadNextPageButton = (item: MyItem, level: number) => {
+  private static downloadNextPageButton = (item: Item, level: number) => {
     const ref = dom.createRef("div");
     return div({ classNames: ["item-row", levels.rowForLevel(level)] }, [
       div(
@@ -174,7 +199,7 @@ export class ItemView {
           ref,
           onClickStopPropagation: () => {
             if (!item.isLoading) {
-              itemsStore.loadNextPage(item);
+              item.loadNextPage();
               dom.setChild(
                 ref.elem,
                 icons.spinnner({
@@ -190,16 +215,24 @@ export class ItemView {
     ]);
   };
 
-  private static view = (item: MyItem, level: number) =>
-    new ItemView(item, level).el;
+  private static view = (
+    item: Item,
+    level: number,
+    onShown: Action<ItemView>,
+    events: AppEvents
+  ) => new ItemView(item, level, onShown, events).el;
 
-  static viewChildrenFor = (item: MyItem) =>
+  static viewChildrenFor = (
+    item: Item,
+    onShown: Action<ItemView>,
+    events: AppEvents
+  ) =>
     dom.fragment(
       item.children
         ? item.children
-            .map((item) => ItemView.view(item, 0))
+            .map((item) => ItemView.view(item, 0, onShown, events))
             .concat(
-              items.getNextPageToken(item)
+              item.getNextPageToken()
                 ? [ItemView.downloadNextPageButton(item, 0)]
                 : []
             )
@@ -211,6 +244,7 @@ const childrenBorder = (level: number) =>
   div({
     classNames: ["item-children-border", levels.childrenBorderForLevel(level)],
   });
+
 style.class("item-row", {
   display: "flex",
   alignItems: "center",
@@ -223,6 +257,10 @@ style.class("item-row", {
   onHover: {
     backgroundColor: colors.itemHover,
   },
+});
+
+style.class2("item-row", "item-row-highlightedContextMenu", {
+  backgroundColor: colors.header,
 });
 
 style.class("hide", { opacity: 0 });

@@ -1,3 +1,5 @@
+import { Item } from "./item";
+
 //this goes down into children
 export const getItemBelow = (item: MyItem): MyItem | undefined => {
   if (item.isOpen && item.children) return item.children![0];
@@ -101,7 +103,7 @@ export const appendChildrenTo = (item: MyItem, children: MyItem[]) => {
   item.children = (item.children || []).concat(children);
 };
 
-export const getRoot = (item: MyItem): MyItem => {
+export const getRootForItem = (item: MyItem): MyItem => {
   let parent = item;
   while (parent.parent) {
     parent = parent.parent;
@@ -177,11 +179,11 @@ export const forEachChild = (
 };
 
 export const traverseChildrenDFS = (
-  item: MyItem,
-  filter?: (item: MyItem) => boolean
-): MyItem[] => {
-  const results: MyItem[] = [];
-  const traverseChildren = (item: MyItem) => {
+  item: Item,
+  filter?: (item: Item) => boolean
+): Item[] => {
+  const results: Item[] = [];
+  const traverseChildren = (item: Item) => {
     if (!filter || filter(item)) results.push(item);
 
     if (item.children) item.children.forEach(traverseChildren);
@@ -191,12 +193,12 @@ export const traverseChildrenDFS = (
 };
 
 export const traverseChildrenBFS = <T>(
-  rootItem: MyItem,
-  filterMap: (item: MyItem) => T | undefined,
+  item: Item,
+  filterMap: (item: Item) => T | undefined,
   maxResults: number
 ): T[] => {
   const results: T[] = [];
-  const queue: MyItem[] = [];
+  const queue: Item[] = [];
   const traverse = () => {
     const item = queue.shift();
 
@@ -209,15 +211,15 @@ export const traverseChildrenBFS = <T>(
     traverse();
   };
 
-  queue.push(rootItem);
+  queue.push(item);
   traverse();
   return results;
 };
 
 export const moveItem = (
-  itemToMove: MyItem,
+  itemToMove: Item,
   placement: DropPlacement,
-  itemRelativeWhichToMove: MyItem
+  itemRelativeWhichToMove: Item
 ) => {
   if (placement === "after") {
     insertItemAfter(itemRelativeWhichToMove, itemToMove);
@@ -228,10 +230,7 @@ export const moveItem = (
   }
 };
 
-const insertItemAfter = (
-  itemRelativeToInsert: MyItem,
-  itemToInsert: MyItem
-) => {
+const insertItemAfter = (itemRelativeToInsert: Item, itemToInsert: Item) => {
   const context = itemRelativeToInsert.parent!.children!;
   const index = context.indexOf(itemRelativeToInsert);
 
@@ -239,10 +238,7 @@ const insertItemAfter = (
   itemToInsert.parent = itemRelativeToInsert.parent;
 };
 
-const insertItemBefore = (
-  itemRelativeToInsert: MyItem,
-  itemToInsert: MyItem
-) => {
+const insertItemBefore = (itemRelativeToInsert: Item, itemToInsert: Item) => {
   const context = itemRelativeToInsert.parent!.children!;
   const index = context.indexOf(itemRelativeToInsert);
 
@@ -250,7 +246,10 @@ const insertItemBefore = (
   itemToInsert.parent = itemRelativeToInsert.parent;
 };
 
-const insertItemInside = (parentItem: MyItem, itemToInsert: MyItem) => {
+const insertItemInside = (parentItem: Item, itemToInsert: Item) => {
   parentItem.children = [itemToInsert].concat(parentItem.children || []);
   itemToInsert.parent = parentItem;
 };
+
+export { Item } from "./item";
+export { getMainRoot, setMainRoot } from "./roots";

@@ -3,7 +3,7 @@
 
 export const colors = {
   //KEY ELEMENTS
-  appBackground: ["#1E1E1E", "#F0F2F5"],
+  appBackground: ["#1E1E1E", "#F2F2F2"],
   header: ["#3C3C3C", "white"],
   footer: ["#3C3C3C", "white"],
   leftSidebar: ["#252526", "white"],
@@ -17,6 +17,7 @@ export const colors = {
   //TYPOGRAPHY
   mainTextColor: ["#DDDDDD", "rgb(76, 81, 85)"],
   disabledTextColor: ["gray", "rgb(184, 188, 191)"],
+  textDanger: ["#ff616f", "#CB1F27"],
 
   //ITEMS
   itemHover: ["rgb(42,45,46)", "rgba(0, 0, 0, 0.03)"],
@@ -27,7 +28,9 @@ export const colors = {
 
   // Item Icons
   itemChevron: ["#B8BCBF", "rgb(184, 188, 191)"],
-  itemChevronHover: ["white", "rgb(76, 81, 85)"],
+  itemChevronHover: ["#dce0e3", "#71767a"],
+  itemChevronActive: ["white", "rgb(76, 81, 85)"],
+
   itemOuterCircle: ["rgba(255,255,255,0.3)", "rgb(220, 224, 226)"],
   itemInnerCircle: ["white", "rgb(76, 81, 85)"],
   itemEmptyCircle: ["#DDDDDD", "rgb(76, 81, 85)"],

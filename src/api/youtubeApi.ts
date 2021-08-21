@@ -13,14 +13,14 @@ export const loadSearchResults = ({
     .then(createMappedResponse);
 };
 
-export const loadPlaylistItems = (
-  playlistId: string,
-  pageToken?: string
-): Promise<MappedResponse> => {
+export const loadPlaylistItems = ({
+  playlistId,
+  nextPageToken,
+}: YoutubePlaylist): Promise<MappedResponse> => {
   verifyNonTestEnvironment();
   let url = `${API_HOST}/getPlaylistItems?playlistId=${playlistId}`;
 
-  if (pageToken) url += `&pageToken=${pageToken}`;
+  if (nextPageToken) url += `&pageToken=${nextPageToken}`;
   return fetch(url)
     .then((res) => res.json() as Promise<YoutubePlaylistDetailsResponse>)
     .then(createMappedResponse);
@@ -112,11 +112,11 @@ export type MappedResponse = {
   nextPageToken?: string;
 };
 
-export type YoutubeChannelUploadPlaylistResponse = {
+type YoutubeChannelUploadPlaylistResponse = {
   playlistId: string;
 };
 
-export type ResponseItem =
+type ResponseItem =
   | VideoResponseItem
   | ChannelResponseItem
   | PlaylistResponseItem;

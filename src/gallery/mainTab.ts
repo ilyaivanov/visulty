@@ -1,25 +1,26 @@
 import { div, button, dom, style } from "../browser";
-import { anim, levels, colors } from "../designSystem";
-import { dispatcher, itemsStore } from "../globals";
-import * as items from "../items";
-
-import { ItemView } from "./itemView";
+import { anim, levels, colors, spacings } from "../designSystem";
+import { AppEvents } from "../events";
+import { Item } from "../items";
+import { ItemsTree } from "./tree";
 
 export class MainTab {
   el: HTMLElement;
-  currentItemFocused?: MyItem;
-  constructor() {
-    this.el = div({ className: "tab" }, []);
-    dispatcher.mainTab = this;
-  }
+  mainTree: ItemsTree;
+  currentItemFocused?: Item;
+  constructor(item: Item, private events: AppEvents) {
+    this.mainTree = new ItemsTree(events);
+    this.currentItemFocused = item;
+    this.el = div({ className: "tab" });
+    this.renderTab(item);
 
-  focusOn = (item: MyItem) => {
+    events.on("focusItem", this.focusOn);
+  }
+  focusOn = (item: Item) => {
     if (!this.currentItemFocused) this.renderTab(item);
     else {
-      const currentLevel = items.getItemDistanceFromRoot(
-        this.currentItemFocused
-      );
-      const nextLevel = items.getItemDistanceFromRoot(item);
+      const currentLevel = this.currentItemFocused.getItemDistanceFromRoot();
+      const nextLevel = item.getItemDistanceFromRoot();
       const isGoingDeeper = currentLevel < nextLevel;
       const initialTrajectory: anim.FlyTrajectory = isGoingDeeper
         ? {
@@ -57,17 +58,17 @@ export class MainTab {
     }
   };
 
-  private renderTab = (item: MyItem) => {
+  private renderTab = (item: Item) => {
     this.currentItemFocused = item;
     dom.setChildren(this.el, [
       this.tabHeader(item),
-      ItemView.viewChildrenFor(item),
+      this.mainTree.viewChildrenFor(item),
       this.addButton(),
     ]);
   };
 
-  tabHeader = (item: MyItem) => {
-    if (items.isRoot(item)) return div({});
+  tabHeader = (item: Item) => {
+    if (item.isRoot()) return div({});
     else
       return div({
         classNames: ["tab-title", levels.rowForLevel(0)],
@@ -79,17 +80,20 @@ export class MainTab {
     return div({ className: levels.rowForLevel(0) }, [
       button({
         textContent: "add",
-        onClick: () => itemsStore.addItemToTheEndOf(itemsStore.root),
+        onClick: () => this.currentItemFocused?.createNewItemAsLastChild(),
       }),
     ]);
   }
-
-  static view = () => new MainTab().el;
 }
 
 style.class("tab-title", {
   fontSize: 24,
   marginBottom: 10,
+  marginLeft:
+    spacings.iconMenuWidth +
+    spacings.chevronSize +
+    spacings.distanceBetweenMenuAndChevron +
+    5,
   fontWeight: "bold",
   color: colors.mainTextColor,
 });

@@ -1,43 +1,64 @@
 import { css, div, dom, span, style, svg } from "../browser";
-import { ClassMap } from "../browser/dom";
 import { anim, colors, icons, timings, zIndexes } from "../designSystem";
-import { dispatcher, itemsStore, uiState } from "../globals";
+import { AppEvents } from "../events";
+import { Item } from "../items/item";
 
-export class LeftSidebar {
-  el: HTMLElement;
+export const viewLeftSidebar = (root: Item, events: AppEvents) => {
+  let sidebarShown = false;
 
-  constructor() {
-    this.el = div({ className: "left-sidebar" }, this.viewChildren());
-    this.assignVisibility();
-    dispatcher.leftSidebar = this;
-  }
+  const rowsShown: WeakMap<Item, LeaftSidebarItem> = new WeakMap();
 
-  render() {
-    dom.setChildren(this.el, this.viewChildren());
-  }
+  const onShown = (row: LeaftSidebarItem) => rowsShown.set(row.props.item, row);
 
-  assignVisibility = () =>
-    dom.toggleClass(
-      this.el,
-      "left-sidebar-hidden",
-      !uiState.isLeftSidebarVisible
-    );
+  const actions: SidebarItemProps["actions"] = {
+    onChevronClick: (item) => item.toggleRightSidebarVisibility(),
+    onItemClick: (item) => events.trigger("focusItem", item),
+  };
 
-  viewChildren = () =>
-    itemsStore.root.children!.map((item) => LeaftSidebarItem.view(item, 0));
-}
+  const result = div(
+    { className: "left-sidebar" },
+    (root.children || []).map(
+      (item) => new LeaftSidebarItem({ item, onShown, actions }, 0).el
+    )
+  );
+
+  const assignSidebarVisibility = () =>
+    dom.toggleClass(result, "left-sidebar-hidden", !sidebarShown);
+
+  assignSidebarVisibility();
+
+  events.on("toggleSidebar", () => {
+    sidebarShown = !sidebarShown;
+    assignSidebarVisibility();
+  });
+
+  events.on("item.rightSidebarVisibilityChanged", (item) =>
+    rowsShown.get(item)?.updateItemChildrenVisibility()
+  );
+
+  return result;
+};
+
+type SidebarItemProps = {
+  item: Item;
+  actions: {
+    onChevronClick: Action<Item>;
+    onItemClick: Action<Item>;
+  };
+  onShown: Action<LeaftSidebarItem>;
+};
 
 export class LeaftSidebarItem {
   el: HTMLDivElement;
-  childrenElement = dom.createRef("div");
-  chevron: SVGElement;
-  constructor(public item: MyItem, private level: number) {
+  private childrenElement = dom.createRef("div");
+  private chevron: SVGElement;
+  constructor(public props: SidebarItemProps, private level: number) {
     this.chevron = icons.chevron({
       className: "left-sidebar-item-chevron",
       classMap: this.chevronClasses(),
       onClick: (e) => {
         e.stopPropagation();
-        itemsStore.toggleItemOnSidebar(item);
+        props.actions.onChevronClick(props.item);
       },
     });
     this.el = div({}, [
@@ -45,7 +66,7 @@ export class LeaftSidebarItem {
         {
           className: "left-sidebar-item",
           style: { paddingLeft: 4 + level * 15 },
-          onClickStopPropagation: () => uiState.focusOnItem(item),
+          onClickStopPropagation: () => props.actions.onItemClick(props.item),
         },
         [
           this.chevron,
@@ -61,24 +82,26 @@ export class LeaftSidebarItem {
               }),
             ],
           }),
-          span({ textContent: item.title }),
+          span({ textContent: props.item.title }),
         ]
       ),
       div(
         { ref: this.childrenElement, className: "left-sidebar-item-children" },
-        item.isOpenInSidebar ? this.childrenFor(item, level) : []
+        props.item.isOpenInSidebar
+          ? this.childrenFor(this.props.item, level)
+          : []
       ),
     ]);
 
-    dispatcher.leftSidebarItemViewed(this);
+    this.props.onShown(this);
   }
 
   updateItemChildrenVisibility = () => {
     dom.assignClassMap(this.chevron, this.chevronClasses());
-    if (this.item.isOpenInSidebar) {
+    if (this.props.item.isOpenInSidebar) {
       dom.setChildren(
         this.childrenElement.elem,
-        this.childrenFor(this.item, this.level)
+        this.childrenFor(this.props.item, this.level)
       );
       anim.expand(this.childrenElement.elem);
     } else {
@@ -90,17 +113,16 @@ export class LeaftSidebarItem {
     }
   };
 
-  static view = (item: MyItem, level: number) =>
-    new LeaftSidebarItem(item, level).el;
-
-  childrenFor = (item: MyItem, level: number): HTMLDivElement[] => {
+  childrenFor = (item: Item, level: number): HTMLDivElement[] => {
     return item.children
-      ? item.children.map((item) => LeaftSidebarItem.view(item, level + 1))
+      ? item.children.map(
+          (item) => new LeaftSidebarItem({ ...this.props, item }, level + 1).el
+        )
       : [];
   };
 
-  chevronClasses = (): ClassMap => ({
-    "left-sidebar-item-chevron-rotated": this.item.isOpenInSidebar,
+  chevronClasses = (): dom.ClassMap => ({
+    "left-sidebar-item-chevron-rotated": this.props.item.isOpenInSidebar,
   });
 }
 

@@ -1,21 +1,30 @@
-// import { items } from "../domain";
 import { dom, div, style } from "../browser";
 import { spacings } from "../designSystem";
 import { colors } from "../designSystem";
-import { itemsStore } from "../globals";
-import { ItemIcon } from "./itemIcon";
-// import FolderIcon from "./FolderIcon";
+import { AppEvents } from "../events";
+import { Item } from "../items";
+import { viewIconFor } from "../gallery/tree";
 
 export class Dnd {
-  itemBeingDragged?: MyItem;
-  itemViewUnder?: MyItem;
+  itemBeingDragged?: Item;
+  itemViewUnder?: Item;
   initialMousePosition: Vector = { x: 0, y: 0 };
   dragAvatar?: HTMLElement;
   dragDestination?: HTMLElement;
   dropPlacement?: DropPlacement;
   appendItemTo?: Element;
 
-  onItemMouseDown = (itemModel: MyItem, e: MouseEvent) => {
+  constructor(events: AppEvents) {
+    events.on("item.mouseDownOnIcon", ({ item, event }) =>
+      this.onItemMouseDown(item, event)
+    );
+
+    events.on("item.mouseMoveOverItem", ({ item, event }) =>
+      this.onItemMouseMoveOver(item, event)
+    );
+  }
+
+  onItemMouseDown = (itemModel: Item, e: MouseEvent) => {
     this.appendItemTo = dom.getFirstElementWithClass(document.body, "app");
 
     this.initialMousePosition = getScreenPosition(e);
@@ -32,9 +41,8 @@ export class Dnd {
     if (e.buttons == 1 && itemBeingDragged) {
       if (!dragAvatar) {
         const dist = distance(initialMousePosition, getScreenPosition(e));
-        console.log(dist);
         if (dist > 5) {
-          const icon = ItemIcon.viewIcon(itemBeingDragged);
+          const icon = viewIconFor(itemBeingDragged);
           this.dragAvatar = div({ className: "item-dragAvatar" }, [icon]);
           dom.addClass(icon, "item-icon-video");
           this.appendItemTo?.appendChild(this.dragAvatar);
@@ -48,14 +56,14 @@ export class Dnd {
     }
   };
 
-  onItemMouseMoveOver = (itemViewUnder: MyItem, e: MouseEvent) => {
+  onItemMouseMoveOver = (itemViewUnder: Item, e: MouseEvent) => {
     if (this.dragAvatar) {
       this.itemViewUnder = itemViewUnder;
       if (!this.dragDestination) {
         const bulp = dom.div({ className: "item-dragDestinationBulp" });
-        const type = itemViewUnder.type;
         bulp.style.borderRadius =
-          (type === "folder" || type === "YTchannel" ? 5 : 1) + "px";
+          (itemViewUnder.isFolder() || itemViewUnder.isPlaylist() ? 5 : 1) +
+          "px";
 
         this.dragDestination = div({ className: "item-dragDestinationLine" }, [
           bulp,
@@ -119,8 +127,7 @@ export class Dnd {
     const { itemBeingDragged, itemViewUnder, dropPlacement } = this;
     if (itemBeingDragged && itemViewUnder && dropPlacement) {
       if (itemBeingDragged != itemViewUnder)
-        itemsStore.moveItem({
-          itemOver: itemBeingDragged,
+        itemBeingDragged.moveItem({
           placement: dropPlacement,
           itemUnder: itemViewUnder,
         });

@@ -15,13 +15,17 @@ type ClassName =
   | "item-title"
   | "item-titleInput"
   | "item-row"
+  | "item-row-highlightedContextMenu"
+  | "item-row_showOnHoverOrSelected"
   | "item-row-title"
+  | "item-row-folder"
   | "item-container-row-title"
   | "item-row_selected"
   | "item-children-border"
   | "item-row-children"
   | "item-icon-svg"
   | "item-icon-circle"
+  | "item-icon-menu"
   | "item-icon-chevron"
   | "item-icon-chevron_open"
   | "item-icon-chevron_visible"
@@ -30,12 +34,20 @@ type ClassName =
   | "item-icon-download"
   | "item-icon-download-spinner"
   | "hide"
-  | "item-row_showOnHoverOrSelected"
   | "item-icon-circle_hidden"
   | "item-icon-image_square"
   | "item-icon-image_circle"
   | "item-icon-video"
   | "item-icon-image_closed"
+
+  //CONTEXT MENU
+  | "context-menu"
+  | "context-menu-arrow"
+  | "context-menu-item"
+  | "context-menu-item-icon"
+  | "context-menu-item-danger"
+  | "context-menu-item-title"
+  | "context-menu-item-shortcut"
 
   //DND
   | "item-dragAvatar"
@@ -53,6 +65,7 @@ type ClassName =
 
   //HEADER
   | "header"
+  | "header-path"
   | "header-icon"
   | "header-icon-disabled"
   | "header-icon-separator"

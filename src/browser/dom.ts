@@ -8,6 +8,17 @@ export const getFirstElementWithClass = (
   return elem.getElementsByClassName(className)[0];
 };
 
+export const fintParentElementWithClass = (
+  elem: Element,
+  className: ClassName
+): Element | null => {
+  let parent = elem.parentElement;
+  while (parent && !parent.classList.contains(className)) {
+    parent = parent.parentElement;
+  }
+  return parent;
+};
+
 //COMMANDS
 export const insert = (
   elem: Element,
@@ -17,6 +28,9 @@ export const insert = (
 
 export const appendChildren = (elem: Element, children: Node[]) =>
   children.forEach((child) => elem.appendChild(child));
+
+export const appendChild = (elem: Element, child: Node) =>
+  elem.appendChild(child);
 
 export const removeAllChildren = (elem: Element) => {
   while (elem.firstChild) elem.firstChild.remove();
@@ -156,7 +170,7 @@ type ElementProps<T> = {
 } & ClassDefinitions &
   Events;
 
-const elem = <T extends keyof HTMLElementTagNameMap>(
+export const elem = <T extends keyof HTMLElementTagNameMap>(
   tag: T,
   props: ElementProps<HTMLElementTagNameMap[T]>,
   children?: ElementChild[]

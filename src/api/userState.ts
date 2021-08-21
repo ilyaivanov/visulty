@@ -15,25 +15,36 @@ export const initFirebase = (onAuthChanged: any) => {
 };
 
 export const saveUserSettings = (
-  userSettings: PersistedState,
+  userSettings: MappedPersistedState,
   userId: string
-): Promise<any> =>
-  firebase
+): Promise<any> => {
+  const state: PersistedState = {
+    itemsSerialized: serializeRootItem(userSettings.root),
+  };
+  return firebase
     .firestore()
     .collection("users")
     .doc(userId)
-    .set({ id: userId, ...userSettings })
+    .set({ id: userId, ...state })
     .catch((e: any) => {
       console.error("Error while saving user settings");
     });
+};
 
-export const loadUserSettings = (userId: string): Promise<PersistedState> =>
+export const loadUserSettings = (
+  userId: string
+): Promise<MappedPersistedState> =>
   firebase
     .firestore()
     .collection("users")
     .doc(userId)
     .get()
-    .then((res: any) => res.data() as PersistedState);
+    .then((res: any) => {
+      const state = res.data() as PersistedState;
+      return {
+        root: deserializeRootItem(state.itemsSerialized),
+      };
+    });
 
 export const auth = () => {};
 

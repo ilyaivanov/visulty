@@ -1,18 +1,26 @@
 import { folder } from "../api/dummyUserState";
+import { createAppEvents } from "../events";
+import { Item } from "../items";
 import { ModalView, SearchModalController } from "./modalController";
 
 describe("When modal window is shown while having", () => {
-  let onPlay: Action<MyItem>;
-  let onFocus: Action<MyItem>;
-  let onDismiss: Action<void>;
+  let onPlay: Action<Item>;
+  let onFocus: Action<Item>;
+  let onDismiss: EmptyAction;
   let viewMock: ViewMock;
 
-  const matchingItem1 = folder("aaa");
-  const matchingItem2 = folder("aa");
-  const root = folder({
-    id: "HOME",
-    children: [matchingItem1, folder("bbb"), matchingItem2, folder("bb")],
-  });
+  const events = createAppEvents();
+
+  const root = new Item(
+    folder({
+      id: "HOME",
+      children: [folder("aaa"), folder("bbb"), folder("aa"), folder("bb")],
+    }),
+    events
+  );
+
+  const matchingItem1 = root.children![0];
+  const matchingItem2 = root.children![2];
 
   beforeEach(() => {
     onPlay = jest.fn();
@@ -87,12 +95,12 @@ describe("When modal window is shown while having", () => {
 type ViewMock = ModalView & {
   triggerInput(value: string): void;
   triggerKeyDown(props: KeyboardEventInit): void;
-  triggerItemClick(item: MyItem): void;
+  triggerItemClick(item: Item): void;
 };
 const createViewMock = (): ViewMock => {
   let onInput: Action<string>;
   let onKeyDown: Action<KeyboardEvent>;
-  let onItemClick: Action<MyItem>;
+  let onItemClick: Action<Item>;
   return {
     onInput: (cb) => (onInput = cb),
     triggerInput: (value) => onInput(value),

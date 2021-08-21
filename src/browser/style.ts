@@ -50,6 +50,10 @@ export const style = {
     handleCompoundStyles(`.${className}:active`, styles),
   classFocus: (className: CN, styles: CompoundStyles) =>
     handleCompoundStyles(`.${className}:focus`, styles),
+  firstChild: (className: CN, styles: CompoundStyles) =>
+    handleCompoundStyles(`.${className}:first-child`, styles),
+  lastChild: (className: CN, styles: CompoundStyles) =>
+    handleCompoundStyles(`.${className}:last-of-type`, styles),
   class2: (className1: CN, className2: CN, styles: CompoundStyles) =>
     handleCompoundStyles(`.${className1}.${className2}`, styles),
   id: (id: ElementId, styles: CompoundStyles) =>
@@ -185,6 +189,8 @@ export type Styles = Partial<{
   border: string;
   borderLeft: string;
   borderTop: string;
+  borderBottom: string;
+  borderRight: string;
   outline: string;
   borderColor: string;
   borderRadius: number | "50%";

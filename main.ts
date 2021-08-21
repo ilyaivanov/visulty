@@ -1,34 +1,29 @@
-import {
-  deserializeRootItem,
-  initFirebase,
-  loadUserSettings,
-} from "./src/api/userState";
 import { sampleUserName } from "./src/api/config";
 import { style } from "./src/browser";
-import { viewApp } from "./src/view/app";
-import { itemsStore, uiState } from "./src/globals";
 import { createThemeStyles } from "./src/designSystem";
-import { dummyRoot } from "./src/api/dummyUserState";
-import * as items from "./src/items";
+import { APIGateway, FakeAPIGateweay, Gateway } from "./src/api";
+import { viewApp } from "./src/app";
+import { createAppEvents } from "./src/events";
+import { Item } from "./src/items";
+import { listenToLoadEvents } from "./src/api/itemsLoader";
+import { initShortcuts } from "./src/shortcuts";
+import { initSearch } from "./src/search";
 
 createThemeStyles();
 
 const USE_REAL_API = true;
+const api: Gateway = USE_REAL_API ? new APIGateway() : new FakeAPIGateweay();
 
-initFirebase(() => {
-  if (USE_REAL_API) {
-    loadUserSettings(sampleUserName).then((data) => {
-      itemsStore.root = deserializeRootItem(data.itemsSerialized);
-      const firstChild = items.getFirstChild(itemsStore.root);
-      document.body.appendChild(viewApp());
-      uiState.focusOnItem(itemsStore.root);
-      firstChild && uiState.select(firstChild);
-    });
-  } else {
-    itemsStore.root = dummyRoot;
-    document.body.appendChild(viewApp());
-  }
-});
+const events = createAppEvents();
+viewApp(document.body, events, api);
+
+listenToLoadEvents(events, api);
+initShortcuts(events);
+initSearch(events);
+api
+  .initFirebare()
+  .then(() => api.loadUserSettings(sampleUserName))
+  .then((data) => events.trigger("stateLoaded", new Item(data.root, events)));
 
 style.tag("body", {
   margin: 0,

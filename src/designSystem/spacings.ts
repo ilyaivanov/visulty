@@ -24,6 +24,10 @@ export const spacings = {
   headerHeight: 48,
   playerFooterHeight: 49,
   rightSidebarDefaultWidth: 250,
+
+  iconMenuWidth: 16,
+  iconMenuHeight: 32,
+  distanceBetweenMenuAndChevron: 15,
   //   bodyScrollWidth: 6,
   //   pageFontSize: 16,
   //   pageTitleFontSize: 23,

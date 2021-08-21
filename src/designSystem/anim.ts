@@ -92,3 +92,11 @@ export const revertAnimations = (elem: HTMLElement | undefined) => {
   }
   return false;
 };
+
+export const removeViaOpaque = (elem: HTMLElement, duration: number) => {
+  elem
+    .animate([{ opacity: 1 }, { opacity: 0 }], { duration })
+    .addEventListener("finish", () => {
+      elem.remove();
+    });
+};

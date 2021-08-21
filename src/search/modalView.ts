@@ -1,13 +1,14 @@
 import { div, input, style, css, dom, span } from "../browser";
 import { colors, timings, zIndexes } from "../designSystem";
-import { ItemIcon } from "../view/itemIcon";
+import { viewIconFor } from "../gallery/tree";
+import { Item } from "../items";
 import { Highlight, LocalSearchEntry } from "./localSearch";
 import { ModalView, LocalSearchResults } from "./modalController";
 
 export default class ModalViewImplementation implements ModalView {
   private input = dom.createRef("input");
   private modalList = dom.createRef("div");
-  private onItemClickCb?: Action<MyItem>;
+  private onItemClickCb?: Action<Item>;
   private onKeyDownCb?: Action<KeyboardEvent>;
   private onInputCb?: Action<string>;
   private el?: HTMLElement;
@@ -30,7 +31,7 @@ export default class ModalViewImplementation implements ModalView {
     return this.el;
   }
 
-  onItemClick(cb: Action<MyItem>): void {
+  onItemClick(cb: Action<Item>): void {
     this.onItemClickCb = cb;
   }
 
@@ -46,7 +47,7 @@ export default class ModalViewImplementation implements ModalView {
   }
 
   row = ({ item, highlights }: LocalSearchEntry) => {
-    const icon = ItemIcon.viewIcon(item);
+    const icon = viewIconFor(item);
     dom.removeClass(icon, "item-icon-video");
     return div(
       {
@@ -83,14 +84,14 @@ export default class ModalViewImplementation implements ModalView {
       .flat()
       .concat(title.slice(highlights[highlights.length - 1].to));
 
-  itemId = (item: MyItem) => "modal-item-" + item.id;
+  itemId = (item: Item) => "modal-item-" + item.id;
 
-  selectItem(item: MyItem): void {
+  selectItem(item: Item): void {
     const row = document.getElementById(this.itemId(item));
     if (row) dom.addClass(row, "modal-row-item-selected");
   }
 
-  unselectItem(item: MyItem): void {
+  unselectItem(item: Item): void {
     const row = document.getElementById(this.itemId(item));
     if (row) dom.removeClass(row, "modal-row-item-selected");
   }
@@ -133,7 +134,7 @@ style.class("modal", {
   position: "absolute",
   top: 200,
   left: `calc(50vw - ${modalWidth / 2}px)`,
-  backgroundColor: "white",
+  backgroundColor: colors.header,
   animation: `modalShow ${timings.modalShow}ms ease-out`,
   borderRadius: 4,
 });
@@ -165,7 +166,7 @@ style.class("modal-row-item", {
 style.classHover("modal-row-item", { backgroundColor: colors.itemHover });
 
 style.class2("modal-row-item", "modal-row-item-selected", {
-  backgroundColor: colors.itemSelected,
+  backgroundColor: colors.itemHover,
 });
 
 style.class("modal-row-list", {
