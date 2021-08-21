@@ -30,7 +30,7 @@ export class PlayerState {
   constructor(private events: AppEvents) {
     this.footer = new Footer({
       playlistIconClicked: this.toggleRightSidebar,
-      focusOn: () => 42,
+      focusOn: (item) => events.trigger("focusItem", item),
       playNext: this.playNextItemInQueue,
       playPrevious: this.playPreviousItemInQueue,
       toggleVideoVisibility: this.toggleVideoFrameVisibility,
