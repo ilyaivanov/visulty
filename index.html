@@ -12,9 +12,21 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: white;
         z-index: 500;
       }
+
+      @media (prefers-color-scheme: dark) {
+        #loader-container {
+          background-color: #1e1e1e;
+        }
+      }
+
+      @media (prefers-color-scheme: light) {
+        #loader-container {
+          background-color: #f2f2f2;
+        }
+      }
+
       #app-loader {
         border: 6px solid #f3f3f3;
         border-radius: 50%;
