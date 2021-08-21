@@ -48,6 +48,8 @@ export class ItemView {
         ]
       ),
     ]);
+    if (this.item.title === "Always Loading")
+      console.log(this.item.isOpen, this.item.isLoading);
     if (this.item.isOpen) this.open(false);
     else this.close(false);
     onShown(this);

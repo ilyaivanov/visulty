@@ -4,8 +4,9 @@ import { AppEvents } from "../events";
 export class Item {
   parent?: Item;
   children?: Item[];
-  isLoading = false;
+  isLoading: boolean;
   constructor(public props: MyItem, private events: AppEvents) {
+    this.isLoading = props.isLoading || false;
     if (props.children)
       this.children = props.children.map((child) => new Item(child, events));
     this.children?.forEach((child) => (child.parent = this));

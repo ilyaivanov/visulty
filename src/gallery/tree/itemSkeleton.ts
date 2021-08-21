@@ -34,7 +34,7 @@ style.class("avatar-row" as any, {
 });
 
 style.class("avatar" as any, {
-  marginLeft: spacings.chevronSize,
+  marginLeft: spacings.distanceBetweenRowLeftBorderAndIcon,
   borderRadius: 4,
   minWidth: 32,
   width: 32,

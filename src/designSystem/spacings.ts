@@ -6,6 +6,8 @@ const chevronSize = 16;
 const borderSize = 2;
 const rowVecticalPadding = 4;
 
+const distanceBetweenMenuAndChevron = 15;
+const iconMenuWidth = 16;
 export const spacings = {
   borderWidth,
   treeMaxWidth,
@@ -19,15 +21,18 @@ export const spacings = {
   //   rowLeftPadding: chevronSize / 2,
   spacePerLevel: chevronSize + outerRadius - borderSize / 2 + 5,
   //   negativeMarginForRowAtZeroLevel: 1000,
+
+  distanceBetweenRowLeftBorderAndIcon:
+    chevronSize + distanceBetweenMenuAndChevron + iconMenuWidth,
   rowVecticalPadding,
   spaceBetweenCircleAndText: 8,
   headerHeight: 48,
   playerFooterHeight: 49,
   rightSidebarDefaultWidth: 250,
 
-  iconMenuWidth: 16,
+  iconMenuWidth,
   iconMenuHeight: 32,
-  distanceBetweenMenuAndChevron: 15,
+  distanceBetweenMenuAndChevron,
   //   bodyScrollWidth: 6,
   //   pageFontSize: 16,
   //   pageTitleFontSize: 23,

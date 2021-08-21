@@ -89,11 +89,7 @@ export class MainTab {
 style.class("tab-title", {
   fontSize: 24,
   marginBottom: 10,
-  marginLeft:
-    spacings.iconMenuWidth +
-    spacings.chevronSize +
-    spacings.distanceBetweenMenuAndChevron +
-    5,
+  marginLeft: spacings.distanceBetweenRowLeftBorderAndIcon,
   fontWeight: "bold",
   color: colors.mainTextColor,
 });

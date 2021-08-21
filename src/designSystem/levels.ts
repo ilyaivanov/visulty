@@ -25,9 +25,7 @@ for (let level = 0; level < numberOfLevelsToGenerate; level++) {
   style.class(childrenBorderForLevel(level), {
     left: `calc(${base} + ${
       level * spacings.spacePerLevel +
-      spacings.chevronSize +
-      spacings.iconMenuWidth +
-      spacings.distanceBetweenMenuAndChevron +
+      spacings.distanceBetweenRowLeftBorderAndIcon +
       spacings.outerRadius -
       borderWidth / 2
     }px)`,
