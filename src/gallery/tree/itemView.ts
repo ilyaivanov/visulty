@@ -291,6 +291,7 @@ style.class("item-children-border", {
 style.class("item-titleInput", { width: "100%" });
 
 style.class("item-icon-download-container", {
+  marginLeft: spacings.distanceBetweenRowLeftBorderAndIcon,
   marginRight: spacings.spaceBetweenCircleAndText,
 });
 
