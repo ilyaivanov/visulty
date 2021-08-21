@@ -5,7 +5,7 @@ import { Item } from "../../items";
 const iconSize = spacings.outerRadius * 2;
 
 export type IconEvents = {
-  onChevronClick: Action<void>;
+  onChevronClick: EmptyAction;
   onMenuClick: Action<HTMLElement>;
   onIconMouseDown: Action<MouseEvent>;
 };

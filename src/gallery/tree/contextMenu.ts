@@ -14,7 +14,7 @@ export const viewItemContextMenu = (
 
   type ContextMenuItemProps = {
     icon: icons.IconFunc;
-    onClick: Action<void>;
+    onClick: EmptyAction;
     title: string;
     shortcut: string;
     titleClass?: ClassName;

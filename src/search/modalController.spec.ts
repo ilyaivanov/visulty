@@ -6,7 +6,7 @@ import { ModalView, SearchModalController } from "./modalController";
 describe("When modal window is shown while having", () => {
   let onPlay: Action<Item>;
   let onFocus: Action<Item>;
-  let onDismiss: Action<void>;
+  let onDismiss: EmptyAction;
   let viewMock: ViewMock;
 
   const events = createAppEvents();

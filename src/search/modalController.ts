@@ -21,7 +21,7 @@ type SearchProps = {
   onPlay: Action<Item>;
   onFocus: Action<Item>;
   getRoot: Func0<Item>;
-  onDismiss: Action<void>;
+  onDismiss: EmptyAction;
 };
 
 export class SearchModalController {
