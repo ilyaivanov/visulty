@@ -1,4 +1,4 @@
-import { css, style, dom, svg } from "../../browser";
+import { css, style, dom, svg, div } from "../../browser";
 import { icons, spacings, colors, timings } from "../../designSystem";
 import { Item } from "../../items";
 
@@ -6,6 +6,7 @@ const iconSize = spacings.outerRadius * 2;
 
 export type IconEvents = {
   onChevronClick: Action<void>;
+  onMenuClick: Action<HTMLElement>;
   onIconMouseDown: Action<MouseEvent>;
 };
 
@@ -29,7 +30,18 @@ export class ItemIcon {
       e.stopPropagation();
       events.onIconMouseDown(e);
     });
-    this.el = dom.fragment([this.chevron, this.iconEl]);
+    this.el = dom.fragment([
+      icons.menu({
+        classNames: ["item-icon-menu"],
+        onClick: (e) => {
+          e.stopPropagation();
+          const icon = e.currentTarget as HTMLElement;
+          events.onMenuClick(icon);
+        },
+      }),
+      this.chevron,
+      this.iconEl,
+    ]);
   }
   public static view = (item: Item, events: IconEvents) =>
     new ItemIcon(item, events).el;
@@ -136,21 +148,48 @@ style.class("item-icon-circle_hidden", { opacity: 0 });
 style.class("item-icon-chevron", {
   height: spacings.chevronSize,
   width: spacings.chevronSize,
-  borderRadius: spacings.chevronSize,
-  //   marginTop: spacings.imageSize / 2 - spacings.chevronSize / 2,
   minWidth: spacings.chevronSize,
   color: colors.itemChevron,
   opacity: 0,
-  userSelect: "none",
-  onHover: { color: "currentColor" },
+  onHover: { color: colors.itemChevronHover },
+  active: { color: colors.itemChevronActive },
   transition: css.transition({
     transform: timings.itemCollapse,
-    // opacity: timings.itemCollapse,
   }),
+  transform: "translate3d(-2px, 0, 0)",
+});
+
+style.class("item-icon-menu", {
+  height: spacings.iconMenuHeight,
+  width: spacings.iconMenuWidth,
+  minWidth: spacings.iconMenuWidth,
+  marginRight: spacings.distanceBetweenMenuAndChevron,
+  color: colors.itemChevron,
+  borderRadius: "50%",
+  onHover: { color: colors.itemChevronHover },
+  active: { color: colors.itemChevronActive },
+  opacity: 0,
+});
+
+style.parentChild("item-row-highlightedContextMenu", "item-icon-menu", {
+  color: "white",
+  opacity: 1,
+});
+
+style.parentHover("item-row", "item-icon-menu", {
+  opacity: 1,
+});
+
+style.parentChild("item-row-folder", "item-icon-chevron", {
+  transform: "translate3d(5px, 0, 0)",
+});
+
+style.parentChild("item-row-folder", "item-icon-chevron_open", {
+  transform: "translate3d(5px, 0, 0) rotateZ(90deg) ",
 });
 
 style.class("item-icon-chevron_open", {
-  transform: "rotateZ(90deg)",
+  transform: "translate3d(-2px, 0, 0) rotateZ(90deg) ",
 });
 
 style.class("item-icon-chevron_visible", {

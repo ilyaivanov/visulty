@@ -8,6 +8,17 @@ export const getFirstElementWithClass = (
   return elem.getElementsByClassName(className)[0];
 };
 
+export const fintParentElementWithClass = (
+  elem: Element,
+  className: ClassName
+): Element | null => {
+  let parent = elem.parentElement;
+  while (parent && !parent.classList.contains(className)) {
+    parent = parent.parentElement;
+  }
+  return parent;
+};
+
 //COMMANDS
 export const insert = (
   elem: Element,

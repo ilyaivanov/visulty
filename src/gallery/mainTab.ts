@@ -1,5 +1,5 @@
 import { div, button, dom, style } from "../browser";
-import { anim, levels, colors } from "../designSystem";
+import { anim, levels, colors, spacings } from "../designSystem";
 import { AppEvents } from "../events";
 import { Item } from "../items";
 import { ItemsTree } from "./tree";
@@ -89,6 +89,11 @@ export class MainTab {
 style.class("tab-title", {
   fontSize: 24,
   marginBottom: 10,
+  marginLeft:
+    spacings.iconMenuWidth +
+    spacings.chevronSize +
+    spacings.distanceBetweenMenuAndChevron +
+    5,
   fontWeight: "bold",
   color: colors.mainTextColor,
 });

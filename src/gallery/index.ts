@@ -1,4 +1,6 @@
 import { dom, div, style, css, button } from "../browser";
+import { spacings, colors, anim } from "../designSystem";
+
 import { AppEvents } from "../events";
 import { Item } from "../items";
 import { MainTab } from "./mainTab";
@@ -45,3 +47,30 @@ export const viewGallery = (item: Item, events: AppEvents) => {
 
   return div({ className: "gallery" }, [mainTab.el, searchTab.el]);
 };
+
+style.class("gallery", {
+  height: `calc(100vh - ${spacings.playerFooterHeight}px - ${spacings.headerHeight}px)`,
+  gridArea: "gallery",
+  display: "flex",
+  overflow: "hidden",
+});
+
+style.class("tab", {
+  paddingTop: 30,
+  flex: 1,
+  overflowY: "overlay",
+  overflowX: "hidden",
+  paddingBottom: "20vh",
+
+  //used to position context menu
+  position: "relative",
+});
+
+css.createScrollStyles("tab", {
+  scrollbar: {
+    width: 8,
+  },
+  thumb: {
+    backgroundColor: colors.scrollThumb,
+  },
+});

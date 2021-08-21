@@ -1,5 +1,5 @@
-import { dom, div, style, css, button } from "./browser";
-import { spacings, colors, anim } from "./designSystem";
+import { dom, div, style } from "./browser";
+import { colors, anim } from "./designSystem";
 
 import { Item, setMainRoot } from "./items";
 import { viewHeader } from "./focus/header";
@@ -70,28 +70,4 @@ style.class("app", {
 style.tag("body", {
   margin: 0,
   fontFamily: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"`,
-});
-
-style.class("gallery", {
-  height: `calc(100vh - ${spacings.playerFooterHeight}px - ${spacings.headerHeight}px)`,
-  gridArea: "gallery",
-  display: "flex",
-  overflow: "hidden",
-});
-
-style.class("tab", {
-  paddingTop: 30,
-  flex: 1,
-  overflowY: "overlay",
-  overflowX: "hidden",
-  paddingBottom: "20vh",
-});
-
-css.createScrollStyles("tab", {
-  scrollbar: {
-    width: 8,
-  },
-  thumb: {
-    backgroundColor: colors.scrollThumb,
-  },
 });

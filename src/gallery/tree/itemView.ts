@@ -1,9 +1,10 @@
-import { dom, div, input, span, button, style } from "../../browser";
+import { dom, div, input, span, button, style, css } from "../../browser";
 import { colors, anim, levels, spacings, icons } from "../../designSystem";
 import { ItemIcon } from "./itemIcon";
 import { showSkeletons } from "./index";
 import { Item } from "../../items/item";
 import { AppEvents } from "../../events";
+import { viewItemContextMenu } from "./contextMenu";
 
 export class ItemView {
   icon: ItemIcon;
@@ -22,11 +23,13 @@ export class ItemView {
       onChevronClick: () => item.toggleVisibility(),
       onIconMouseDown: (event) =>
         events.trigger("item.mouseDownOnIcon", { item, event }),
+      onMenuClick: (elem) => viewItemContextMenu(elem, events, this),
     });
     this.el = div({}, [
       div(
         {
           classNames: ["item-row", levels.rowForLevel(level)],
+          classMap: { "item-row-folder": item.isFolder() },
           ref: this.rowElem,
           // onClick: () => uiState.select(item),
           onMouseMove: (event) =>
@@ -42,28 +45,6 @@ export class ItemView {
             textContent: item.title,
             ref: this.titleElem,
           }),
-          div({ classNames: ["hide", "item-row_showOnHoverOrSelected"] }, [
-            button({
-              textContent: "▶",
-              onClickStopPropagation: () =>
-                this.events.trigger("item.play", item),
-            }),
-            button({
-              textContent: "F",
-
-              onClickStopPropagation: () =>
-                this.events.trigger("focusItem", item),
-            }),
-            button({
-              textContent: "X",
-              onClickStopPropagation: () =>
-                item.remove({ playAnimation: true }),
-            }),
-            button({
-              textContent: "E",
-              onClickStopPropagation: () => this.enterRenameMode(),
-            }),
-          ]),
         ]
       ),
     ]);
@@ -141,7 +122,6 @@ export class ItemView {
   };
 
   private viewChildren = () => {
-    console.log(this.item.title, this.item);
     return div(
       { className: "item-row-children", ref: this.childrenElem },
       this.item.isLoading
@@ -160,7 +140,34 @@ export class ItemView {
     );
   };
 
-  private enterRenameMode = () => {
+  highlightContextMenu = () => {
+    this.rowElem.elem
+      .animate(
+        [
+          { backgroundColor: colors.itemHover },
+          { backgroundColor: colors.header },
+        ],
+        { duration: 200 }
+      )
+      .addEventListener("finish", () =>
+        dom.addClass(this.rowElem.elem, "item-row-highlightedContextMenu")
+      );
+  };
+  unhighlightContextMenu = () => {
+    this.rowElem.elem
+      .animate(
+        [
+          { backgroundColor: colors.header },
+          { backgroundColor: colors.itemHover },
+        ],
+        { duration: 200 }
+      )
+      .addEventListener("finish", () =>
+        dom.removeClass(this.rowElem.elem, "item-row-highlightedContextMenu")
+      );
+  };
+
+  enterRenameMode = () => {
     const inputElem = input({
       className: "item-titleInput",
       value: this.item.title,
@@ -237,6 +244,7 @@ const childrenBorder = (level: number) =>
   div({
     classNames: ["item-children-border", levels.childrenBorderForLevel(level)],
   });
+
 style.class("item-row", {
   display: "flex",
   alignItems: "center",
@@ -249,6 +257,10 @@ style.class("item-row", {
   onHover: {
     backgroundColor: colors.itemHover,
   },
+});
+
+style.class2("item-row", "item-row-highlightedContextMenu", {
+  backgroundColor: colors.header,
 });
 
 style.class("hide", { opacity: 0 });
