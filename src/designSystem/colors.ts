@@ -37,4 +37,9 @@ export const colors = {
   itemImageShadow: ["rgba(255, 255, 255, 0.7)", "rgb(184, 188, 191)"],
   itemImageInsetShadow: ["rgba(255,255,255,0.15)", "rgba(0,0,0,0.1)"],
   dragDestination: ["white", "black"],
+
+  //Player
+  playerProgress: ["rgba(0,0,0,0.1)", "rgba(0,0,0,0.1)"],
+  playerProgressBuffered: ["#636363", "#C2C2C2"],
+  playerProgressEllapssed: ["white", "rgb(76, 81, 85)"],
 };

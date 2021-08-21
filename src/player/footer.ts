@@ -1,12 +1,14 @@
 import { dom, div, style, css, img, span } from "../browser";
 import { icons, spacings, colors, timings, zIndexes } from "../designSystem";
-import { youtubeIframeId } from "../api/youtubePlayer";
+import * as youtubePlayer from "../api/youtubePlayer";
 import { Item } from "../items";
-
+import { numbers } from "../lodash";
+const { youtubeIframeId } = youtubePlayer;
 type FooterProps = {
   playlistIconClicked: Action<MouseEvent>;
   playPrevious: Action<MouseEvent>;
   playNext: Action<MouseEvent>;
+  mouseMoveAlongTrack: Action<MouseEvent>;
   toggleVideoVisibility: Action<MouseEvent>;
   focusOn: Action<Item>;
 };
@@ -17,6 +19,9 @@ export class Footer {
   textArea = dom.createRef("div");
   youtubePlayer = dom.createRef("div");
   targetText = dom.createRef("div");
+  progressContainerElem = dom.createRef("div");
+  ellapsedElem = dom.createRef("div");
+  bufferedElem = dom.createRef("div");
 
   constructor(private props: FooterProps) {
     this.el = div({ className: "player" }, [
@@ -62,7 +67,7 @@ export class Footer {
           onClick: () => this.props.focusOn(pathItem),
         }),
       ];
-      if (!isLast) res.push(span({ textContent: " > " }));
+      if (!isLast) res.push(span({ textContent: " › " }));
       return res;
     };
     return div(
@@ -105,53 +110,61 @@ export class Footer {
     div(
       {
         className: "player-progress-container-padding",
-        onMouseMove: (e) => {
-          const assumedDuration = 2 * 60 + 31;
-          const overallWidth = (e.currentTarget as HTMLDivElement).clientWidth;
-          const width = this.targetText.elem.offsetWidth;
-          const textPadding = 3;
-          let position = clamp(
-            e.clientX - width / 2,
-            textPadding,
-            overallWidth - width - textPadding
-          );
-
-          this.targetText.elem.style.left = position + "px";
-          this.targetText.elem.textContent = formatTime(
-            (e.clientX / overallWidth) * assumedDuration
-          );
-        },
+        onMouseMove: this.props.mouseMoveAlongTrack,
       },
       [
-        div({ className: "player-progress-container" }, [
-          div({ className: "player-progress-buffer", style: { width: 400 } }),
-          div(
-            { className: "player-progress-ellapsed", style: { width: 200 } },
-            [div({ className: "player-progress-bulp" })]
-          ),
+        div(
+          {
+            className: "player-progress-container",
+            ref: this.progressContainerElem,
+          },
+          [
+            div({
+              className: "player-progress-buffer",
+              style: { width: 0 },
+              ref: this.bufferedElem,
+            }),
+            div(
+              {
+                className: "player-progress-ellapsed",
+                style: { width: 0 },
+                ref: this.ellapsedElem,
+              },
+              [div({ className: "player-progress-bulp" })]
+            ),
 
-          div({
-            className: "player-progress-text",
-            ref: this.targetText,
-          }),
-        ]),
+            div({
+              className: "player-progress-text",
+              ref: this.targetText,
+            }),
+          ]
+        ),
       ]
     );
+
+  updateProgress = (playerState: youtubePlayer.PlayerProgressState) => {
+    const width = this.getPlayerWidth();
+    this.ellapsedElem.elem.style.width =
+      (playerState.currentTime / playerState.duration) * width + "px";
+    this.bufferedElem.elem.style.width =
+      playerState.loadedFraction * width + "px";
+  };
+
+  getPlayerWidth = () => this.progressContainerElem.elem.clientWidth;
+
+  setDestinationLabel = (label: string, mouseClientX: number) => {
+    this.targetText.elem.textContent = label;
+    const overallWidth = this.getPlayerWidth();
+    const width = this.targetText.elem.offsetWidth;
+    const textPadding = 3;
+    let position = numbers.clamp(
+      mouseClientX - width / 2,
+      textPadding,
+      overallWidth - width - textPadding
+    );
+    this.targetText.elem.style.left = position + "px";
+  };
 }
-
-const formatTime = (time: number) => {
-  const minutes = Math.floor(time / 60);
-  const seconds = Math.floor(time % 60);
-  const padZeros = (val: number): string => (val < 10 ? "0" + val : "" + val);
-
-  return `${padZeros(minutes)}:${padZeros(seconds)}`;
-};
-
-const clamp = (val: number, min: number, max: number): number => {
-  if (val < min) return min;
-  if (val > max) return max;
-  return val;
-};
 
 style.class("player", {
   //relative because of player-progress indicator
@@ -173,7 +186,7 @@ style.class("player-progress-container", {
   left: 0,
   right: 0,
   height: containerHeight,
-  backgroundColor: "rgba(0,0,0,0.1)",
+  backgroundColor: colors.playerProgress,
 });
 
 style.class("player-progress-container-padding", {
@@ -190,7 +203,7 @@ style.class("player-progress-buffer", {
   left: 0,
   top: 0,
   bottom: 0,
-  backgroundColor: "#C2C2C2",
+  backgroundColor: colors.playerProgressBuffered,
 });
 
 style.class("player-progress-ellapsed", {
@@ -198,11 +211,11 @@ style.class("player-progress-ellapsed", {
   left: 0,
   top: 0,
   bottom: 0,
-  backgroundColor: colors.itemInnerCircle,
+  backgroundColor: colors.playerProgressEllapssed,
 });
 
 style.class("player-progress-text", {
-  textShadow: `0 0 4px rgb(0 0 0 / 40%)`,
+  textShadow: `0 0 6px rgb(0 0 0 / 60%)`,
   position: "absolute",
   top: -25,
   color: colors.mainTextColor,

@@ -1,6 +1,7 @@
 import * as youtubePlayer from "../api/youtubePlayer";
 import { AppEvents } from "../events";
 import { Item } from "../items";
+import { time } from "../lodash";
 import { Footer } from "./footer";
 import { RightSidebar } from "./rightSidebar";
 
@@ -34,6 +35,7 @@ export class PlayerState {
       playNext: this.playNextItemInQueue,
       playPrevious: this.playPreviousItemInQueue,
       toggleVideoVisibility: this.toggleVideoFrameVisibility,
+      mouseMoveAlongTrack: this.handleMouseMove,
     });
     this.rightSidebar = new RightSidebar({
       onItemClicked: this.playItemInQueue,
@@ -42,9 +44,9 @@ export class PlayerState {
     this.rightSidebar.toggleVisibility(this.isRightSidebarVisible);
 
     events.on("item.play", this.playItem);
-    youtubePlayer.addEventListener("videoEnd", () =>
-      this.playNextItemInQueue()
-    );
+    youtubePlayer.addEventListener("videoEnd", this.playNextItemInQueue);
+
+    youtubePlayer.addEventListener("progress", this.updateProgress);
   }
 
   playItem = (item: Item) => {
@@ -112,5 +114,21 @@ export class PlayerState {
   toggleRightSidebar = () => {
     this.isRightSidebarVisible = !this.isRightSidebarVisible;
     this.rightSidebar.toggleVisibility(this.isRightSidebarVisible);
+  };
+
+  private updateProgress = () => {
+    this.footer.updateProgress(youtubePlayer.getPlayerProgressState());
+  };
+
+  handleMouseMove = (e: MouseEvent) => {
+    if (youtubePlayer.hasVideo()) {
+      const assumedDuration = youtubePlayer.getDuration();
+      this.footer.setDestinationLabel(
+        time.formatTime(
+          (e.clientX / this.footer.getPlayerWidth()) * assumedDuration
+        ),
+        e.clientX
+      );
+    }
   };
 }
