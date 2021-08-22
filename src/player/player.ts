@@ -20,7 +20,9 @@ export const viewPlayer = (events: AppEvents): PlayerResults => {
 
 export class PlayerState {
   isRightSidebarVisible = false;
+  isDragging = false;
   isVideoFrameShown = true;
+  isPlaying = false;
   itemBeingPlayed?: Item;
   currentItemPlayed?: Item;
   queue?: Item[];
@@ -36,6 +38,7 @@ export class PlayerState {
       playPrevious: this.playPreviousItemInQueue,
       toggleVideoVisibility: this.toggleVideoFrameVisibility,
       mouseMoveAlongTrack: this.handleMouseMove,
+      mouseDownAtTrack: this.startMoving,
     });
     this.rightSidebar = new RightSidebar({
       onItemClicked: this.playItemInQueue,
@@ -117,10 +120,51 @@ export class PlayerState {
   };
 
   private updateProgress = () => {
-    this.footer.updateProgress(youtubePlayer.getPlayerProgressState());
+    console.log("update progres", this.isDragging);
+    if (!this.isDragging)
+      this.footer.updateProgress(youtubePlayer.getPlayerProgressState());
   };
 
   handleMouseMove = (e: MouseEvent) => {
+    if (!this.isDragging) this.updateTextLabelPosition(e);
+  };
+
+  startMoving = (e: MouseEvent) => {
+    if (youtubePlayer.hasVideo()) {
+      this.isDragging = true;
+      this.updateTextLabelPosition(e);
+      this.footer.alwaysShowCurrentPosition();
+
+      const seekToMousePosition = (e: MouseEvent, allowAhead: boolean) =>
+        youtubePlayer.seek(
+          (e.clientX / this.footer.getPlayerWidth()) *
+            youtubePlayer.getDuration(),
+          allowAhead
+        );
+
+      youtubePlayer.pause();
+      seekToMousePosition(e, false);
+      this.footer.placeBulpAt(e.clientX);
+
+      const onMouseMove = (e: MouseEvent) => {
+        seekToMousePosition(e, false);
+        this.updateTextLabelPosition(e);
+        this.footer.placeBulpAt(e.clientX);
+      };
+      const onMouseUp = (e: MouseEvent) => {
+        this.isDragging = false;
+        seekToMousePosition(e, true);
+        youtubePlayer.resume();
+        this.footer.stopAlwaysShowingCurrentPosition();
+        document.removeEventListener("mousemove", onMouseMove);
+        document.removeEventListener("mouseup", onMouseUp);
+      };
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
+    }
+  };
+
+  private updateTextLabelPosition = (e: MouseEvent) => {
     if (youtubePlayer.hasVideo()) {
       const assumedDuration = youtubePlayer.getDuration();
       this.footer.setDestinationLabel(

@@ -9,6 +9,7 @@ type FooterProps = {
   playPrevious: Action<MouseEvent>;
   playNext: Action<MouseEvent>;
   mouseMoveAlongTrack: Action<MouseEvent>;
+  mouseDownAtTrack: Action<MouseEvent>;
   toggleVideoVisibility: Action<MouseEvent>;
   focusOn: Action<Item>;
 };
@@ -111,6 +112,7 @@ export class Footer {
       {
         className: "player-progress-container-padding",
         onMouseMove: this.props.mouseMoveAlongTrack,
+        onMouseDown: this.props.mouseDownAtTrack,
       },
       [
         div(
@@ -150,6 +152,10 @@ export class Footer {
       playerState.loadedFraction * width + "px";
   };
 
+  placeBulpAt = (x: number) => {
+    this.ellapsedElem.elem.style.width = x + "px";
+  };
+
   getPlayerWidth = () => this.progressContainerElem.elem.clientWidth;
 
   setDestinationLabel = (label: string, mouseClientX: number) => {
@@ -164,6 +170,19 @@ export class Footer {
     );
     this.targetText.elem.style.left = position + "px";
   };
+
+  alwaysShowCurrentPosition() {
+    dom.addClass(
+      this.progressContainerElem.elem,
+      "player-progress-container-visible-tracker"
+    );
+  }
+  stopAlwaysShowingCurrentPosition() {
+    dom.removeClass(
+      this.progressContainerElem.elem,
+      "player-progress-container-visible-tracker"
+    );
+  }
 }
 
 style.class("player", {
@@ -187,6 +206,7 @@ style.class("player-progress-container", {
   right: 0,
   height: containerHeight,
   backgroundColor: colors.playerProgress,
+  userSelect: "none",
 });
 
 style.class("player-progress-container-padding", {
@@ -256,6 +276,32 @@ style.parentHover("player-progress-container-padding", "player-progress-text", {
 style.parentHover("player-progress-container-padding", "player-progress-bulp", {
   transform: "scale(1)",
 });
+
+style.class2(
+  "player-progress-container-visible-tracker",
+  "player-progress-container",
+  {
+    height: containerHeightOnHover,
+    transform: `translateY(${
+      (containerHeightOnHover - containerHeight) / 2
+    }px)`,
+  }
+);
+
+style.parentChild(
+  "player-progress-container-visible-tracker",
+  "player-progress-text",
+  {
+    opacity: 1,
+  }
+);
+style.parentChild(
+  "player-progress-container-visible-tracker",
+  "player-progress-bulp",
+  {
+    transform: "scale(1)",
+  }
+);
 
 style.class("player-iframe", {
   position: "absolute",

@@ -93,6 +93,7 @@ type ClassName =
   | "footer-icon-play-previous"
   | "footer-icon-container"
   | "player-progress-container-padding"
+  | "player-progress-container-visible-tracker"
   | "player-progress-container"
   | "player-progress-buffer"
   | "player-progress-ellapsed"

@@ -72,6 +72,7 @@ global.onYouTubeIframeAPIReady = () => {
     playerVars: { autoplay: 1 /*, 'controls': 0 */ },
     events: {
       onReady: () => {
+        progressInterval = setInterval(onTick, 200);
         isReady = true;
       },
       onStateChange: onPlayerStateChange,
@@ -79,7 +80,7 @@ global.onYouTubeIframeAPIReady = () => {
   });
 };
 
-let progressInterval: NodeJS.Timeout;
+let progressInterval: NodeJS.Timeout | undefined;
 function onPlayerStateChange(event: any) {
   const state: PlayerState = event.data;
   if (state === PlayerState.ENDED) {
@@ -87,9 +88,12 @@ function onPlayerStateChange(event: any) {
   }
 
   if (state === PlayerState.PLAYING) {
-    progressInterval = setInterval(onTick, 200);
+    if (!progressInterval) progressInterval = setInterval(onTick, 200);
   } else {
-    if (progressInterval) clearInterval(progressInterval);
+    if (progressInterval) {
+      clearInterval(progressInterval);
+      progressInterval = undefined;
+    }
   }
 }
 
@@ -124,7 +128,10 @@ export const getPlayerProgressState = (): PlayerProgressState => {
 
 export const getDuration = (): number => player.getDuration();
 export const hasVideo = (): boolean => isReady;
-// export const getPlayerState = (): PlayerState => player && player.get;
+export const seek = (time: number, allowSeekAhead: boolean) =>
+  player.seekTo(time, allowSeekAhead);
+export const pause = () => player.pauseVideo();
+export const resume = () => player.playVideo();
 
 export const removeEventListener = (
   eventType: "videoEnd",
