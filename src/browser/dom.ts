@@ -104,6 +104,7 @@ type Events = {
   onClick?: (e: MouseEvent) => void;
   onClickStopPropagation?: (e: MouseEvent) => void;
   onMouseMove?: (e: MouseEvent) => void;
+  onMouseDown?: (e: MouseEvent) => void;
   onMouseEnter?: (e: MouseEvent) => void;
   onMouseLeave?: (e: MouseEvent) => void;
   onBlur?: (e: FocusEvent) => void;
@@ -119,6 +120,7 @@ const assignElementEvents = (elem: HTMLElement, props: Events) => {
       onClickStopPropagation(e);
     });
   if (props.onMouseMove) elem.addEventListener("mousemove", props.onMouseMove);
+  if (props.onMouseDown) elem.addEventListener("mousedown", props.onMouseDown);
   if (props.onMouseEnter)
     elem.addEventListener("mouseenter", props.onMouseEnter);
   if (props.onMouseLeave)
